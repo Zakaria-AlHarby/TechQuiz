@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار أكمل - البروتوكولات</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:"Cairo", Arial, sans-serif;
+    background:linear-gradient(135deg, #eef2ff, #e6eeff);
+    min-height:100vh;
+    padding:15px;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    overflow-y:auto;
+}
+
+.box{
+    background:#fff;
+    width:100%;
+    max-width:750px;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+
+h2{
+    text-align:center;
+    margin-bottom:15px;
+    color:#333;
+}
+
+.progress-text{
+    text-align:center;
+    font-weight:bold;
+    margin-bottom:8px;
+    color:#4a64ff;
+    font-size:18px;
+}
+
+.progress-bar{
+    width:100%;
+    height:10px;
+    background:#e0e0e0;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg, #4a64ff, #6a82ff);
+    transition:.3s;
+}
+
+#score{
+    text-align:center;
+    font-size:20px;
+    padding:12px;
+    margin-bottom:20px;
+    background:#f3f6ff;
+    border-radius:10px;
+    font-weight:bold;
+    color:#4a64ff;
+    border:2px solid #e0e6ff;
+}
+
+.question{
+    background:#f8faff;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:25px;
+    font-weight:bold;
+    font-size:20px;
+    line-height:1.6;
+    border-right:5px solid #4a64ff;
+}
+
+.input-area{
+    margin:15px 0 10px;
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:center;
+}
+
+#userAnswer{
+    flex:3;
+    padding:15px;
+    font-size:18px;
+    border:2px solid #ccd4f0;
+    border-radius:12px;
+    font-family:"Cairo", Arial, sans-serif;
+    text-align:right;
+    background:#fff;
+    transition:0.2s;
+}
+
+#userAnswer:focus{
+    border-color:#4a64ff;
+    outline:none;
+    box-shadow:0 0 0 3px rgba(74,100,255,0.2);
+}
+
+#checkBtn{
+    flex:1;
+    background:#4a64ff;
+    color:#fff;
+    border:none;
+    padding:15px;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+#checkBtn:hover{
+    background:#3a54ef;
+}
+
+#feedback{
+    display:none;
+    text-align:center;
+    font-weight:bold;
+    margin-top:20px;
+    padding:15px;
+    border-radius:10px;
+    background:#f0f4ff;
+    border-right:5px solid #4a64ff;
+    font-size:18px;
+    line-height:1.5;
+}
+
+button{
+    width:100%;
+    padding:18px;
+    margin-top:15px;
+    border:none;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+#nextBtn{
+    background:linear-gradient(135deg, #4a64ff, #6a82ff);
+    color:#fff;
+    display:none;
+}
+
+#nextBtn:hover{
+    background:linear-gradient(135deg, #3a54ef, #5a72ef);
+}
+
+#prevBtn{
+    background:linear-gradient(135deg, #6c757d, #868e96);
+    color:#fff;
+    display:none;
+}
+
+#prevBtn:hover{
+    background:linear-gradient(135deg, #5c656d, #767e86);
+}
+
+#result{
+    display:none;
+    margin-top:25px;
+    padding:25px;
+    background:#d4ffd6;
+    border-radius:15px;
+    text-align:center;
+    font-weight:bold;
+    font-size:22px;
+    border:3px solid #1b8a2c;
+}
+
+#result span{
+    display:block;
+    margin:10px 0;
+    font-size:28px;
+    color:#1b8a2c;
+}
+
+.restart-btn{
+    background:linear-gradient(135deg, #28a745, #20c997);
+    color:#fff;
+    margin-top:20px;
+    display:none;
+}
+
+.restart-btn:hover{
+    background:linear-gradient(135deg, #218838, #1ca87e);
+}
+
+.feedback-detail{
+    font-weight:normal;
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px dashed #4a64ff;
+    color:#555;
+}
+
+.correct-feedback{
+    background-color:#e0ffe0;
+    border-right-color:#1b8a2c;
+}
+
+.wrong-feedback{
+    background-color:#ffe0e0;
+    border-right-color:#b30000;
+}
+
+@media (max-width: 600px) {
+    .box{padding:15px;}
+    .question{font-size:18px; padding:15px;}
+    #userAnswer{padding:12px; font-size:16px;}
+    #checkBtn{padding:12px;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2> أكمل العبارة (البروتوكولات)</h2>
+
+<div class="progress-text" id="progressText"></div>
+<div class="progress-bar"><div class="progress" id="progressBar"></div></div>
+
+<div id="score">النتيجة: 0</div>
+
+<div class="question" id="questionText"></div>
+
+<div class="input-area">
+    <input type="text" id="userAnswer" placeholder="اكتب إجابتك هنا ..." autocomplete="off">
+    <button id="checkBtn" onclick="checkAnswer()">✔ تحقق</button>
+</div>
+
+<div id="feedback"></div>
+
+<button id="prevBtn" onclick="prevQuestion()">السؤال السابق</button>
+<button id="nextBtn" onclick="nextQuestion()">السؤال التالي</button>
+
+<div id="result"></div>
+<button class="restart-btn" onclick="restartTest()">↻ إعادة الاختبار</button>
+</div>
+
+<script>
+const questions = [
+  {
+    "q": "بروتوكول الاتصال الأساسي يستخدم لربط مجموعة من الأجهزة الحاسوبية على شبكة واحدة؟",
+    "correctAnswer": "IP",
+    "feedback": "IP (Internet Protocol) – المسؤول عن توجيه الحزم وعناوين الأجهزة على الشبكة."
+  },
+  {
+    "q": "بروتوكول التحكم بالنقل، وهو مجموعة من القواعد التي تحكم نقل البيانات بين طرفين بشكل موثوق وآمن؟",
+    "correctAnswer": "TCP",
+    "feedback": "TCP (Transmission Control Protocol) – يضمن وصول البيانات بالكامل وبالترتيب الصحيح."
+  },
+  {
+    "q": "بروتوكول مسؤول عن بيانات المستخدم، يعمل على إرسال الرسائل القصيرة دون ضمان وصولها؟",
+    "correctAnswer": "UDP",
+    "feedback": "UDP (User Datagram Protocol) – سريع لكن غير موثوق، يُستخدم في البث المباشر والألعاب."
+  },
+  {
+    "q": "بروتوكول لنقل النص التشعبي (صفحات الويب) عبر الإنترنت؟",
+    "correctAnswer": "HTTP",
+    "feedback": "HTTP (HyperText Transfer Protocol) – أساس اتصال المتصفح بالخادم."
+  },
+  {
+    "q": "بروتوكول لنقل النص التشعبي الآمن (يعمل مع تشفير SSL/TLS)؟",
+    "correctAnswer": "HTTPS",
+    "feedback": "HTTPS (HyperText Transfer Protocol Secure) – يُستخدم للمواقع الآمنة."
+  },
+  {
+    "q": "بروتوكول يتبع تقنية ربط رقم IP بالموقع الإلكتروني عبر الاسم (تحويل النطاقات إلى عناوين IP)؟",
+    "correctAnswer": "DNS",
+    "feedback": "DNS (Domain Name System) – دليل الهاتف للإنترنت."
+  },
+  {
+    "q": "بروتوكول التهيئة الآلية للمضيفين، يقوم بتوزيع عناوين IP تلقائياً على الأجهزة في الشبكة؟",
+    "correctAnswer": "DHCP",
+    "feedback": "DHCP (Dynamic Host Configuration Protocol) – يُستخدم في الراوتر لتوزيع الـ IP تلقائياً."
+  },
+  {
+    "q": "بروتوكول رسائل التحكم في الإنترنت، يُستخدم في أوامر مثل ping و traceroute؟",
+    "correctAnswer": "ICMP",
+    "feedback": "ICMP (Internet Control Message Protocol) – لإرسال رسائل الخطأ والتشخيص."
+  },
+  {
+    "q": "بروتوكول مسؤول عن إرسال البريد البسيط، ويُستخدم في إرسال واستقبال الإيميلات؟",
+    "correctAnswer": "SMTP",
+    "feedback": "SMTP (Simple Mail Transfer Protocol) – بروتوكول إرسال البريد الإلكتروني."
+  },
+  {
+    "q": "بروتوكول نقل الملفات بين العميل والخادم عبر الشبكة؟",
+    "correctAnswer": "FTP",
+    "feedback": "FTP (File Transfer Protocol) – لنقل الملفات."
+  }
+];
+
+let index = 0;
+let score = 0;
+let userAnswers = Array(questions.length).fill(null);
+let answerStatus = Array(questions.length).fill(false);
+
+function updateProgress() {
+    document.getElementById("progressText").textContent = `السؤال ${index+1} من ${questions.length}`;
+    document.getElementById("progressBar").style.width = ((index+1)/questions.length)*100 + "%";
+}
+
+function loadQuestion() {
+    updateProgress();
+    const q = questions[index];
+    document.getElementById("questionText").textContent = q.q;
+    document.getElementById("feedback").style.display = "none";
+    
+    // زر "التالي" يكون ظاهراً دائماً
+    document.getElementById("nextBtn").style.display = "block";
+    document.getElementById("prevBtn").style.display = index > 0 ? "block" : "none";
+    
+    const inputField = document.getElementById("userAnswer");
+    const checkBtn = document.getElementById("checkBtn");
+    
+    if (userAnswers[index] !== null) {
+        inputField.value = userAnswers[index];
+        inputField.disabled = true;
+        checkBtn.disabled = true;
+        checkBtn.style.opacity = "0.6";
+        showSavedFeedback();
+    } else {
+        inputField.value = "";
+        inputField.disabled = false;
+        checkBtn.disabled = false;
+        checkBtn.style.opacity = "1";
+        inputField.style.borderColor = "#ccd4f0";
+    }
+    inputField.focus();
+}
+
+function normalizeAnswer(str) {
+    return str.trim().toUpperCase();
+}
+
+function isAnswerCorrect(userText, correctText) {
+    return normalizeAnswer(userText) === normalizeAnswer(correctText);
+}
+
+function checkAnswer() {
+    if (userAnswers[index] !== null) {
+        document.getElementById("feedback").innerHTML = `<span style="color:#ff9800">⚠️ لقد أجبت على هذا السؤال مسبقًا.</span>`;
+        document.getElementById("feedback").style.display = "block";
+        return;
+    }
+    
+    const inputField = document.getElementById("userAnswer");
+    const userText = inputField.value;
+    if (userText.trim() === "") {
+        document.getElementById("feedback").innerHTML = `<span style="color:#b30000">✏️ الرجاء كتابة إجابة قبل التحقق.</span>`;
+        document.getElementById("feedback").style.display = "block";
+        return;
+    }
+    
+    const q = questions[index];
+    const correctAns = q.correctAnswer;
+    const isCorrect = isAnswerCorrect(userText, correctAns);
+    
+    userAnswers[index] = userText.trim();
+    answerStatus[index] = isCorrect;
+    
+    if (isCorrect) {
+        score++;
+    }
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة! ✅</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة!</span>
+                        <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${correctAns}</strong><br>${q.feedback}</div>`;
+    }
+    document.getElementById("feedback").innerHTML = feedbackHtml;
+    document.getElementById("feedback").style.display = "block";
+    
+    inputField.disabled = true;
+    document.getElementById("checkBtn").disabled = true;
+    document.getElementById("checkBtn").style.opacity = "0.6";
+}
+
+function showSavedFeedback() {
+    const q = questions[index];
+    const userText = userAnswers[index];
+    const isCorrect = answerStatus[index];
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة ✅ (إجابتك: ${userText})</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة (إجابتك: ${userText})</span>
+                        <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.correctAnswer}</strong><br>${q.feedback}</div>`;
+    }
+    document.getElementById("feedback").innerHTML = feedbackHtml;
+    document.getElementById("feedback").style.display = "block";
+}
+
+function nextQuestion() {
+    // إذا لم يجب على السؤال الحالي، نمنع الانتقال
+    if (userAnswers[index] === null) {
+        document.getElementById("feedback").innerHTML = `<span style="color:#b30000">❗ يجب الإجابة على السؤال الحالي أولاً。</span>`;
+        document.getElementById("feedback").style.display = "block";
+        return;
+    }
+    
+    if (index < questions.length - 1) {
+        index++;
+        // عند الانتقال لسؤال جديد، نحرر الحقول إذا لم يكن قد أُجيب بعد
+        const inputField = document.getElementById("userAnswer");
+        const checkBtn = document.getElementById("checkBtn");
+        if (userAnswers[index] === null) {
+            inputField.disabled = false;
+            checkBtn.disabled = false;
+            checkBtn.style.opacity = "1";
+        } else {
+            inputField.disabled = true;
+            checkBtn.disabled = true;
+            checkBtn.style.opacity = "0.6";
+        }
+        loadQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function prevQuestion() {
+    if (index > 0) {
+        index--;
+        const inputField = document.getElementById("userAnswer");
+        const checkBtn = document.getElementById("checkBtn");
+        if (userAnswers[index] === null) {
+            inputField.disabled = false;
+            checkBtn.disabled = false;
+            checkBtn.style.opacity = "1";
+        } else {
+            inputField.disabled = true;
+            checkBtn.disabled = true;
+            checkBtn.style.opacity = "0.6";
+        }
+        loadQuestion();
+    }
+}
+
+function showResult() {
+    document.querySelector(".progress-bar").style.display = "none";
+    document.getElementById("progressText").style.display = "none";
+    document.getElementById("questionText").style.display = "none";
+    document.getElementById("userAnswer").style.display = "none";
+    document.getElementById("checkBtn").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = "none";
+    document.getElementById("feedback").style.display = "none";
+    
+    const percent = Math.round((score/questions.length)*100);
+    let message = "";
+    if (percent >= 90) message = "🎉 ممتاز!";
+    else if (percent >= 75) message = "👍 جيد جداً!";
+    else if (percent >= 60) message = "📚 جيد، حاول مراجعة بعض البروتوكولات.";
+    else message = "📖 لا تيأس، أعد الاختبار وراجع الإجابات.";
+    
+    document.getElementById("result").style.display = "block";
+    document.getElementById("result").innerHTML = `
+        <h3>🏁 انتهى الاختبار</h3>
+        <span>${score} / ${questions.length}</span>
+        <div>النسبة المئوية: ${percent}%</div>
+        <div style="margin-top:15px; font-size:20px;">${message}</div>
+        <div style="margin-top:20px; font-size:16px;">📌 اضغط "إعادة الاختبار" للتدرب مجدداً</div>
+    `;
+    document.querySelector(".restart-btn").style.display = "block";
+}
+
+function restartTest() {
+    index = 0;
+    score = 0;
+    userAnswers = Array(questions.length).fill(null);
+    answerStatus = Array(questions.length).fill(false);
+    
+    document.querySelector(".progress-bar").style.display = "block";
+    document.getElementById("progressText").style.display = "block";
+    document.getElementById("questionText").style.display = "block";
+    document.getElementById("userAnswer").style.display = "block";
+    document.getElementById("checkBtn").style.display = "block";
+    document.getElementById("result").style.display = "none";
+    document.querySelector(".restart-btn").style.display = "none";
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    const inputField = document.getElementById("userAnswer");
+    inputField.disabled = false;
+    inputField.value = "";
+    document.getElementById("checkBtn").disabled = false;
+    document.getElementById("checkBtn").style.opacity = "1";
+    
+    loadQuestion();
+}
+
+// ربط Enter بالتحقق
+document.getElementById("userAnswer").addEventListener("keypress", function(e) {
+    if (e.key === "Enter" && userAnswers[index] === null) {
+        checkAnswer();
+    }
+});
+
+// بدء الاختبار
+loadQuestion();
+</script>
+</body>
+</html>
