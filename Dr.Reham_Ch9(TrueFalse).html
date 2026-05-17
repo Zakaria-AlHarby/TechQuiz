@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار تكنولوجيا التعليم</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:"Cairo", Arial, sans-serif;
+    background:linear-gradient(135deg, #eef2ff, #e6eeff);
+    min-height:100vh;
+    padding:15px;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    overflow-y:auto;
+}
+
+.box{
+    background:#fff;
+    width:100%;
+    max-width:650px;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+
+h2{
+    text-align:center;
+    margin-bottom:15px;
+    color:#333;
+}
+
+/* ===== عداد الأسئلة ===== */
+.progress-text{
+    text-align:center;
+    font-weight:bold;
+    margin-bottom:8px;
+    color:#4a64ff;
+    font-size:18px;
+}
+
+.progress-bar{
+    width:100%;
+    height:10px;
+    background:#e0e0e0;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg, #4a64ff, #6a82ff);
+    transition:.3s;
+}
+/* ======================= */
+
+#score{
+    text-align:center;
+    font-size:20px;
+    padding:12px;
+    margin-bottom:20px;
+    background:#f3f6ff;
+    border-radius:10px;
+    font-weight:bold;
+    color:#4a64ff;
+    border:2px solid #e0e6ff;
+}
+
+.question{
+    background:#f8faff;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:25px;
+    font-weight:bold;
+    font-size:20px;
+    line-height:1.6;
+    border-right:5px solid #4a64ff;
+}
+
+.options-container{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.option{
+    background:#e8edff;
+    padding:20px;
+    border-radius:12px;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+    font-size:18px;
+    border:2px solid transparent;
+}
+
+.option:hover{
+    background:#d9e0ff;
+    transform:translateY(-2px);
+}
+
+.option.selected{
+    border-color:#4a64ff;
+    background:#d9e0ff;
+}
+
+.option.correct{
+    background:#b6ffb6;
+    color:#1b8a2c;
+    border-color:#1b8a2c;
+}
+
+.option.wrong{
+    background:#ffb6b6;
+    color:#b30000;
+    border-color:#b30000;
+}
+
+#feedback{
+    display:none;
+    text-align:center;
+    font-weight:bold;
+    margin-top:20px;
+    padding:15px;
+    border-radius:10px;
+    background:#f0f4ff;
+    border-right:5px solid #4a64ff;
+    font-size:18px;
+    line-height:1.5;
+}
+
+button{
+    width:100%;
+    padding:18px;
+    margin-top:15px;
+    border:none;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+#nextBtn{
+    background:linear-gradient(135deg, #4a64ff, #6a82ff);
+    color:#fff;
+    display:none;
+}
+
+#nextBtn:hover{
+    background:linear-gradient(135deg, #3a54ef, #5a72ef);
+}
+
+#prevBtn{
+    background:linear-gradient(135deg, #6c757d, #868e96);
+    color:#fff;
+    display:none;
+}
+
+#prevBtn:hover{
+    background:linear-gradient(135deg, #5c656d, #767e86);
+}
+
+#result{
+    display:none;
+    margin-top:25px;
+    padding:25px;
+    background:#d4ffd6;
+    border-radius:15px;
+    text-align:center;
+    font-weight:bold;
+    font-size:22px;
+    border:3px solid #1b8a2c;
+}
+
+#result span{
+    display:block;
+    margin:10px 0;
+    font-size:28px;
+    color:#1b8a2c;
+}
+
+.restart-btn{
+    background:linear-gradient(135deg, #28a745, #20c997);
+    color:#fff;
+    margin-top:20px;
+    display:none;
+}
+
+.restart-btn:hover{
+    background:linear-gradient(135deg, #218838, #1ca87e);
+}
+
+.feedback-detail{
+    font-weight:normal;
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px dashed #4a64ff;
+    color:#555;
+}
+
+@media (max-width: 600px) {
+    .box{
+        padding:15px;
+    }
+    
+    .question{
+        font-size:18px;
+        padding:15px;
+    }
+    
+    .option{
+        padding:16px;
+        font-size:16px;
+    }
+    
+    #feedback{
+        font-size:16px;
+        padding:12px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2>الفصل التاسع</h2>
+
+<!-- عداد الأسئلة -->
+<div class="progress-text" id="progressText"></div>
+<div class="progress-bar">
+    <div class="progress" id="progressBar"></div>
+</div>
+
+<div id="score">النتيجة: 0</div>
+
+<div class="question" id="questionText"></div>
+<div class="options-container" id="options"></div>
+
+<div id="feedback"></div>
+
+<button id="prevBtn" onclick="prevQuestion()">السؤال السابق</button>
+<button id="nextBtn" onclick="nextQuestion()">السؤال التالي</button>
+
+<div id="result"></div>
+<button class="restart-btn" onclick="restartTest()">إعادة الاختبار</button>
+</div>
+
+<script>
+const questions = [
+  {
+    "q": "التعلم القائم على الويب هو بيئة تعليمية تفاعلية تعتمد بشكل أساسي على تكنولوجيا الإنترنت لتقديم المحتوى وتسهيل التواصل.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، هذا هو التعريف الأساسي للتعلم القائم على الويب (Web-Based Learning)."
+  },
+  {
+    "q": "يقتصر التعلم القائم على الويب على تقديم المواد التعليمية بشكل جامد دون إمكانية التفاعل بين المعلم والطلاب.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 1,
+    "feedback": "خطأ، من أهم مميزات التعلم عبر الويب هو التفاعلية والتواصل المستمر."
+  },
+  {
+    "q": "في التعلم القائم على الويب، يتحول دور المتعلم من متلقٍّ سلبي إلى مشارك نشط وباحث عن المعرفة.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، هذه هي الفلسفة التربوية الحديثة للتعلم القائم على الويب."
+  },
+  {
+    "q": "يُعد التقييم المستمر والتغذية الراجعة الفورية من الأركان الأساسية في بيئات التعلم عبر الويب.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، حيث تتيح المنصات الإلكترونية توفير تغذية راجعة فورية للمتعلمين."
+  },
+  {
+    "q": "يتطلب التعلم القائم على الويب وجود المعلم والمتعلم في نفس المكان والوقت دائماً لإتمام العملية التعليمية.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 1,
+    "feedback": "خطأ، التعلم عبر الويب يتميز بعدم التقيد بالمكان والزمان (غير متزامن أو متزامن عن بُعد)."
+  },
+  {
+    "q": "يوفر التعلم عبر الويب مرونة كاملة تسمح للمتعلم بالسير في المادة الدراسية وفقاً لسرعته وقدراته الذاتية.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، التعلم الذاتي والتعلم حسب السرعة الذاتية من أهم مزايا التعلم الإلكتروني."
+  },
+  {
+    "q": "يعتمد التعلم القائم على الويب على تكنولوجيا المعالجة المحلية فقط دون الحاجة إلى الاتصال بشبكة الإنترنت.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 1,
+    "feedback": "خطأ، التعلم القائم على الويب (Web-Based) يعتمد بشكل أساسي على الاتصال بالإنترنت."
+  },
+  {
+    "q": "يدمج التعلم القائم على الويب بين الجانب التقني (الشبكات والمنصات) والجانب التربوي (الاستراتيجيات والأهداف).",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، هذا هو مفهوم التكامل بين التقنية والتربية لتحقيق أهداف تعليمية."
+  },
+  {
+    "q": "تُعد لغة HTML غير مهمة في تصميم صفحات ومقررات التعلم القائم على الويب.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 1,
+    "feedback": "خطأ، HTML هي اللغة الأساسية لبناء صفحات الويب والمحتوى التعليمي الإلكتروني."
+  },
+  {
+    "q": "تتيح الوسائط المتشعبة (Hypermedia) للمتعلم التنقل بمرونة بين النصوص، والأصوات، والفيديوهات داخل المقررات الإلكترونية.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، الوسائط المتشعبة تدمج الروابط التشعبية مع عناصر الوسائط المتعددة."
+  },
+  {
+    "q": "التعريف الإجرائي للتعلم القائم على الويب يربطه دائماً بأداة قياس محددة مثل الاختبار التحصيلي البعدي.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، حيث يجب أن يكون المفهوم قابلاً للملاحظة والقياس من خلال اختبار أو أداة محددة."
+  },
+  {
+    "q": "يعتبر نظام إدارة التعلم (LMS) أداة ثانوية ولا يشكل جزءاً من البنية التحتية للتعلم عبر الويب.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 1,
+    "feedback": "خطأ، نظام إدارة التعلم (مثل Moodle) هو حجر الزاوية والبنية التحتية الأساسية للتعلم عبر الويب."
+  },
+  {
+    "q": "يساعد التعلم عبر الويب على مراعاة الفروق الفردية بين المتعلمين من خلال تنوع مصادر تقديم المحتوى.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، حيث يمكن للطالب اختيار المصادر والمسارات التي تناسب أسلوب تعلمه."
+  },
+  {
+    "q": "يهدف التعلم القائم على الويب إلى إلغاء دور المعلم تماماً واستبداله بالآلة دون أي توجيه تربوي.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 1,
+    "feedback": "خطأ، الدور يتحول من ملقن إلى موجه وميسر، لكن المعلم يبقى العنصر الأساسي."
+  },
+  {
+    "q": "ترتكز الفلسفة التربوية للتعلم عبر الويب على جعل المتعلم محوراً للعملية التعليمية.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، وهذا ما يعرف بنظرية البنائية والتعلم المتمركز حول المتعلم (Learner-Centered)."
+  },
+  {
+    "q": "تنقسم أدوات التواصل في التعلم القائم على الويب إلى أدوات متزامنة وأدوات غير متزامنة.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، التصنيف الرئيسي لأدوات الاتصال في التعلم الإلكتروني."
+  },
+  {
+    "q": "تُعد غرف الدردشة الفورية (Chat Rooms) من أدوات التواصل غير المتزامنة لأنها لا تتطلب تواجد الأطراف في نفس الوقت.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 1,
+    "feedback": "خطأ، غرف الدردشة الفورية هي أدوات تواصل متزامن (Synchronous) تتطلب تواجد الجميع في نفس الوقت."
+  },
+  {
+    "q": "يعتبر البريد الإلكتروني (E-mail) من أبرز أدوات التواصل غير المتزامنة المستخدمة في إرسال التكليفات والواجبات.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، البريد الإلكتروني لا يتطلب رداً فورياً، لذا يصنف ضمن غير المتزامن (Asynchronous)."
+  },
+  {
+    "q": "تتيح المنتديات التعليمية (Discussion Forums) تبادل الآراء والنقاشات بين الطلاب حول قضية معينة بشكل غير متزامن.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، المنتديات تسمح بالنقاش على مدى أيام دون الحاجة للتواجد المتزامن."
+  },
+  {
+    "q": "الفصول الافتراضية (Virtual Classrooms) تتبع نمط الاتصال غير المتزامن لأن المحاضرات تكون مسجلة دائماً.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 1,
+    "feedback": "خطأ، الفصول الافتراضية (مثل Zoom أو Teams) هي أدوات متزامنة تحاكي الفصل التقليدي المباشر."
+  },
+  {
+    "q": "تُستخدم أدوات الإبحار (Navigation Tools) كالروابط والقوائم لتسهيل حركة الطالب داخل المقرر الإلكتروني دون تشتت.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، سهولة الإبحار (Usability) من أهم معايير تصميم المقررات الإلكترونية."
+  },
+  {
+    "q": "لا توجد أي علاقة بين أجيال الويب (Web 2.0 و Web 3.0) وتطوير بيئات التعلم القائم على الويب.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 1,
+    "feedback": "خطأ، كل جيل من الويب أحدث ثورة في أدوات واستراتيجيات التعلم الإلكتروني."
+  },
+  {
+    "q": "ساهمت تطبيقات Web 2.0 في تحويل التعلم عبر الويب إلى بيئة تشاركية تعتمد على المحتوى الذي يصنعه الطلاب (مثل المدونات والويكي).",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، Web 2.0 هو الويب التشاركي (Read-Write Web)."
+  },
+  {
+    "q": "تدعم بيئة التعلم القائم على الويب تقديم الاختبارات الإلكترونية ذات التصحيح التلقائي لتقديم تغذية راجعة فورية.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، التصحيح الآلي من أهم مميزات أنظمة إدارة التعلم (LMS)."
+  },
+  {
+    "q": "تعتبر المدونات التعليمية (Blogs) من أدوات الاتصال المتزامن التي تقدم محادثات صوتية مباشرة.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 1,
+    "feedback": "خطأ، المدونات هي أدوات غير متزامنة لنشر المقالات والأفكار، وليست للمحادثة الصوتية المباشرة."
+  },
+  {
+    "q": "تساهم منصات الويكي (Wiki) في تنمية مهارات العمل الجماعي والتأليف المشترك بين المتعلمين عبر الويب.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، الويكي يسمح لعدة مستخدمين بتحرير وثيقة واحدة بشكل تعاوني (مثل ويكيبيديا)."
+  },
+  {
+    "q": "تُمثل ملفات الإنجاز الإلكترونية (E-Portfolios) أداة قوية لتقويم أداء الطالب ونموه المعرفي والمهاري عبر الويب.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، وهي تعكس تطور المتعلم عبر الزمن وتجمع أعماله."
+  },
+  {
+    "q": "يقتصر المحتوى التعليمي في الويب على النصوص المكتوبة فقط ويمنع استخدام الرسوم المتحركة تجنباً لتشتيت الطالب.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 1,
+    "feedback": "خطأ، التعلم عبر الويب يعتمد على الوسائط المتعددة (نصوص، صور، فيديو، رسوم متحركة) لجذب الانتباه وتوضيح المعلومة."
+  },
+  {
+    "q": "توفر بيئة الويب إمكانية تتبع أداء الطلاب (Tracking) ومعرفة عدد ساعات دخولهم وتفاعلهم مع المقرر.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، سجلات المتتبع (Logs) تمكن المعلم من تحليل سلوك المتعلمين."
+  },
+  {
+    "q": "يُعد توفير الدعم الفني والإرشادي للطالب جزءاً لا يتجزأ من نجاح بيئة التعلم القائم على الويب.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، لا يكتمل النظام التعليمي الإلكتروني بدون دعم فني لحل مشكلات الوصول والتقنية."
+  },
+  {
+    "q": "استراتيجيات التدريس عبر الويب هي خطط وبرامج عمل منظمة توظف أدوات الشبكة لتحقيق أهداف تعليمية محددة.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، هذا هو التعريف الإجرائي لاستراتيجيات التدريس الإلكترونية."
+  },
+  {
+    "q": "تصلح جميع استراتيجيات التدريس التقليدية للتطبيق عبر الويب بنفس الطريقة دون أي تعديل أو إعادة تصميم.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 1,
+    "feedback": "خطأ، تتطلب الاستراتيجيات التقليدية إعادة هندسة (Redesign) لتتناسب مع طبيعة البيئة الرقمية."
+  },
+  {
+    "q": "تتكون رحلات الويب المعرفية من عناصر أساسية تشمل: المقدمة، المهمة، العمليات، المصادر، التقييم، والخاتمة.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، هذه هي بنية (WebQuest) التي صممها بيرني دودج."
+  },
+  {
+    "q": "تُعد استراتيجية 'التعلم التعاوني عبر الويب' من الاستراتيجيات التي تعتمد على تقسيم الطلاب إلى مجموعات صغيرة لإنجاز مهمة مشتركة باستخدام أدوات التشارك.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، وتستخدم أدوات مثل Google Docs أو المنتديات لتحقيق التفاعل."
+  },
+  {
+    "q": "لا يمكن تطبيق استراتيجية 'حل المشكلات' عبر الويب نظراً لغياب التفاعل المباشر وجهاً لوجه بين الطلاب.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 1,
+    "feedback": "خطأ، يمكن تطبيقها عبر الفصول الافتراضية أو الأدوات التعاونية التي تحاكي التفاعل."
+  },
+  {
+    "q": "تساهم استراتيجية 'المناقشة الإلكترونية' في إعطاء فرصة للطلاب الخجولين للتعبير عن آرائهم بحرية أكبر مقارنة بالفصل التقليدي.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، الشعور بالخصوصية خلف الشاشة يقلل من قلق التحدث أمام الآخرين."
+  },
+  {
+    "q": "تقوم استراتيجية 'التعلم الذاتي عبر الويب' على تقديم موديولات تعليمية مستقلة يدرسها الطالب بمفرده وحسب طاقته.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، التعلم الذاتي (Self-paced Learning) هو جوهر هذه الاستراتيجية."
+  },
+  {
+    "q": "تعتمد استراتيجية 'المشروعات عبر الويب' على العمل الفردي فقط ويُحظر فيها التعاون بين المجموعات.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 1,
+    "feedback": "خطأ، المشروعات عبر الويب (Web Projects) تعتمد أساساً على العمل الجماعي والتعاون."
+  },
+  {
+    "q": "يُعد 'التعلم المدمج' (Blended Learning) استراتيجية تجمع بين مزايا التعلم التقليدي وجهاً لوجه والتعلم القائم على الويب.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، وهو أفضل النماذج حالياً لأنه يجمع بين مميزات النظامين."
+  },
+  {
+    "q": "في استراتيجية 'الصف المقلوب' (Flipped Classroom)، يشاهد الطلاب المحاضرة عبر الويب في المنزل، ويخصصون وقت الفصل للمناقشات والأنشطة.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، وهذا يعكس مفهوم 'القلب' أو الانقلاب في استخدام وقت الفصل."
+  },
+  {
+    "q": "تقتصر استراتيجية التوجيه والتحكم في التدريس عبر الويب على المعلم فقط، ولا وجود لأسلوب التوجيه الذاتي للمتعلم.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 1,
+    "feedback": "خطأ، التعلم عبر الويب يشجع على التوجيه الذاتي (Self-Regulation) وتحمل مسؤولية التعلم."
+  },
+  {
+    "q": "تساعد استراتيجية 'العصف الذهني الإلكتروني' (E-Brainstorming) على جمع أكبر عدد من الأفكار الإبداعية من الطلاب عبر منصات النقاش.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، أدوات مثل اللوحات التفاعلية (Jamboard) أو المنتديات تتيح عصفاً ذهنياً واسعاً."
+  },
+  {
+    "q": "تعد استراتيجية 'الالعاب التعليمية الرقمية عبر الويب' غير مفيدة تربوياً وتُستخدم للتسلية فقط.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 1,
+    "feedback": "خطأ، الألعاب التعليمية (Gamification) تحفز الدافعية وتحقق التعلم من خلال التحدي والمتعة."
+  },
+  {
+    "q": "تتطلب استراتيجيات التدريس عبر الويب من المعلم أن يلعب دور 'الميسر والموجه' (Facilitator) بدلاً من دور الملقن.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، دور المعلم في البيئة الرقمية يتحول من 'حكيم على المنبر' إلى 'مرشد بجانب الطريق'."
+  },
+  {
+    "q": "تساهم استراتيجية 'الخرائط الذهنية الإلكترونية المشتركة' في تلخيص وتنظيم المعرفة بين الطلاب عبر الويب.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، أدوات مثل MindMeister تسمح ببناء الخرائط الذهنية بشكل تعاوني."
+  },
+  {
+    "q": "عند تصميم استراتيجية تدريس عبر الويب، يتم إغفال صياغة الأهداف السلوكية والتركيز فقط على الإبهار التقني.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 1,
+    "feedback": "خطأ، الأهداف السلوكية هي الأساس في أي تصميم تعليمي، والتقنية وسيلة وليست غاية."
+  },
+  {
+    "q": "توفر استراتيجية 'دراسة الحالة عبر الويب' سيناريوهات واقعية للطلاب لتحليلها واتخاذ القرارات المناسبة بشأنها مستخدمين مصادر الشبكة.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، الإنترنت يتيح الوصول إلى حالات وقصص حقيقية من جميع أنحاء العالم."
+  },
+  {
+    "q": "يعتمد نجاح استراتيجيات التدريس عبر الويب على مدى اتساق الأدوات التكنولوجية المستخدمة مع طبيعة المحتوى والأهداف التعليمية المراد تحقيقها.",
+    "options": ["صحيحة", "خاطئة"],
+    "correct": 0,
+    "feedback": "صحيح، هذا ما يطلق عليه 'التكامل التكنولوجي' أو 'الملاءمة التقنية'."
+  }
+];
+
+let index = 0;
+let score = 0;
+let userAnswers = Array(questions.length).fill(null);
+
+function updateProgress(){
+    document.getElementById("progressText").textContent =
+        `السؤال ${index+1} من ${questions.length}`;
+
+    document.getElementById("progressBar").style.width =
+        ((index+1)/questions.length)*100 + "%";
+}
+
+function loadQuestion(){
+    updateProgress();
+
+    const q = questions[index];
+    document.getElementById("questionText").textContent = q.q;
+    document.getElementById("feedback").style.display="none";
+    document.getElementById("nextBtn").style.display="none";
+    
+    // إظهار زر السابق فقط إذا لم نكن في السؤال الأول
+    document.getElementById("prevBtn").style.display = index>0?"block":"none";
+
+    // إنشاء خيارات السؤال
+    document.getElementById("options").innerHTML = `
+        <div class="option" onclick="selectOption(0)">✓ صواب</div>
+        <div class="option" onclick="selectOption(1)">✗ خطأ</div>
+    `;
+
+    // إذا كان المستخدم قد أجاب على هذا السؤال مسبقاً، نعرض إجابته
+    if(userAnswers[index] !== null){
+        showSavedAnswer();
+    }
+}
+
+function selectOption(i){
+    // منع الإجابة مرة أخرى على نفس السؤال
+    if(userAnswers[index] !== null) return;
+    
+    userAnswers[index] = i;
+    const correct = questions[index].correct;
+    const options = document.querySelectorAll(".option");
+    
+    // إضافة تأثير التحديد
+    options[i].classList.add("selected");
+    
+    // إظهار الإجابة الصحيحة والخاطئة
+    if(i === correct){
+        score++;
+        document.getElementById("feedback").innerHTML = 
+            `<span style="color:#1b8a2c">✔ إجابة صحيحة</span>
+             <div class="feedback-detail">${questions[index].feedback}</div>`;
+    }else{
+        document.getElementById("feedback").innerHTML = 
+            `<span style="color:#b30000">❌ إجابة خاطئة</span>
+             <div class="feedback-detail">${questions[index].feedback}</div>`;
+    }
+
+    // تلوين الإجابات
+    options.forEach((op,idx)=>{
+        if(idx === correct) op.classList.add("correct");
+        else if(idx === i && idx !== correct) op.classList.add("wrong");
+        op.style.pointerEvents="none";
+    });
+
+    // تحديث النتيجة
+    document.getElementById("score").textContent=`النتيجة: ${score}`;
+    document.getElementById("feedback").style.display="block";
+    document.getElementById("nextBtn").style.display="block";
+}
+
+function showSavedAnswer(){
+    const correct = questions[index].correct;
+    const selected = userAnswers[index];
+    const options = document.querySelectorAll(".option");
+
+    // تلوين الإجابات
+    options.forEach((op,idx)=>{
+        if(idx === correct) op.classList.add("correct");
+        if(idx === selected && idx !== correct) op.classList.add("wrong");
+        if(idx === selected) op.classList.add("selected");
+        op.style.pointerEvents="none";
+    });
+
+    // إظهار التغذية الراجعة
+    document.getElementById("feedback").style.display="block";
+    document.getElementById("feedback").innerHTML = 
+        selected === correct ? 
+        `<span style="color:#1b8a2c">✔ إجابة صحيحة</span>
+         <div class="feedback-detail">${questions[index].feedback}</div>` :
+        `<span style="color:#b30000">❌ إجابة خاطئة</span>
+         <div class="feedback-detail">${questions[index].feedback}</div>`;
+
+    document.getElementById("nextBtn").style.display="block";
+}
+
+function nextQuestion(){
+    index++;
+    if(index === questions.length){
+        showResult();
+    }else{
+        loadQuestion();
+    }
+}
+
+function prevQuestion(){
+    if(index>0){
+        index--;
+        loadQuestion();
+    }
+}
+
+function showResult(){
+    document.querySelector(".progress-bar").style.display="none";
+    document.getElementById("progressText").style.display="none";
+    document.getElementById("questionText").style.display="none";
+    document.getElementById("options").style.display="none";
+    document.getElementById("nextBtn").style.display="none";
+    document.getElementById("prevBtn").style.display="none";
+    document.getElementById("feedback").style.display="none";
+
+    const percent = Math.round((score/questions.length)*100);
+    let message = "";
+    
+    if(percent >= 90) message = "!ممتاز";
+    else if(percent >= 80) message = "جيد جداً!";
+    else if(percent >= 70) message = "محتاج تذاكر تاني!";
+    else if(percent >= 60) message = "روح نام أفضل";
+    else message = "روح نام أفضل";
+    
+    document.getElementById("result").style.display="block";
+    document.getElementById("result").innerHTML = `
+        <h3>انتهى الاختبار</h3>
+        <span>${score}/${questions.length}</span>
+        <div>${percent}%</div>
+        <div style="margin-top:15px; font-size:20px;">${message}</div>
+    `;
+    
+    document.querySelector(".restart-btn").style.display="block";
+}
+
+function restartTest(){
+    index = 0;
+    score = 0;
+    userAnswers = Array(questions.length).fill(null);
+    
+    document.querySelector(".progress-bar").style.display="block";
+    document.getElementById("progressText").style.display="block";
+    document.getElementById("questionText").style.display="block";
+    document.getElementById("options").style.display="flex";
+    document.getElementById("result").style.display="none";
+    document.querySelector(".restart-btn").style.display="none";
+    
+    document.getElementById("score").textContent=`النتيجة: ${score}`;
+    
+    loadQuestion();
+}
+
+// بدء الاختبار
+loadQuestion();
+</script>
+
+</body>
+</html>
