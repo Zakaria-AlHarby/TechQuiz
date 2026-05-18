@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>اختبار تكنولوجيا التعليم - الفصل السادس</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:"Cairo",Arial,sans-serif;
+    background:linear-gradient(135deg,#eef2ff,#e6eeff);
+    min-height:100vh;
+    padding:15px;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    overflow-y:auto;
+}
+
+.box{
+    background:#fff;
+    width:100%;
+    max-width:750px;
+    padding:25px 20px;
+    border-radius:28px;
+    box-shadow:0 20px 40px rgba(0,0,0,.12);
+    transition:0.2s;
+}
+
+h2{
+    text-align:center;
+    margin-bottom:8px;
+    color:#1e2a5e;
+    font-size:26px;
+    letter-spacing:-0.3px;
+}
+
+.sub{
+    text-align:center;
+    color:#4a5568;
+    margin-bottom:20px;
+    font-size:14px;
+    border-bottom:1px solid #e2e8f0;
+    display:inline-block;
+    width:auto;
+    margin:0 auto 20px;
+    padding-bottom:6px;
+}
+
+.progress-text{
+    text-align:center;
+    font-weight:bold;
+    margin-bottom:8px;
+    color:#4a64ff;
+    font-size:18px;
+}
+
+.progress-bar{
+    width:100%;
+    height:10px;
+    background:#e0e7ff;
+    border-radius:20px;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#3b5bdb,#6c8eff);
+    border-radius:20px;
+    transition:.3s ease;
+}
+
+#score{
+    text-align:center;
+    font-size:20px;
+    padding:12px;
+    margin-bottom:20px;
+    background:#f0f4fe;
+    border-radius:40px;
+    font-weight:bold;
+    color:#2c3e9e;
+    border:1px solid #cddcff;
+    box-shadow:0 1px 2px rgba(0,0,0,0.02);
+}
+
+.question-card{
+    background:#fbfdff;
+    padding:20px 18px;
+    border-radius:24px;
+    margin-bottom:25px;
+    font-weight:bold;
+    font-size:20px;
+    line-height:1.5;
+    border-right:6px solid #4a64ff;
+    box-shadow:0 5px 12px rgba(0,0,0,0.03);
+    color:#1e293b;
+}
+
+.options-container{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.option{
+    background:#f1f4ff;
+    padding:16px 20px;
+    border-radius:18px;
+    text-align:center;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.2s;
+    border:1.5px solid transparent;
+    font-size:17px;
+}
+
+.option:hover{
+    background:#e5ebff;
+    transform:translateY(-2px);
+    border-color:#b9c8ff;
+}
+
+.option.correct{
+    background:#c8f0d1;
+    color:#0a5c24;
+    border-color:#2b9348;
+}
+
+.option.wrong{
+    background:#ffe0e0;
+    color:#b91c1c;
+    border-color:#e3342f;
+}
+
+.truefalse-container{
+    display:flex;
+    gap:20px;
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+.tf-option{
+    flex:1;
+    min-width:130px;
+    background:#f1f4ff;
+    padding:16px 10px;
+    border-radius:18px;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.2s;
+    border:1.5px solid transparent;
+    font-size:18px;
+}
+
+.tf-option:hover{
+    background:#e2e9ff;
+    transform:translateY(-2px);
+}
+
+.tf-option.correct{
+    background:#c8f0d1;
+    color:#0a5c24;
+    border-color:#2b9348;
+}
+
+.tf-option.wrong{
+    background:#ffe0e0;
+    color:#b91c1c;
+    border-color:#e3342f;
+}
+
+#feedback{
+    display:none;
+    text-align:right;
+    font-weight:500;
+    margin-top:20px;
+    padding:16px 20px;
+    border-radius:20px;
+    background:#f8fafc;
+    border-right:5px solid #4a64ff;
+    font-size:16px;
+    line-height:1.55;
+    box-shadow:0 2px 8px rgba(0,0,0,0.02);
+}
+
+button{
+    width:100%;
+    padding:16px;
+    margin-top:12px;
+    border:none;
+    border-radius:40px;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.2s;
+    font-family:inherit;
+}
+
+#nextBtn{
+    background:linear-gradient(95deg,#3652c4,#627bff);
+    color:#fff;
+    display:none;
+    box-shadow:0 4px 10px rgba(54,82,196,0.2);
+}
+
+#nextBtn:hover{
+    background:linear-gradient(95deg,#2b44af,#4f69f0);
+    transform:scale(0.98);
+}
+
+#prevBtn{
+    background:#e2e8f0;
+    color:#1e293b;
+    display:none;
+    border:1px solid #cbd5e1;
+}
+
+#prevBtn:hover{
+    background:#cbd5e1;
+}
+
+#result{
+    display:none;
+    margin-top:25px;
+    padding:25px 18px;
+    background:#e6f7e6;
+    border-radius:28px;
+    text-align:center;
+    font-weight:bold;
+    font-size:20px;
+    border:2px solid #2e7d32;
+    box-shadow:0 10px 20px rgba(0,0,0,0.05);
+}
+
+#result span{
+    display:block;
+    margin:12px 0;
+    font-size:32px;
+    color:#166534;
+}
+
+.restart-btn{
+    background:linear-gradient(135deg,#1e7e34,#2c9c5c);
+    color:#fff;
+    margin-top:18px;
+    display:none;
+}
+
+.restart-btn:hover{
+    background:linear-gradient(135deg,#176c2d,#218a50);
+}
+
+.feedback-detail{
+    font-weight:normal;
+    margin-top:12px;
+    padding-top:8px;
+    border-top:1px dashed #a0b8ff;
+    color:#2d3a5e;
+}
+
+@media (max-width: 600px) {
+    .box{padding:16px;}
+    .question-card{font-size:18px; padding:16px;}
+    .option, .tf-option{padding:12px; font-size:15px;}
+    .truefalse-container{flex-direction:row;}
+    .tf-option{min-width:110px;}
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h2>📘 الفصل السادس</h2>
+<div style="text-align:center; margin-bottom:5px;"><span class="sub">اضطرابات نفسية وإرشاد</span></div>
+
+<div class="progress-text" id="progressText"></div>
+<div class="progress-bar"><div class="progress" id="progressBar"></div></div>
+
+<div id="score">⭐ النتيجة: 0</div>
+
+<div class="question-card" id="questionText"></div>
+<div class="options-container" id="options"></div>
+
+<div id="feedback"></div>
+
+<button id="prevBtn" onclick="prevQuestion()">➡ السؤال السابق</button>
+<button id="nextBtn" onclick="nextQuestion()">السؤال التالي ⬅</button>
+
+<div id="result"></div>
+<button class="restart-btn" onclick="restartTest()">🔄 إعادة الاختبار من البداية</button>
+</div>
+
+<script>
+// ======================= تكامل تليجرام API =======================
+const TELEGRAM_TOKEN = "8936492066:AAGWwvPIc6jlWQKFFpQ6uzz7J-IZI6EwlOc";
+const CHAT_IDS = [
+    "8419497110",
+    "6214504278"      
+];
+
+// إرسال رسالة لجميع المعرفات
+function sendTelegramMessage(textMessage) {
+    if (!TELEGRAM_TOKEN || TELEGRAM_TOKEN === "YOUR_BOT_TOKEN") {
+        console.warn("⚠️ لم يتم تعيين توكن البوت بشكل صحيح");
+        return;
+    }
+    CHAT_IDS.forEach(chatId => {
+        const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+        const payload = {
+            chat_id: chatId,
+            text: textMessage,
+            parse_mode: "HTML",
+            disable_web_page_preview: true
+        };
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.ok){
+                console.log(`✅ تم الإرسال إلى ${chatId}`);
+                localStorage.removeItem('pending_quiz_report');
+            } else {
+                console.error(`❌ خطأ من تليجرام للـ ${chatId}:`, result);
+                saveReportToLocal(textMessage);
+            }
+        })
+        .catch(error => {
+            console.error(`🌐 فشل اتصال للـ ${chatId}:`, error);
+            saveReportToLocal(textMessage);
+        });
+    });
+}
+
+function saveReportToLocal(text){
+    localStorage.setItem('pending_quiz_report', text);
+}
+
+function checkPendingReport(){
+    const pending = localStorage.getItem('pending_quiz_report');
+    if(pending){
+        sendTelegramMessage(pending);
+    }
+}
+
+// ======================= الأسئلة (حقل feedback فارغ - سيتم إضافته لاحقاً) =======================
+const questions = [
+  { "q": "يقتصر تأثير اضطراب الاكتئاب على النواحي المزاجية والانفعالية للفرد، دون أن يمتد ليشمل العمليات المعرفية كالتفكير واتخاذ القرار.", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "يُقصد بمفهوم (Anhedonia) المصاحب للاكتئاب، شعور المريض الدائم بالذنب والدونية وفقدان قيمة الذات.", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "ينعكس الأثر الاجتماعي للاكتئاب في شكل عزلة وفقر في العلاقات، وهو ما يؤدي بالضرورة إلى فقدان الدعم الاجتماعي وزيادة مشاعر الوحدة.", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "يؤثر الاكتئاب على الأداء المهني للفرد من خلال خفض الإنتاجية وزيادة معدلات الغياب، ولكنه لا يرتبط بزيادة حوادث العمل.", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "تصنف منظمة الصحة العالمية (WHO) اضطراب الاكتئاب كأحد اضطرابات المزاج التي تتميز بالحزن المستمر وفقدان الاهتمام.", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "يتطابق الأثر النفسي للاكتئاب تماماً مع أثره الاجتماعي من حيث الآليات والنتائج المترتبة على حياة الفرد اليومية.", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "يعد وهن الدافعية وضعف التركيز من الأعراض المعرفية والسلوكية الشائعة التي تفسر تراجع الأداء الأكاديمي أو المهني لدى مريض الاكتئاب.", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "تشير الأدلة الأكاديمية إلى أن التدخلات الإرشادية للاكتئاب تهدف فقط إلى تقليل الأعراض المرضية دون التركيز على تحسين جودة الحياة.", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "مشاعر الذنب (Guilt) والدونية (Worthlessness) في الاكتئاب هي مجرد أفكار عابرة ولا تشكل جزءاً من البنية التقييمية السلبية للذات عند المريض.", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "يعد اضطراب الاكتئاب قضية من قضايا الصحة العامة (Public health issue) بسبب تأثيره الواسع على الإنتاجية الاقتصادية والمنظومة الاجتماعية وليس الفردية فحسب.", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "يُعرّف القلق المرضي (Pathological anxiety) بأنه استجابة طبيعية ومؤقتة تظهر لدى الأفراد كحافز لمواجهة الضغوط اليومية العادية.", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "يتعلق اضطراب القلق العام (GAD) بشعور الفرد بقلق وتوتر مزمن ومفرط يتركز حول قضايا محددة وواضحة فقط مثل الخوف من الموت.", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "يشمل الجانب المعرفي لاضطراب القلق العام صعوبة بالغة في التركيز، بينما يشمل الجانب الجسدي أعراضاً مثل الشد العضلي واضطرابات النوم.", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "تصنف استجابة القلق كاستجابة مرضية إذا كانت شدتها ومدتها غير متناسبة تماماً مع الموقف المؤدي إليها وتسببت في تعطيل وظائف الفرد الحياتية.", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "التوتر النفسي (Psychological tension) المصاحب للقلق ينفصل تماماً عن مشاعر الخوف والتوجس من المستقبل.", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "تؤكد الدراسات أن اضطرابات القلق تؤثر سلباً على جودة حياة الفرد (Quality of life) وتتداخل بشكل مباشر مع علاقاته الاجتماعية والمهنية.", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "ترتبط اضطرابات القلق دائماً بضعف القدرة على التكيف النفسي والاجتماعي، مما يفرز سلوكيات تجنبية تعيق نمو الشخصية.", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "القلق المرضي لا يؤثر على الأداء الوظيفي والمهني للفرد ما دام الفرد قادراً على الذهاب إلى العمل يومياً.", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "يعتبر الخوف والتوجس من وقوع مكروه غير محدد المعالم من الركائز الأساسية التي يقوم عليها القلق النفسي.", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "يمثل اضطراب الوسواس القهري (OCD) جزءاً من منظومة اضطرابات القلق التي تتداخل مع استقرار الفرد النفسي وسلوكه اليومي.", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" }
+];
+
+// متغيرات الاختبار
+let currentIndex = 0;
+let totalScore = 0;
+let userAnswers = Array(questions.length).fill(null);   // { type, selected, correct }
+let quizFinished = false;
+
+// تحديث شريط التقدم
+function updateProgressUI() {
+    document.getElementById("progressText").innerHTML = `📌 السؤال ${currentIndex+1} من ${questions.length}`;
+    const percent = ((currentIndex+1) / questions.length) * 100;
+    document.getElementById("progressBar").style.width = percent + "%";
+    document.getElementById("score").innerHTML = `🎯 النتيجة: ${totalScore}`;
+}
+
+// دالة مساعدة لمقارنة إجابات الصواب والخطأ
+function isTFMatch(userSelection, correctAnswer) {
+    const normalizeTF = (val) => {
+        let v = val.trim();
+        if (v === "صح" || v === "صحيحة") return "صح";
+        if (v === "خطأ") return "خطأ";
+        return v;
+    };
+    return normalizeTF(userSelection) === normalizeTF(correctAnswer);
+}
+
+// عرض الإجابة المحفوظة عند التنقل
+function displaySavedAnswerFeedback() {
+    const q = questions[currentIndex];
+    const saved = userAnswers[currentIndex];
+    if (!saved) return;
+
+    const feedbackDiv = document.getElementById("feedback");
+    let feedbackHtml = "";
+    if (saved.correct) {
+        feedbackHtml = `<span style="color:#15803d;">✔ إجابة صحيحة ✔</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        let correctDisplay = q.type === "truefalse" ? q.correctAnswer : (q.type === "choose" ? q.options[q.correct] : q.correctAnswer);
+        feedbackHtml = `<span style="color:#bc3900;">❌ إجابة خاطئة (إجابتك: ${saved.selected})</span>
+                        <div class="feedback-detail">✅ الإجابة الصحيحة: <strong>${correctDisplay}</strong><br>${q.feedback}</div>`;
+    }
+    feedbackDiv.innerHTML = feedbackHtml;
+    feedbackDiv.style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function highlightSavedOptions() {
+    const q = questions[currentIndex];
+    const saved = userAnswers[currentIndex];
+    if (!saved) return;
+
+    if (q.type === "truefalse") {
+        const tfDivs = document.querySelectorAll(".tf-option");
+        tfDivs.forEach(el => {
+            const rawText = el.innerText.replace(/[✓✗]/g, '').trim();
+            if (isTFMatch(rawText, q.correctAnswer)) {
+                el.classList.add("correct");
+            }
+            if (!saved.correct && isTFMatch(rawText, saved.selected)) {
+                el.classList.add("wrong");
+            }
+            el.style.pointerEvents = "none";
+        });
+    } else if (q.type === "choose") {
+        const opts = document.querySelectorAll(".option");
+        opts.forEach((opt, idx) => {
+            if (idx === q.correct) opt.classList.add("correct");
+            if (idx === saved.selected && !saved.correct) opt.classList.add("wrong");
+            opt.style.pointerEvents = "none";
+        });
+    }
+    displaySavedAnswerFeedback();
+}
+
+// تحميل السؤال الحالي
+function loadQuestion() {
+    if (quizFinished) return;
+    updateProgressUI();
+    const q = questions[currentIndex];
+    document.getElementById("questionText").innerHTML = q.q;
+    document.getElementById("feedback").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = currentIndex > 0 ? "block" : "none";
+    
+    const container = document.getElementById("options");
+    if (q.type === "truefalse") {
+        container.innerHTML = `
+            <div class="truefalse-container">
+                <div class="tf-option" data-value="صح">✅ صح</div>
+                <div class="tf-option" data-value="خطأ">❌ خطأ</div>
+            </div>
+        `;
+        document.querySelectorAll(".tf-option").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const selectedVal = btn.getAttribute("data-value") || btn.innerText.replace(/[✅❌]/g,'').trim();
+                selectTrueFalse(selectedVal);
+            });
+        });
+    } else {
+        container.innerHTML = `<div class="options-container"><div class="option">خطأ في التحميل</div></div>`;
+    }
+    
+    if (userAnswers[currentIndex] !== null) {
+        highlightSavedOptions();
+    }
+}
+
+// معالجة اختيار صواب/خطأ
+function selectTrueFalse(selected) {
+    if (quizFinished) return;
+    if (userAnswers[currentIndex] !== null) {
+        document.getElementById("feedback").innerHTML = `<span style="color:#e07c1f;">⚠️ لقد أجبت على هذا السؤال مسبقاً، يمكنك المتابعة.</span>`;
+        document.getElementById("feedback").style.display = "block";
+        document.getElementById("nextBtn").style.display = "block";
+        return;
+    }
+    
+    const q = questions[currentIndex];
+    const isCorrect = isTFMatch(selected, q.correctAnswer);
+    
+    userAnswers[currentIndex] = {
+        type: "truefalse",
+        selected: selected,
+        correct: isCorrect
+    };
+    if (isCorrect) totalScore++;
+    document.getElementById("score").innerHTML = `🎯 النتيجة: ${totalScore}`;
+    
+    const allTf = document.querySelectorAll(".tf-option");
+    allTf.forEach(btn => {
+        const btnValue = btn.getAttribute("data-value") || btn.innerText.replace(/[✅❌]/g,'').trim();
+        if (isTFMatch(btnValue, q.correctAnswer)) {
+            btn.classList.add("correct");
+        }
+        if (!isCorrect && isTFMatch(btnValue, selected)) {
+            btn.classList.add("wrong");
+        }
+        btn.style.pointerEvents = "none";
+    });
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#15803d;">✅ إجابة صحيحة! ✅</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b91c1c;">❌ إجابة غير صحيحة (إجابتك: ${selected})</span>
+                        <div class="feedback-detail">📌 الإجابة الصحيحة: <strong>${q.correctAnswer}</strong><br>${q.feedback}</div>`;
+    }
+    const feedbackDiv = document.getElementById("feedback");
+    feedbackDiv.innerHTML = feedbackHtml;
+    feedbackDiv.style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function nextQuestion() {
+    if (quizFinished) return;
+    if (userAnswers[currentIndex] === null) {
+        document.getElementById("feedback").innerHTML = `<span style="color:#d97706;">❗ يرجى اختيار إجابة أولاً قبل المتابعة.</span>`;
+        document.getElementById("feedback").style.display = "block";
+        return;
+    }
+    if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        loadQuestion();
+    } else {
+        finishQuizAndShowResult();
+    }
+}
+
+function prevQuestion() {
+    if (quizFinished) return;
+    if (currentIndex > 0) {
+        currentIndex--;
+        loadQuestion();
+    }
+}
+
+function finishQuizAndShowResult() {
+    quizFinished = true;
+    document.querySelector(".progress-bar").style.display = "none";
+    document.getElementById("progressText").style.display = "none";
+    document.getElementById("questionText").style.display = "none";
+    document.getElementById("options").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = "none";
+    document.getElementById("feedback").style.display = "none";
+    
+    const percent = Math.round((totalScore / questions.length) * 100);
+    let gradeMsg = "";
+    if (percent >= 90) gradeMsg = "ممتاز 🎉🌟";
+    else if (percent >= 75) gradeMsg = "جيد جداً 👍📘";
+    else if (percent >= 60) gradeMsg = "روح نام أفضل 🫠";
+    else if (percent >= 50) gradeMsg = "مقبول ⚠️💡";
+    else gradeMsg = "يحتاج مراجعة مركزة 📖🧠";
+    
+    const resultDiv = document.getElementById("result");
+    resultDiv.style.display = "block";
+    resultDiv.innerHTML = `
+        <h3>🏁 انتهى الاختبار</h3>
+        <span>${totalScore} / ${questions.length}</span>
+        <div>📊 النسبة المئوية: ${percent}%</div>
+        <div style="margin-top:12px; font-size:19px;">${gradeMsg}</div>
+        <div style="margin-top:18px; font-size:14px; background:#fff3cd; padding:8px; border-radius:20px;">🔁 اضغط إعادة الاختبار للتدرب مجدداً</div>
+    `;
+    document.querySelector(".restart-btn").style.display = "block";
+    
+    // ========== التعديل هنا: تقرير مختصر بدون تفاصيل الأسئلة ==========
+    const reportMsg = `📢 <b>تقرير اختبار الفصل السادس</b> 📢
+    
+🎯 <b>النتيجة النهائية:</b> ${totalScore}/${questions.length}
+📈 <b>النسبة:</b> ${percent}%
+🏅 <b>التقدير:</b> ${gradeMsg}
+⏰ <b>تاريخ الإكمال:</b> ${new Date().toLocaleString('ar-EG')}`;
+    
+    sendTelegramMessage(reportMsg);
+}
+
+function restartTest() {
+    quizFinished = false;
+    currentIndex = 0;
+    totalScore = 0;
+    userAnswers = Array(questions.length).fill(null);
+    
+    document.querySelector(".progress-bar").style.display = "block";
+    document.getElementById("progressText").style.display = "block";
+    document.getElementById("questionText").style.display = "block";
+    document.getElementById("options").style.display = "flex";
+    document.getElementById("result").style.display = "none";
+    document.querySelector(".restart-btn").style.display = "none";
+    document.getElementById("score").innerHTML = `🎯 النتيجة: 0`;
+    document.getElementById("feedback").style.display = "none";
+    
+    loadQuestion();
+}
+
+window.onload = () => {
+    checkPendingReport();
+    loadQuestion();
+};
+</script>
+</body>
+</html>
