@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار تكنولوجيا التعليم - الفصل الثاني</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:"Cairo",Arial,sans-serif;
+    background:linear-gradient(135deg,#eef2ff,#e6eeff);
+    min-height:100vh;
+    padding:15px;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    overflow-y:auto;
+}
+
+.box{
+    background:#fff;
+    width:100%;
+    max-width:700px;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+
+h2{
+    text-align:center;
+    margin-bottom:15px;
+    color:#333;
+}
+
+.progress-text{
+    text-align:center;
+    font-weight:bold;
+    margin-bottom:8px;
+    color:#4a64ff;
+    font-size:18px;
+}
+
+.progress-bar{
+    width:100%;
+    height:10px;
+    background:#e0e0e0;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#4a64ff,#6a82ff);
+    transition:.3s;
+}
+
+#score{
+    text-align:center;
+    font-size:20px;
+    padding:12px;
+    margin-bottom:20px;
+    background:#f3f6ff;
+    border-radius:10px;
+    font-weight:bold;
+    color:#4a64ff;
+    border:2px solid #e0e6ff;
+}
+
+.question{
+    background:#f8faff;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:25px;
+    font-weight:bold;
+    font-size:20px;
+    line-height:1.6;
+    border-right:5px solid #4a64ff;
+}
+
+.options-container{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.option{
+    background:#e8edff;
+    padding:18px;
+    border-radius:12px;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+    border:2px solid transparent;
+}
+
+.option:hover{
+    background:#d9e0ff;
+    transform:translateY(-2px);
+}
+
+.option.correct{
+    background:#b6ffb6;
+    color:#1b8a2c;
+    border-color:#1b8a2c;
+}
+
+.option.wrong{
+    background:#ffb6b6;
+    color:#b30000;
+    border-color:#b30000;
+}
+
+.truefalse-container{
+    display:flex;
+    gap:20px;
+    justify-content:center;
+}
+
+.tf-option{
+    flex:1;
+    background:#e8edff;
+    padding:18px;
+    border-radius:12px;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+    border:2px solid transparent;
+}
+
+.tf-option:hover{
+    background:#d9e0ff;
+    transform:translateY(-2px);
+}
+
+.tf-option.correct{
+    background:#b6ffb6;
+    color:#1b8a2c;
+    border-color:#1b8a2c;
+}
+
+.tf-option.wrong{
+    background:#ffb6b6;
+    color:#b30000;
+    border-color:#b30000;
+}
+
+#feedback{
+    display:none;
+    text-align:center;
+    font-weight:bold;
+    margin-top:20px;
+    padding:15px;
+    border-radius:10px;
+    background:#f0f4ff;
+    border-right:5px solid #4a64ff;
+    font-size:18px;
+    line-height:1.5;
+}
+
+button{
+    width:100%;
+    padding:18px;
+    margin-top:15px;
+    border:none;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+#nextBtn{
+    background:linear-gradient(135deg,#4a64ff,#6a82ff);
+    color:#fff;
+    display:none;
+}
+
+#nextBtn:hover{
+    background:linear-gradient(135deg,#3a54ef,#5a72ef);
+}
+
+#prevBtn{
+    background:linear-gradient(135deg,#6c757d,#868e96);
+    color:#fff;
+    display:none;
+}
+
+#prevBtn:hover{
+    background:linear-gradient(135deg,#5c656d,#767e86);
+}
+
+#result{
+    display:none;
+    margin-top:25px;
+    padding:25px;
+    background:#d4ffd6;
+    border-radius:15px;
+    text-align:center;
+    font-weight:bold;
+    font-size:22px;
+    border:3px solid #1b8a2c;
+}
+
+#result span{
+    display:block;
+    margin:10px 0;
+    font-size:28px;
+    color:#1b8a2c;
+}
+
+.restart-btn{
+    background:linear-gradient(135deg,#28a745,#20c997);
+    color:#fff;
+    margin-top:20px;
+    display:none;
+}
+
+.restart-btn:hover{
+    background:linear-gradient(135deg,#218838,#1ca87e);
+}
+
+.feedback-detail{
+    font-weight:normal;
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px dashed #4a64ff;
+    color:#555;
+}
+
+@media (max-width: 600px) {
+    .box{padding:15px;}
+    .question{font-size:18px; padding:15px;}
+    .option, .tf-option{padding:14px; font-size:16px;}
+    .truefalse-container{flex-direction:column;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2>📚 اختبار-الإرشاد النفسي</h2>
+
+<div class="progress-text" id="progressText"></div>
+<div class="progress-bar"><div class="progress" id="progressBar"></div></div>
+
+<div id="score">النتيجة: 0</div>
+
+<div class="question" id="questionText"></div>
+<div class="options-container" id="options"></div>
+
+<div id="feedback"></div>
+
+<button id="prevBtn" onclick="prevQuestion()">⬅ السؤال السابق</button>
+<button id="nextBtn" onclick="nextQuestion()">السؤال التالي ➡</button>
+
+<div id="result"></div>
+<button class="restart-btn" onclick="restartTest()">🔄 إعادة الاختبار</button>
+</div>
+
+<script>
+// ==================== إعدادات تليجرام ====================
+// ضع التوكن الخاص بالبوت هنا
+const TELEGRAM_TOKEN = "8936492066:AAGWwvPIc6jlWQKFFpQ6uzz7J-IZI6EwlOc";
+
+// قائمة بأرقام Chat ID للمتابعين (أضف أي عدد تريده)
+const CHAT_IDS = [
+    "8419497110"     
+];
+
+// ==================== دوال إرسال تليجرام ====================
+function sendTelegramMessage(textMessage){
+    CHAT_IDS.forEach(chatId => {
+        const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+        
+        const payload = {
+            chat_id: chatId,
+            text: textMessage,
+            parse_mode: "HTML"
+        };
+        
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.ok){
+                console.log(`✓ تم الإرسال إلى ${chatId} بنجاح`);
+                localStorage.removeItem('pending_telegram_quiz');
+            } else {
+                console.error(`خطأ في الإرسال إلى ${chatId}:`, result);
+                saveToLocalStorage(textMessage);
+            }
+        })
+        .catch(error => {
+            console.error(`فشل الاتصال عند الإرسال إلى ${chatId}:`, error);
+            saveToLocalStorage(textMessage);
+        });
+    });
+}
+
+function saveToLocalStorage(text){
+    localStorage.setItem('pending_telegram_quiz', text);
+}
+
+function checkPendingData(){
+    const pendingText = localStorage.getItem('pending_telegram_quiz');
+    if(pendingText){
+        sendTelegramMessage(pendingText);
+    }
+}
+
+// ===== الأسئلة الجديدة (اختيار من متعدد + صواب وخطأ) =====
+const questions = [
+  // أسئلة الاختيار من متعدد (Choose)
+  {
+    "type": "choose",
+    "q": "يركز ....... بشكل أكبر على الأهداف قصيرة المدى وحل المشكلات الحالية.",
+    "options": ["علم النفس الإكلينيكي", "الإرشاد النفسي", "التحليل النفسي", "العلاج النفسي"],
+    "correct": 1,
+    "feedback": "الإرشاد النفسي يركز على المشكلات الحالية والحلول قصيرة المدى."
+  },
+  {
+    "type": "choose",
+    "q": "يركز ....... بشكل أكبر على الأهداف طويلة المدى والعميقة بالشخصية.",
+    "options": ["التحليل النفسي", "العلاج النفسي", "الإرشاد النفسي", "علم النفس الإكلينيكي"],
+    "correct": 1,
+    "feedback": "العلاج النفسي يركز على الأهداف طويلة المدى والتعمق في الشخصية."
+  },
+  {
+    "type": "choose",
+    "q": "تتعلق ..... بقدرة المرشد على التفكير العميق وتحليل المواقف الإرشادية، وفهم أبعاد شخصية المسترشد وسلوكياته.",
+    "options": ["المهارات المعرفية", "المهارات الشخصية", "المناهج والتدخلات العلاجية", "المهارات الفنية"],
+    "correct": 0,
+    "feedback": "المهارات المعرفية تتعلق بالتفكير التحليلي وفهم المواقف الإرشادية."
+  },
+  {
+    "type": "choose",
+    "q": "الدور....... للمرشد النفسي يتمثل في العمل على معالجة وتصحيح المشكلات القائمة.",
+    "options": ["الإصلاحي", "الوقائي", "النمائي", "المهني"],
+    "correct": 0,
+    "feedback": "الدور الإصلاحي يهدف إلى معالجة وتصحيح المشكلات القائمة."
+  },
+  {
+    "type": "choose",
+    "q": "يُعد ..... من أمثلة الاضطرابات العقلية/النفسية الشديدة وهو اضطراب يؤثر على التفكير والإدراك والسلوك.",
+    "options": ["اضطراب ما بعد الصدمة", "القلق", "الفصام", "الاكتئاب"],
+    "correct": 2,
+    "feedback": "الفصام هو اضطراب نفسي شديد يؤثر على التفكير والإدراك والسلوك."
+  },
+  {
+    "type": "choose",
+    "q": "تؤكد المدرسة ...... على النمو الشخصي وتحقيق الذات، وترى أن الصحة النفسية هي قدرة الفرد على تحقيق إمكاناته الكامنة.",
+    "options": ["الإنسانية", "المعرفية", "التحليل النفسي", "السلوكية"],
+    "correct": 0,
+    "feedback": "المدرسة الإنسانية تركز على النمو الشخصي وتحقيق الذات."
+  },
+  {
+    "type": "choose",
+    "q": "تركز المدرسة .......... على أنماط السلوك القابلة للملاحظة، وتعتبر أن الصحة النفسية هي القدرة على اكتساب سلوكيات تكيفية.",
+    "options": ["السلوكية", "التحليل النفسي", "الإنسانية", "المعرفية"],
+    "correct": 0,
+    "feedback": "المدرسة السلوكية تركز على السلوكيات القابلة للملاحظة والاكتساب."
+  },
+  {
+    "type": "choose",
+    "q": "يُعد ..... هو رائد الإرشاد المتمركز حول العميل (المسترشد).",
+    "options": ["كارل روجرز", "دونالد سوبر", "سيجموند فرويد", "فرانك بارسونز"],
+    "correct": 0,
+    "feedback": "كارل روجرز هو رائد الإرشاد المتمركز حول العميل."
+  },
+  {
+    "type": "choose",
+    "q": "يُعد ..... هو مؤسس حركة الإرشاد المهني.",
+    "options": ["دونالد سوبر", "سيجموند فرويد", "فرانك بارسونز", "كارل روجرز"],
+    "correct": 2,
+    "feedback": "فرانك بارسونز هو مؤسس حركة الإرشاد المهني."
+  },
+  {
+    "type": "choose",
+    "q": "تُعد ......... من الخصائص الشخصية للمرشد، وتعني إيجاد قيمة شخصية ومهنية في الممارسة.",
+    "options": ["الأصالة والصدق", "الهوية الواضحة", "اختيارات موجهة للحياة", "البحث عن المعنى في العمل"],
+    "correct": 3,
+    "feedback": "البحث عن المعنى في العمل يعني إيجاد قيمة شخصية ومهنية في الممارسة."
+  },
+  {
+    "type": "choose",
+    "q": "تُعد ......... من الخصائص الشخصية للمرشد، وتعني الحماس للحياة والمهنة.",
+    "options": ["الهوية الواضحة", "اختيارات موجهة للحياة", "الشغف", "الأصالة والصدق"],
+    "correct": 2,
+    "feedback": "الشغف يعني الحماس للحياة والمهنة."
+  },
+  // أسئلة الصواب والخطأ (True/False)
+  {
+    "type": "truefalse",
+    "q": "يهتم التوجيه بالتطبيق العملي المباشر في الجلسات الإرشادية.",
+    "correctAnswer": "خطأ",
+    "feedback": "التوجيه يركز على المعلومات والتوعية، بينما الإرشاد يهتم بالتطبيق العملي المباشر."
+  },
+  {
+    "type": "truefalse",
+    "q": "يشمل البعد المجتمعي للصحة النفسية إقامة علاقات إيجابية مع الأسرة والأصدقاء وزملاء العمل.",
+    "correctAnswer": "خطأ",
+    "feedback": "هذا يمثل البعد الاجتماعي أو البيشخصي وليس البعد المجتمعي العام."
+  },
+  {
+    "type": "truefalse",
+    "q": "من مبادئ الإرشاد الرئيسية تقبل المرشد للمسترشد كما هو ودون شروط.",
+    "correctAnswer": "صح",
+    "feedback": "القبول غير المشروط هو أحد مبادئ الإرشاد الأساسية."
+  },
+  {
+    "type": "truefalse",
+    "q": "يركز العلاج النفسي على المشكلة نفسها ونقاط القوة في الشخصية.",
+    "correctAnswer": "خطأ",
+    "feedback": "العلاج النفسي يركز على صاحب المشكلة ونقاط القوة معاً."
+  },
+  {
+    "type": "truefalse",
+    "q": "يُعد الوعي الثقافي من الخصائص الشخصية للمرشد ويُعبر عن إدراك الفرد لمشاعره وأفكاره وسلوكياته ومعتقداته.",
+    "correctAnswer": "خطأ",
+    "feedback": "ما ذكر في العبارة هو تعريف الوعي بالذات، وليس الوعي الثقافي."
+  },
+  {
+    "type": "truefalse",
+    "q": "يركّز أخصائيو الإرشاد النفسي على تشخيص الاضطرابات النفسية وعلاجها.",
+    "correctAnswer": "خطأ",
+    "feedback": "تشخيص الاضطرابات الشديدة وعلاجها من مهام الأخصائي الإكلينيكي أو الطبيب النفسي."
+  },
+  {
+    "type": "truefalse",
+    "q": "يُعد النشاط البدني من الاستراتيجيات الفردية لتعزيز الصحة النفسية.",
+    "correctAnswer": "صح",
+    "feedback": "النشاط البدني يساهم في تعزيز الصحة النفسية."
+  },
+  {
+    "type": "truefalse",
+    "q": "يأتي الإرشاد النفسي بعد التوجيه ويُعد الواجهة النهائية لبرنامجه.",
+    "correctAnswer": "صح",
+    "feedback": "الإرشاد النفسي يأتي بعد التوجيه كمرحلة أكثر تخصصاً."
+  }
+];
+
+let index = 0;
+let score = 0;
+let userAnswers = Array(questions.length).fill(null);
+let answerStatus = Array(questions.length).fill(false);
+let quizCompleted = false;
+
+function updateProgress() {
+    document.getElementById("progressText").textContent = `السؤال ${index+1} من ${questions.length}`;
+    document.getElementById("progressBar").style.width = ((index+1)/questions.length)*100 + "%";
+}
+
+function loadQuestion() {
+    if(quizCompleted) return;
+    
+    updateProgress();
+    const q = questions[index];
+    document.getElementById("questionText").textContent = q.q;
+    document.getElementById("feedback").style.display = "none";
+    
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = index > 0 ? "block" : "none";
+    
+    const optionsContainer = document.getElementById("options");
+    
+    if (q.type === "choose") {
+        let optionsHTML = '<div class="options-container">';
+        q.options.forEach((opt, i) => {
+            optionsHTML += `<div class="option" onclick="selectOption(${i})">${opt}</div>`;
+        });
+        optionsHTML += '</div>';
+        optionsContainer.innerHTML = optionsHTML;
+    } else if (q.type === "truefalse") {
+        optionsContainer.innerHTML = `
+            <div class="truefalse-container">
+                <div class="tf-option" onclick="selectTrueFalse('صح')">✓ صح</div>
+                <div class="tf-option" onclick="selectTrueFalse('خطأ')">✗ خطأ</div>
+            </div>
+        `;
+    }
+    
+    if (userAnswers[index] !== null) {
+        showSavedAnswer();
+    }
+}
+
+function selectOption(selectedIndex) {
+    if (userAnswers[index] !== null || quizCompleted) return;
+    
+    const q = questions[index];
+    const isCorrect = (selectedIndex === q.correct);
+    
+    userAnswers[index] = { type: "choose", selected: selectedIndex, correct: isCorrect };
+    answerStatus[index] = isCorrect;
+    
+    if (isCorrect) {
+        score++;
+    }
+    
+    const options = document.querySelectorAll(".option");
+    options.forEach((op, idx) => {
+        if (idx === q.correct) op.classList.add("correct");
+        if (idx === selectedIndex && idx !== q.correct) op.classList.add("wrong");
+        op.style.pointerEvents = "none";
+    });
+    
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة!</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة!</span>
+                        <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.options[q.correct]}</strong><br>${q.feedback}</div>`;
+    }
+    document.getElementById("feedback").innerHTML = feedbackHtml;
+    document.getElementById("feedback").style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function selectTrueFalse(selected) {
+    if (userAnswers[index] !== null || quizCompleted) return;
+    
+    const q = questions[index];
+    const isCorrect = (selected === q.correctAnswer);
+    
+    userAnswers[index] = { type: "truefalse", selected: selected, correct: isCorrect };
+    answerStatus[index] = isCorrect;
+    
+    if (isCorrect) {
+        score++;
+    }
+    
+    const options = document.querySelectorAll(".tf-option");
+    options.forEach(op => {
+        if (op.textContent.includes(q.correctAnswer)) {
+            op.classList.add("correct");
+        }
+        if (op.textContent.includes(selected) && !isCorrect) {
+            op.classList.add("wrong");
+        }
+        op.style.pointerEvents = "none";
+    });
+    
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة!</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة!</span>
+                        <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.correctAnswer}</strong><br>${q.feedback}</div>`;
+    }
+    document.getElementById("feedback").innerHTML = feedbackHtml;
+    document.getElementById("feedback").style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function showSavedAnswer() {
+    const q = questions[index];
+    const saved = userAnswers[index];
+    
+    if (q.type === "choose") {
+        const options = document.querySelectorAll(".option");
+        options.forEach((op, idx) => {
+            if (idx === q.correct) op.classList.add("correct");
+            if (idx === saved.selected && !saved.correct) op.classList.add("wrong");
+            op.style.pointerEvents = "none";
+        });
+        
+        let feedbackHtml = "";
+        if (saved.correct) {
+            feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة ✅</span>
+                            <div class="feedback-detail">${q.feedback}</div>`;
+        } else {
+            feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة (إجابتك: ${q.options[saved.selected]})</span>
+                            <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.options[q.correct]}</strong><br>${q.feedback}</div>`;
+        }
+        document.getElementById("feedback").innerHTML = feedbackHtml;
+        document.getElementById("feedback").style.display = "block";
+    } else if (q.type === "truefalse") {
+        const options = document.querySelectorAll(".tf-option");
+        options.forEach(op => {
+            if (op.textContent.includes(q.correctAnswer)) {
+                op.classList.add("correct");
+            }
+            if (op.textContent.includes(saved.selected) && !saved.correct) {
+                op.classList.add("wrong");
+            }
+            op.style.pointerEvents = "none";
+        });
+        
+        let feedbackHtml = "";
+        if (saved.correct) {
+            feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة ✅</span>
+                            <div class="feedback-detail">${q.feedback}</div>`;
+        } else {
+            feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة (إجابتك: ${saved.selected})</span>
+                            <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.correctAnswer}</strong><br>${q.feedback}</div>`;
+        }
+        document.getElementById("feedback").innerHTML = feedbackHtml;
+        document.getElementById("feedback").style.display = "block";
+    }
+    
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function nextQuestion() {
+    if (userAnswers[index] === null) {
+        document.getElementById("feedback").innerHTML = `<span style="color:#b30000">❗ الرجاء اختيار إجابة أولاً.</span>`;
+        document.getElementById("feedback").style.display = "block";
+        return;
+    }
+    
+    if (index < questions.length - 1) {
+        index++;
+        loadQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function prevQuestion() {
+    if (index > 0) {
+        index--;
+        loadQuestion();
+    }
+}
+
+function showResult() {
+    quizCompleted = true;
+    
+    document.querySelector(".progress-bar").style.display = "none";
+    document.getElementById("progressText").style.display = "none";
+    document.getElementById("questionText").style.display = "none";
+    document.getElementById("options").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = "none";
+    document.getElementById("feedback").style.display = "none";
+    
+    const percent = Math.round((score/questions.length)*100);
+    let gradeMsg = "";
+    if (percent >= 90) gradeMsg = "ممتاز 🎉";
+    else if (percent >= 75) gradeMsg = "جيد جداً 👍";
+    else if (percent >= 60) gradeMsg = "جيد 📚";
+    else if (percent >= 50) gradeMsg = "مقبول ⚠";
+    else gradeMsg = "يحتاج مراجعة 📖";
+    
+    document.getElementById("result").style.display = "block";
+    document.getElementById("result").innerHTML = `
+        <h3>🏁 انتهى الاختبار</h3>
+        <span>${score} / ${questions.length}</span>
+        <div>النسبة المئوية: ${percent}%</div>
+        <div style="margin-top:15px; font-size:20px;">${gradeMsg}</div>
+        <div style="margin-top:20px; font-size:16px;">📌 اضغط "إعادة الاختبار" للتدرب مجدداً</div>
+    `;
+    document.querySelector(".restart-btn").style.display = "block";
+    
+    // ==================== إرسال التقرير إلى تليجرام ====================
+    let answersDetails = "";
+    for(let i = 0; i < questions.length; i++){
+        const q = questions[i];
+        const userAns = userAnswers[i];
+        if(userAns === null) continue;
+        
+        let isCorrect = userAns.correct;
+        const mark = isCorrect ? "✅" : "❌";
+        let userAnswerText = "";
+        
+        if(q.type === "choose"){
+            userAnswerText = q.options[userAns.selected];
+        } else {
+            userAnswerText = userAns.selected;
+        }
+        
+        answersDetails += `\n${i+1}. ${mark} ${q.q.substring(0, 45)}... (الإجابة: ${userAnswerText})`;
+    }
+    
+    const reportText = `📊 <b>تقرير اختبار جديد</b> 📊
+    
+📚 <b>المادة:</b> الفصل الثاني - الإرشاد النفسي
+🎯 <b>النتيجة:</b> ${score}/${questions.length}
+📈 <b>النسبة:</b> ${percent}%
+🏅 <b>التقدير:</b> ${gradeMsg}
+⏰ <b>الوقت:</b> ${new Date().toLocaleString('ar-EG')}
+
+${answersDetails}
+---
+تم الإجابة على ${score} أسئلة صحيحة من ${questions.length}`;
+    
+    sendTelegramMessage(reportText);
+}
+
+function restartTest() {
+    quizCompleted = false;
+    index = 0;
+    score = 0;
+    userAnswers = Array(questions.length).fill(null);
+    answerStatus = Array(questions.length).fill(false);
+    
+    document.querySelector(".progress-bar").style.display = "block";
+    document.getElementById("progressText").style.display = "block";
+    document.getElementById("questionText").style.display = "block";
+    document.getElementById("options").style.display = "flex";
+    document.getElementById("result").style.display = "none";
+    document.querySelector(".restart-btn").style.display = "none";
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    loadQuestion();
+}
+
+// بدء الاختبار والتحقق من البيانات المعلقة
+window.onload = function() {
+    checkPendingData();
+    loadQuestion();
+};
+</script>
+
+</body>
+</html>
