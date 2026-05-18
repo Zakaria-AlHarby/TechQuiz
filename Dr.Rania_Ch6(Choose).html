@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>اختبار تكنولوجيا التعليم - الفصل السادس</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:"Cairo",Arial,sans-serif;
+    background:linear-gradient(135deg,#eef2ff,#e6eeff);
+    min-height:100vh;
+    padding:15px;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    overflow-y:auto;
+}
+
+.box{
+    background:#fff;
+    width:100%;
+    max-width:750px;
+    padding:25px 20px;
+    border-radius:28px;
+    box-shadow:0 20px 40px rgba(0,0,0,.12);
+    transition:0.2s;
+}
+
+h2{
+    text-align:center;
+    margin-bottom:8px;
+    color:#1e2a5e;
+    font-size:26px;
+    letter-spacing:-0.3px;
+}
+
+.sub{
+    text-align:center;
+    color:#4a5568;
+    margin-bottom:20px;
+    font-size:14px;
+    border-bottom:1px solid #e2e8f0;
+    display:inline-block;
+    width:auto;
+    margin:0 auto 20px;
+    padding-bottom:6px;
+}
+
+.progress-text{
+    text-align:center;
+    font-weight:bold;
+    margin-bottom:8px;
+    color:#4a64ff;
+    font-size:18px;
+}
+
+.progress-bar{
+    width:100%;
+    height:10px;
+    background:#e0e7ff;
+    border-radius:20px;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#3b5bdb,#6c8eff);
+    border-radius:20px;
+    transition:.3s ease;
+}
+
+#score{
+    text-align:center;
+    font-size:20px;
+    padding:12px;
+    margin-bottom:20px;
+    background:#f0f4fe;
+    border-radius:40px;
+    font-weight:bold;
+    color:#2c3e9e;
+    border:1px solid #cddcff;
+    box-shadow:0 1px 2px rgba(0,0,0,0.02);
+}
+
+.question-card{
+    background:#fbfdff;
+    padding:20px 18px;
+    border-radius:24px;
+    margin-bottom:25px;
+    font-weight:bold;
+    font-size:20px;
+    line-height:1.5;
+    border-right:6px solid #4a64ff;
+    box-shadow:0 5px 12px rgba(0,0,0,0.03);
+    color:#1e293b;
+}
+
+.options-container{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.option{
+    background:#f1f4ff;
+    padding:16px 20px;
+    border-radius:18px;
+    text-align:center;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.2s;
+    border:1.5px solid transparent;
+    font-size:17px;
+}
+
+.option:hover{
+    background:#e5ebff;
+    transform:translateY(-2px);
+    border-color:#b9c8ff;
+}
+
+.option.correct{
+    background:#c8f0d1;
+    color:#0a5c24;
+    border-color:#2b9348;
+}
+
+.option.wrong{
+    background:#ffe0e0;
+    color:#b91c1c;
+    border-color:#e3342f;
+}
+
+.truefalse-container{
+    display:flex;
+    gap:20px;
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+.tf-option{
+    flex:1;
+    min-width:130px;
+    background:#f1f4ff;
+    padding:16px 10px;
+    border-radius:18px;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.2s;
+    border:1.5px solid transparent;
+    font-size:18px;
+}
+
+.tf-option:hover{
+    background:#e2e9ff;
+    transform:translateY(-2px);
+}
+
+.tf-option.correct{
+    background:#c8f0d1;
+    color:#0a5c24;
+    border-color:#2b9348;
+}
+
+.tf-option.wrong{
+    background:#ffe0e0;
+    color:#b91c1c;
+    border-color:#e3342f;
+}
+
+#feedback{
+    display:none;
+    text-align:right;
+    font-weight:500;
+    margin-top:20px;
+    padding:16px 20px;
+    border-radius:20px;
+    background:#f8fafc;
+    border-right:5px solid #4a64ff;
+    font-size:16px;
+    line-height:1.55;
+    box-shadow:0 2px 8px rgba(0,0,0,0.02);
+}
+
+button{
+    width:100%;
+    padding:16px;
+    margin-top:12px;
+    border:none;
+    border-radius:40px;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.2s;
+    font-family:inherit;
+}
+
+#nextBtn{
+    background:linear-gradient(95deg,#3652c4,#627bff);
+    color:#fff;
+    display:none;
+    box-shadow:0 4px 10px rgba(54,82,196,0.2);
+}
+
+#nextBtn:hover{
+    background:linear-gradient(95deg,#2b44af,#4f69f0);
+    transform:scale(0.98);
+}
+
+#prevBtn{
+    background:#e2e8f0;
+    color:#1e293b;
+    display:none;
+    border:1px solid #cbd5e1;
+}
+
+#prevBtn:hover{
+    background:#cbd5e1;
+}
+
+#result{
+    display:none;
+    margin-top:25px;
+    padding:25px 18px;
+    background:#e6f7e6;
+    border-radius:28px;
+    text-align:center;
+    font-weight:bold;
+    font-size:20px;
+    border:2px solid #2e7d32;
+    box-shadow:0 10px 20px rgba(0,0,0,0.05);
+}
+
+#result span{
+    display:block;
+    margin:12px 0;
+    font-size:32px;
+    color:#166534;
+}
+
+.restart-btn{
+    background:linear-gradient(135deg,#1e7e34,#2c9c5c);
+    color:#fff;
+    margin-top:18px;
+    display:none;
+}
+
+.restart-btn:hover{
+    background:linear-gradient(135deg,#176c2d,#218a50);
+}
+
+.feedback-detail{
+    font-weight:normal;
+    margin-top:12px;
+    padding-top:8px;
+    border-top:1px dashed #a0b8ff;
+    color:#2d3a5e;
+}
+
+@media (max-width: 600px) {
+    .box{padding:16px;}
+    .question-card{font-size:18px; padding:16px;}
+    .option, .tf-option{padding:12px; font-size:15px;}
+    .truefalse-container{flex-direction:row;}
+    .tf-option{min-width:110px;}
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h2>الفصل السادس</h2>
+<div style="text-align:center; margin-bottom:5px;"><span class="sub">اضطرابات نفسية وإرشاد</span></div>
+
+<div class="progress-text" id="progressText"></div>
+<div class="progress-bar"><div class="progress" id="progressBar"></div></div>
+
+<div id="score">⭐ النتيجة: 0</div>
+
+<div class="question-card" id="questionText"></div>
+<div class="options-container" id="options"></div>
+
+<div id="feedback"></div>
+
+<button id="prevBtn" onclick="prevQuestion()">➡ السؤال السابق</button>
+<button id="nextBtn" onclick="nextQuestion()">السؤال التالي ⬅</button>
+
+<div id="result"></div>
+<button class="restart-btn" onclick="restartTest()">🔄 إعادة الاختبار من البداية</button>
+</div>
+
+<script>
+// ======================= تكامل تليجرام API =======================
+const TELEGRAM_TOKEN = "8936492066:AAGWwvPIc6jlWQKFFpQ6uzz7J-IZI6EwlOc";
+const CHAT_IDS = [
+    "8419497110",
+    "6214504278"      
+];
+
+// إرسال رسالة لجميع المعرفات
+function sendTelegramMessage(textMessage) {
+    if (!TELEGRAM_TOKEN || TELEGRAM_TOKEN === "YOUR_BOT_TOKEN") {
+        console.warn("⚠️ لم يتم تعيين توكن البوت بشكل صحيح");
+        return;
+    }
+    CHAT_IDS.forEach(chatId => {
+        const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+        const payload = {
+            chat_id: chatId,
+            text: textMessage,
+            parse_mode: "HTML",
+            disable_web_page_preview: true
+        };
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.ok){
+                console.log(`✅ تم الإرسال إلى ${chatId}`);
+                localStorage.removeItem('pending_quiz_report');
+            } else {
+                console.error(`❌ خطأ من تليجرام للـ ${chatId}:`, result);
+                saveReportToLocal(textMessage);
+            }
+        })
+        .catch(error => {
+            console.error(`🌐 فشل اتصال للـ ${chatId}:`, error);
+            saveReportToLocal(textMessage);
+        });
+    });
+}
+
+function saveReportToLocal(text){
+    localStorage.setItem('pending_quiz_report', text);
+}
+
+function checkPendingReport(){
+    const pending = localStorage.getItem('pending_quiz_report');
+    if(pending){
+        sendTelegramMessage(pending);
+    }
+}
+
+const questions = [
+  // ====================== الأسئلة 1-50 (اختيار من متعدد) ======================
+  { "q": "وفقاً لمنظمة الصحة العالمية (WHO)، يُصنف الاكتئاب كاضطراب في:", "type": "choose", "options": ["الشخصية", "المزاج", "السلوك العصبي", "الوعي والإدراك"], "correct": 1, "feedback": "" },
+  { "q": "يُعرف العرض الأساسي للاكتئاب المتمثل في فقدان القدرة على الشعور بالمتعة بـ:", "type": "choose", "options": ["Anhedonia", "Insomnia", "Rumination", "Stigma"], "correct": 0, "feedback": "" },
+  { "q": "من الأعراض المعرفية الشائعة لدى مريض الاكتئاب المعاناة من:", "type": "choose", "options": ["زيادة التفاعل الاجتماعي", "الأفكار التلقائية السلبية وجلد الذات", "الأوهام الحسية البصرية", "النشاط الحركي الزائد"], "correct": 1, "feedback": "" },
+  { "q": "التفكير المستمر والاجترار السلبي للأفكار الحزينة والمؤلمة يُسمى:", "type": "choose", "options": ["Cognitive Restructuring", "Rumination", "Behavioral Activation", "Mindfulness"], "correct": 1, "feedback": "" },
+  { "q": "أي مما يلي يعد من الآثار المهنية والوظيفية المباشرة للاكتئاب على الفرد؟", "type": "choose", "options": ["انخفاض الإنتاجية والغياب المتكرر عن العمل", "زيادة القدرة على التركيز", "توسيع شبكة العلاقات المهنية", "الاندفاع نحو السلوك الاجتماعي"], "correct": 0, "feedback": "" },
+  { "q": "من الأعراض الجسدية (الفيزيولوجية) المشتركة المرتبطة باضطراب الاكتئاب:", "type": "choose", "options": ["اضطرابات النوم والشهية", "زيادة مناعة الجسم ضد الأمراض المزمنة", "تحسن مرونة العضلات", "النشاط المفرط"], "correct": 0, "feedback": "" },
+  { "q": "يهدف العلاج المعرفي السلوكي (CBT) للاكتئاب بشكل رئيسي إلى:", "type": "choose", "options": ["تتبع العقد الطفولية بالتحليل النفسي", "تعديل الأفكار التلقائية السلبية والمشوهة", "الاعتماد التام على المهدئات الطبية", "إحداث صدمات كهربائية"], "correct": 1, "feedback": "" },
+  { "q": "يتضمن أسلوب 'التنشيط السلوكي' (Behavioral Activation) في علاج الاكتئاب:", "type": "choose", "options": ["تشجيع المريض على الانخراط في أنشطة إيجابية ومثمرة", "منع المريض من الحركة لتقليل التوتر", "تعديل النظام الغذائي الصارم فقط", "التركيز على النوم الطويل ليرتاح الدماغ"], "correct": 0, "feedback": "" },
+  { "q": "يقوم العلاج الجدلي السلوكي (DBT) بالتركيز على مهارات أساسية مثل:", "type": "choose", "options": ["تفسير الأحلام والرموز اللاشعورية", "تنظيم الانفعالات، وتحمل الضغوط، واليقظة الذهنية", "التنويم المغناطيسي الإيحائي", "التحليل الإحصائي للسلوك اليومي"], "correct": 1, "feedback": "" },
+  { "q": "يركز علاج القبول والالتزام (ACT) على تحقيق 'المرونة النفسية' من خلال:", "type": "choose", "options": ["رفض كل المشاعر المؤلمة ومحاربتها", "قبول الأفكار والمشاعر بصفتها خبرات نفسية والالتزام بالقيم الشخصية", "تغيير البيئة المحيطة بالفرد جذرياً وبشكل يومي", "التماهي مع رغبات الآخرين دون قيد أو شرط"], "correct": 1, "feedback": "" },
+  { "q": "ما هي الفائدة الأساسية للأسلوب الإرشادي 'التثقيف النفسي' (Psychoeducation)؟", "type": "choose", "options": ["تدريب المريض على مهارات البرمجة اللغوية", "تزويد المريض وأسرته بمعلومات علمية حول طبيعة الاضطراب وعلاجه", "توجيه المريض مهنياً لتغيير تخصصه الأكاديمي فوراً", "صرف الوصفات الطبية الدوائية للمريض"], "correct": 1, "feedback": "" },
+  { "q": "من أساليب التكيف المعرفي التي يُدرب عليها مرشد الـ CBT لتخفيف أعراض الاكتئاب:", "type": "choose", "options": ["إعادة الهيكلة المعرفية (Cognitive Reappraisal)", "الإنكار الدفاعي", "التبرير اللاشعوري", "أحلام اليقظة الموجهة"], "correct": 0, "feedback": "" },
+  { "q": "يساعد العلاج الجماعي (Group Therapy) مريض الاكتئاب من خلال:", "type": "choose", "options": ["تخفيض تكلفة العلاج المالي فحسب", "تعزيز شعور الانتماء وتقليل العزلة الاجتماعية عبر مشاركة الخبرات", "إلزام المرضى باتخاذ قرارات جماعية موحدة", "منع التدخل الإرشادي الفردي"], "correct": 1, "feedback": "" },
+  { "q": "يرتبط الاكتئاب المزمن بيولوجياً بحدوث تغيرات في كفاءة ونشاط:", "type": "choose", "options": ["الغدد العرقية في الأطراف", "اللوزة الدماغية (Amygdala) وقشرة الفص الجبهي (Prefrontal Cortex)", "النخاع الشوكي السفلي", "الخلايا اللمفاوية العظمية فقط"], "correct": 1, "feedback": "" },
+  { "q": "من المبادئ الأساسية لعلاج القبول والالتزام (ACT) مفهوم 'الفصل المعرفي' (Cognitive Defusion) ويعني:", "type": "choose", "options": ["فصل المريض عن محيطه الاجتماعي المباشر", "رؤية الأفكار كأفكار فقط وليس كحقائق مطلقة ومخيفة", "تقسيم الذكاء الإنساني إلى جوانب متعددة", "نسيان الخبرات السابقة المؤلمة كلياً"], "correct": 1, "feedback": "" },
+  { "q": "يُعد الشعور بالذنب (Guilt) والدونية (Worthlessness) من الأعراض النفسية الأساسية لاضطراب:", "type": "choose", "options": ["القلق العام", "الاكتئاب", "فقدان الشهية العصبي", "الصمت الانتقائي"], "correct": 1, "feedback": "" },
+  { "q": "العلاقة الإرشادية الداعمة (Supportive Counseling) تركز في جوهرها على:", "type": "choose", "options": ["التحالف العلاجي، والتعاطف، وتقديم المساندة الانفعالية للمسترشد", "تطبيق اختبارات الذكاء الرسمية في كل جلسة", "إعطاء نصائح مباشرة وصارمة يجب تنفيذها", "مواجهة المسترشد بعيوبه ونقاط ضعفه بعنف"], "correct": 0, "feedback": "" },
+  { "q": "يتميز اضطراب القلق العام (GAD) بوجود:", "type": "choose", "options": ["خوف شديد ومفاجئ يستمر لثوانٍ معدودة فقط", "قلق وتوتر مفرط ومستمر يصعب التحكم فيه يخص عدة موضوعات", "خوف محدد من حيوان معين كالفئران أو الكلاب", "امتناع كلي عن الحديث في المناسبات الرسمية"], "correct": 1, "feedback": "" },
+  { "q": "تُعرف نوبات الهلع (Panic Attacks) بأنها:", "type": "choose", "options": ["حالة من الحزن المستمر واليأس الشديد", "نوبات فجائية حادة من الخوف الشديد تصل ذروتها خلال دقائق مصحوبة بأعراض جسدية", "رغبة عارمة في تناول الطعام بكميات هائلة", "خوف مستمر وتجنب دائم للأماكن المفتوحة فقط"], "correct": 1, "feedback": "" },
+  { "q": "الخوف الشديد وغير العقلاني من التواجد في أماكن يصعب الخروج منها أو الحصول على مساعدة فيها يُعرف بـ:", "type": "choose", "options": ["الرهاب الاجتماعي", "رهاب الخلاء (Agoraphobia)", "اضطراب قلق الانفصال", "الصمت الانتقائي"], "correct": 1, "feedback": "" },
+  { "q": "يُطلق على الاضطراب الذي يمتنع فيه الطفل عن التحدث في مواقف اجتماعية محددة (كالمدرسة) رغم قدرته على الكلام:", "type": "choose", "options": ["قلق الانفصال", "الصمت الانتقائي (Selective Mutism)", "الرهاب المحدد", "اضطراب نهم الطعام"], "correct": 1, "feedback": "" },
+  { "q": "المنظور السلوكي يفسر نشأة المخاوف المرضية (الرهاب) باعتبارها:", "type": "choose", "options": ["صراعات لاشعورية مكبوتة في مرحلة الطفولة المبكرة", "سلوكيات متعلمة ناتجة عن الإشراط أو الملاحظة والتجنب التدعيمي", "تشوهات في التفكير الإنساني الواعي", "خلل جيني في كيمياء الدماغ فقط"], "correct": 1, "feedback": "" },
+  { "q": "من أبرز الاستراتيجيات السلوكية الفعالة في علاج اضطرابات القلق والرهاب:", "type": "choose", "options": ["التعرض التدريجي (Gradual Exposure)", "التنفيس الانفعالي بالتداعي الحر", "التنويم المغناطيسي الكلي", "الراحة التامة والابتعاد عن المثيرات"], "correct": 0, "feedback": "" },
+  { "q": "الخوف المرضي الحاد من المواقف الاجتماعية والتعرض لتقييم الآخرين أو الإحراج يُسمى:", "type": "choose", "options": ["اضطراب القلق العام", "الرهاب الاجتماعي (Social Anxiety Disorder)", "رهاب الخلاء", "الرهاب المحدد"], "correct": 1, "feedback": "" },
+  { "q": "وفقاً للمنظور المعرفي، ينشأ القلق النفسي نتيجة:", "type": "choose", "options": ["تراجع في إفراز الأنسولين بالجسم", "التحريفات المعرفية والمبالغة في تقدير التهديد وضآلة القدرة على المواجهة", "ضعف الروابط الأسرية خلال المراهقة", "الرغبة في جلب انتباه الآخرين عاطفياً"], "correct": 1, "feedback": "" },
+  { "q": "ما هو 'المعيار الذهبي' (Gold Standard) في العلاج النفسي لاضطرابات القلق وفق الأبحاث العلمية؟", "type": "choose", "options": ["التحليل النفسي الكلاسيكي", "العلاج المعرفي السلوكي (CBT)", "الإرشاد المهني بالسمات والخصائص", "العلاج باللعب غير الموجه"], "correct": 1, "feedback": "" },
+  { "q": "يتميز اضطراب قلق الانفصال (Separation Anxiety Disorder) بـ:", "type": "choose", "options": ["خوف مفرط وغير متناسب من الابتعاد عن الأشخاص الذين يرتبط بهم الفرد", "خوف من ركوب الطائرات والقطارات السريعة", "رفض تناول الطعام أمام أفراد الأسرة", "الرغبة في العزلة التامة عن المجتمع طوال الحياة"], "correct": 0, "feedback": "" },
+  { "q": "يُعد اضطراب الرهاب المحدد (Specific Phobia) عبارة عن خوف حاد وغير عقلاني من:", "type": "choose", "options": ["جميع المواقف الحياتية دون استثناء", "مثير أو موقف معين بذاته (مثل المرتفعات، الدم، الحقن)", "التحدث أمام الجمهور في قاعة مغلقة", "الانفصال عن الوالدين عند النوم"], "correct": 1, "feedback": "" },
+  { "q": "مفهوم 'الخوف من الانتكاس' (Relapse Fear) لدى المتعافين من القلق يُعالج بفاعلية عبر:", "type": "choose", "options": ["إيقاف العلاج فجأة لتدريب المريض على الاعتماد على نفسه", "اليقظة الذهنية وتدريبات منع الاستجابة والتثقيف النفسي المستمر", "تجنب الحديث عن المرض تماماً وعدم تذكره", "تغيير المرشد النفسي بمرشد آخر جديد"], "correct": 1, "feedback": "" },
+  { "q": "تتضمن الأعراض الجسدية المصاحبة لنوبة الهلع الحادة كل مما يلي عدا:", "type": "choose", "options": ["تسارع ضربات القلب وضيق التنفس", "الارتجاف والشعور بالاختناق", "الدوار والتعرق الغزير", "الانخفاض الشديد واللحظي في حرارة الجسم لدرجة التجمد"], "correct": 3, "feedback": "" },
+  { "q": "يركز العلاج العقلاني الانفعالي السلوكي (REBT) لألبرت أليس في علاج القلق على:", "type": "choose", "options": ["تحليل الأحلام وعقدة أوديب", "تحديد ودحض الأفكار والاعتقادات غير العقلانية (مثل حتمية الكمال)", "تعديل السلوك من خلال التعزيز المالي المباشر", "تدريبات الاسترخاء العضلي فقط دون نقاش عقلي"], "correct": 1, "feedback": "" },
+  { "q": "الهدف الأساسي من تدريبات التنفس العميق والاسترخاء في مواجهة القلق هو:", "type": "choose", "options": ["تنشيط الجهاز العصبي الباراسمبثاوي لتقليل الاستثارة الفسيولوجية", "تحسين مهارات القراءة والكلام السريع أمام الآخرين", "زيادة إفراز هرمون الأدرينالين في الدم", "إدخال المريض في النوم العميق الفوري أثناء الجلسة"], "correct": 0, "feedback": "" },
+  { "q": "ما الذي يُقصد بـ 'التشوهات المعرفية' (Cognitive Distortions) لدى مرضى القلق؟", "type": "choose", "options": ["تلف في خلايا التفكير بالدماغ", "أنماط تفكير غير واقعية أو مضخمة للمخاطر (مثل التفكير الكارثي)", "فقدان مؤقت للذاكرة قصيرة المدى", "عدم القدرة على استيعاب التعليمات اللفظية للمرشد"], "correct": 1, "feedback": "" },
+  { "q": "يتميز اضطراب فقدان الشهية العصبي (Anorexia Nervosa) بـ:", "type": "choose", "options": ["تناول كميات هائلة من الطعام ثم التقيؤ عمداً", "الرفض المتعمد للحفاظ على الحد الأدنى للوزن الطبيعي والخوف الشديد من السمنة", "عدم الاهتمام بشكل الجسم أو الوزن مطلقاً", "تناول المواد غير الغذائية كالطين والطباشير"], "correct": 1, "feedback": "" },
+  { "q": "الصورة المشوهة للجسم (Distorted Body Image) تعني لدى مريض الأنوركسيا:", "type": "choose", "options": ["رؤية نفسه نحيفاً جداً رغم كونه يعاني من السمنة المفرطة", "رؤية نفسه سميناً وبديناً رغم المعاناة الحقيقية من الهزال والنحافة الشديدة", "فقدان البصر الجزئي بسبب سوء التغذية الحاد", "الرغبة في إجراء عمليات تجميلية للوجه فقط"], "correct": 1, "feedback": "" },
+  { "q": "من المضاعفات الجسدية الخطيرة الناتجة عن اضطراب فقدان الشهية العصبي المزمن:", "type": "choose", "options": ["زيادة كثافة العظام وقوتها", "لين وهشاشة العظام (Osteoporosis) ومشاكل حادة في القلب", "تحسن كفاءة الجهاز الهضمي والامتصاص", "ارتفاع مستوى السكر في الدم بشكل دائم"], "correct": 1, "feedback": "" },
+  { "q": "يختلف اضطراب نهم الطعام (Binge-Eating Disorder) عن فقدان الشهية والشره في:", "type": "choose", "options": ["تناول الطعام ببطء شديد على مدار اليوم", "تناول كميات ضخمة من الطعام في وقت قصير مع غياب السلوكيات التعويضية (كالتقيؤ)", "ممارسة الرياضة العنيفة عقب كل وجبة مباشرة", "أنه يصيب الأطفال الرضع فقط دون الكبار"], "correct": 1, "feedback": "" },
+  { "q": "أي من العوامل الأسرية التالية يرتبط بزيادة احتمالية إصابة الأبناء باضطرابات الأكل؟", "type": "choose", "options": ["التركيز المفرط من الوالدين على الوزن، النحافة، والمظهر المثالي للجسم", "منح الأبناء حرية كاملة في اختيار نوعية الغذاء", "تشجيع الأبناء على ممارسة الهوايات الفنية", "الاستقرار الأسري وغياب النزاعات"], "correct": 0, "feedback": "" },
+  { "q": "تلعب وسائل الإعلام ومنصات التواصل الاجتماعي دوراً سلبياً في اضطرابات الأكل من خلال:", "type": "choose", "options": ["ترويج الأغذية الصحية والنباتية المتوازنة", "تكريس معايير جمالية غير واقعية تربط النحافة الشديدة بالنجاح والجاذبية", "تقديم برامج توعوية حول مخاطر سوء التغذية", "حث الشباب على ممارسة الرياضة الصباحية"], "correct": 1, "feedback": "" },
+  { "q": "تتطلب الخطط العلاجية المتكاملة لاضطرابات الأكل تدخلاً من فريق متعدد التخصصات يشمل:", "type": "choose", "options": ["المرشد النفسي، طبيب الطب النفسي، وأخصائي التغذية العلاجية", "المرشد المهني والأكاديمي فقط", "أخصائي الرياضة البدنية والمدرب الشخصي بمفردهم", "أخصائي التثقيف المجتمعي والسياسي"], "correct": 0, "feedback": "" },
+  { "q": "الهدف الأول والملح في علاج الحالات الحادة جداً من فقدان الشهية العصبي هو:", "type": "choose", "options": ["تعديل الأفكار المشوهة حول معايير الجمال العالمية", "الاستعادة الطبية العاجلة للوزن وعلاج المضاعفات الجسدية المهددة للحياة", "دمج المريض في برامج تدريب مهني متقدمة", "إجراء جلسات إرشاد أسري مطولة دون التدخل الطارئ"], "correct": 1, "feedback": "" },
+  { "q": "يُستخدم العلاج المعرفي السلوكي المطور لاضطرابات الأكل (CBT-E) للتركيز على:", "type": "choose", "options": ["تعديل السلوكيات المرتبطة بالأكل وصورة الجسم والتحكم في النهم والتقيؤ", "دراسة الدوافع اللاشعورية القديمة المرتبطة بالأمومة", "تغيير البيئة السكنية للمريض بشكل كامل", "استبدال الطعام العادي بالمكملات الغذائية الكيميائية مدى الحياة"], "correct": 0, "feedback": "" },
+  { "q": "يُقصد بالسلوكيات التعويضية (Compensatory Behaviors) في اضطرابات الأكل:", "type": "choose", "options": ["تعويض النقص العاطفي بشراء الهدايا الثمينة للآخرين", "أساليب للتخلص من السعرات الحرارية كالتقيؤ العمد أو الإفراط في الملينات والرياضة العنيفة", "تناول وجبات إضافية لتعويض الوزن المفقود", "الانعزال عن الأسرة أثناء أوقات تناول الوجبات الرئيسة"], "correct": 1, "feedback": "" },
+  { "q": "من العوامل البيولوجية المفسرة لاضطراب الأكل وجود خلل في تنظيم:", "type": "choose", "options": ["هرمونات النمو العضلي الطرفي", "النواقل العصبية بالدماغ (مثل السيروتونين) المسؤول عن تنظيم الشهية والمزاج", "معدل ضربات القلب الأساسي", "وظائف الكلى والكبد الطبيعية"], "correct": 1, "feedback": "" },
+  { "q": "أي مما يلي يعد مؤشراً نفسياً دالاً على احتمالية المعاناة من اضطراب نهم الطعام؟", "type": "choose", "options": ["تناول الطعام عند الجوع الشديد فقط والتوقف عند الشبع", "تناول كميات كبيرة من الطعام دون جوع حقيقي والشعور بالاشمئزاز والذنب بعد الأكل", "الرغبة في الطهي للآخرين دون تناول أي طعام معهم", "الالتزام الصارم بجدول السعرات الحرارية المحدد طبياً"], "correct": 1, "feedback": "" },
+  { "q": "تكامل الأدوار بين العلاج النفسي والعلاج الطبي الدوائي في الاضطرابات الشائعة يهدف إلى:", "type": "choose", "options": ["إلغاء دور المرشد النفسي تماماً والاعتماد على العقاقير", "تخفيف الأعراض الحادة دوائياً بالتزامن مع تعديل الأفكار والسلوكيات نفسياً لضمان عدم الانتكاس", "إطالة مدة الجلسات الإرشادية لزيادة العائد المالي", "إثبات تفوق الطب النفسي على علم النفس الإرشادي"], "correct": 1, "feedback": "" },
+  { "q": "يسعى الإرشاد النفسي في إطار وقائي وعلاجي داعم إلى تحقيق:", "type": "choose", "options": ["أهداف تتجاوز مجرد علاج الاضطراب إلى تعزيز جودة الحياة والوعي بالصحة النفسية", "تحويل كل أفراد المجتمع إلى معالجين نفسيين", "إلزام المرضى بالانعزال التام عن مجتمعاتهم المحلية", "التركيز على تشخيص الحالات الذهانية الشديدة فقط"], "correct": 0, "feedback": "" },
+  { "q": "يُعد 'التحالف العلاجي البناء' بين المرشد والمسترشد قوام العملية الإرشادية لكونه:", "type": "choose", "options": ["يسمح للمرشد بفرض آرائه الشخصية وقيمه على المسترشد دون نقاش", "يوفر بيئة آمنة خالية من الأحكام تدعم المسترشد في مواجهة أفكاره وسلوكياته المضطربة", "يمنح المسترشد الحق في إلغاء الجلسات وتغيير مواعيدها دون ضوابط", "يركز فقط على ملء الاستمارات التشخيصية الورقية"], "correct": 1, "feedback": "" },
+  { "q": "تسهم 'مجموعات الدعم' (Support Groups) لمرضى القلق واضطرابات الأكل في:", "type": "choose", "options": ["نقل العدوى السلوكية السلبية بين المرضى وتدهور حالتهم", "إتاحة مساحة لمشاركة استراتيجيات التكيف الفعالة، والحد من وصمة المرض (Stigma)", "الاستغناء الكامل عن الجلسات الإرشادية الفردية المنظمة", "إصدار أحكام تقييمية قاسية من المرضى تجاه بعضهم البعض"], "correct": 1, "feedback": "" },
+  { "q": "تُعرف 'وصمة المرض النفسي' (Stigma) بأنها:", "type": "choose", "options": ["مكافأة اجتماعية يحصل عليها المريض النفسي لتميزه", "النظرة السلبية والتمييز الاجتماعي ضد الأفراد الذين يعانون من اضطرابات نفسية", "علامة طبية تظهر على جلد المريض لتشخيص نوع الاضطراب", "قدرة الفرد على تحمل الألم النفسي دون شكوى"], "correct": 1, "feedback": "" }
+];
+
+// متغيرات الاختبار
+let currentIndex = 0;
+let totalScore = 0;
+let userAnswers = Array(questions.length).fill(null);   // { type, selected, correct }
+let quizFinished = false;
+
+// تحديث شريط التقدم
+function updateProgressUI() {
+    document.getElementById("progressText").innerHTML = `📌 السؤال ${currentIndex+1} من ${questions.length}`;
+    const percent = ((currentIndex+1) / questions.length) * 100;
+    document.getElementById("progressBar").style.width = percent + "%";
+    document.getElementById("score").innerHTML = `🎯 النتيجة: ${totalScore}`;
+}
+
+// دالة مساعدة لمقارنة إجابات الصواب والخطأ
+function isTFMatch(userSelection, correctAnswer) {
+    const normalizeTF = (val) => {
+        let v = val.trim();
+        if (v === "صح" || v === "صحيحة") return "صح";
+        if (v === "خطأ") return "خطأ";
+        return v;
+    };
+    return normalizeTF(userSelection) === normalizeTF(correctAnswer);
+}
+
+// عرض الإجابة المحفوظة عند التنقل
+function displaySavedAnswerFeedback() {
+    const q = questions[currentIndex];
+    const saved = userAnswers[currentIndex];
+    if (!saved) return;
+
+    const feedbackDiv = document.getElementById("feedback");
+    let feedbackHtml = "";
+    if (saved.correct) {
+        feedbackHtml = `<span style="color:#15803d;">✔ إجابة صحيحة ✔</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        let correctDisplay = q.type === "truefalse" ? q.correctAnswer : (q.type === "choose" ? q.options[q.correct] : q.correctAnswer);
+        feedbackHtml = `<span style="color:#bc3900;">❌ إجابة خاطئة (إجابتك: ${saved.selected})</span>
+                        <div class="feedback-detail">✅ الإجابة الصحيحة: <strong>${correctDisplay}</strong><br>${q.feedback}</div>`;
+    }
+    feedbackDiv.innerHTML = feedbackHtml;
+    feedbackDiv.style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function highlightSavedOptions() {
+    const q = questions[currentIndex];
+    const saved = userAnswers[currentIndex];
+    if (!saved) return;
+
+    if (q.type === "choose") {
+        const opts = document.querySelectorAll(".option");
+        opts.forEach((opt, idx) => {
+            if (idx === q.correct) opt.classList.add("correct");
+            if (idx === saved.selected && !saved.correct) opt.classList.add("wrong");
+            opt.style.pointerEvents = "none";
+        });
+    } else if (q.type === "truefalse") {
+        const tfDivs = document.querySelectorAll(".tf-option");
+        tfDivs.forEach(el => {
+            const rawText = el.innerText.replace(/[✓✗]/g, '').trim();
+            if (isTFMatch(rawText, q.correctAnswer)) {
+                el.classList.add("correct");
+            }
+            if (!saved.correct && isTFMatch(rawText, saved.selected)) {
+                el.classList.add("wrong");
+            }
+            el.style.pointerEvents = "none";
+        });
+    }
+    displaySavedAnswerFeedback();
+}
+
+// تحميل السؤال الحالي
+function loadQuestion() {
+    if (quizFinished) return;
+    updateProgressUI();
+    const q = questions[currentIndex];
+    document.getElementById("questionText").innerHTML = q.q;
+    document.getElementById("feedback").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = currentIndex > 0 ? "block" : "none";
+    
+    const container = document.getElementById("options");
+    
+    if (q.type === "choose") {
+        let optionsHTML = '<div class="options-container">';
+        q.options.forEach((opt, idx) => {
+            optionsHTML += `<div class="option" onclick="selectOption(${idx})">${opt}</div>`;
+        });
+        optionsHTML += '</div>';
+        container.innerHTML = optionsHTML;
+    } else if (q.type === "truefalse") {
+        container.innerHTML = `
+            <div class="truefalse-container">
+                <div class="tf-option" data-value="صح">✅ صح</div>
+                <div class="tf-option" data-value="خطأ">❌ خطأ</div>
+            </div>
+        `;
+        document.querySelectorAll(".tf-option").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const selectedVal = btn.getAttribute("data-value") || btn.innerText.replace(/[✅❌]/g,'').trim();
+                selectTrueFalse(selectedVal);
+            });
+        });
+    }
+    
+    if (userAnswers[currentIndex] !== null) {
+        highlightSavedOptions();
+    }
+}
+
+// معالجة اختيار صواب/خطأ
+function selectTrueFalse(selected) {
+    if (quizFinished) return;
+    if (userAnswers[currentIndex] !== null) {
+        document.getElementById("feedback").innerHTML = `<span style="color:#e07c1f;">⚠️ لقد أجبت على هذا السؤال مسبقاً، يمكنك المتابعة.</span>`;
+        document.getElementById("feedback").style.display = "block";
+        document.getElementById("nextBtn").style.display = "block";
+        return;
+    }
+    
+    const q = questions[currentIndex];
+    const isCorrect = isTFMatch(selected, q.correctAnswer);
+    
+    userAnswers[currentIndex] = {
+        type: "truefalse",
+        selected: selected,
+        correct: isCorrect
+    };
+    if (isCorrect) totalScore++;
+    document.getElementById("score").innerHTML = `🎯 النتيجة: ${totalScore}`;
+    
+    const allTf = document.querySelectorAll(".tf-option");
+    allTf.forEach(btn => {
+        const btnValue = btn.getAttribute("data-value") || btn.innerText.replace(/[✅❌]/g,'').trim();
+        if (isTFMatch(btnValue, q.correctAnswer)) {
+            btn.classList.add("correct");
+        }
+        if (!isCorrect && isTFMatch(btnValue, selected)) {
+            btn.classList.add("wrong");
+        }
+        btn.style.pointerEvents = "none";
+    });
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#15803d;">✅ إجابة صحيحة! ✅</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b91c1c;">❌ إجابة غير صحيحة (إجابتك: ${selected})</span>
+                        <div class="feedback-detail">📌 الإجابة الصحيحة: <strong>${q.correctAnswer}</strong><br>${q.feedback}</div>`;
+    }
+    const feedbackDiv = document.getElementById("feedback");
+    feedbackDiv.innerHTML = feedbackHtml;
+    feedbackDiv.style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+// دالة اختيار الإجابات للأسئلة من نوع choose (اختيار من متعدد)
+function selectOption(selectedIndex) {
+    if (userAnswers[currentIndex] !== null || quizFinished) return;
+    
+    const q = questions[currentIndex];
+    const isCorrect = (selectedIndex === q.correct);
+    
+    userAnswers[currentIndex] = {
+        type: "choose",
+        selected: selectedIndex,
+        correct: isCorrect
+    };
+    
+    if (isCorrect) {
+        totalScore++;
+    }
+    
+    const options = document.querySelectorAll(".option");
+    options.forEach((op, idx) => {
+        if (idx === q.correct) op.classList.add("correct");
+        if (idx === selectedIndex && idx !== q.correct) op.classList.add("wrong");
+        op.style.pointerEvents = "none";
+    });
+    
+    document.getElementById("score").innerHTML = `🎯 النتيجة: ${totalScore}`;
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#15803d;">✅ إجابة صحيحة! ✅</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b91c1c;">❌ إجابة خاطئة!</span>
+                        <div class="feedback-detail">📌 الإجابة الصحيحة هي: <strong>${q.options[q.correct]}</strong><br>${q.feedback}</div>`;
+    }
+    document.getElementById("feedback").innerHTML = feedbackHtml;
+    document.getElementById("feedback").style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function nextQuestion() {
+    if (quizFinished) return;
+    if (userAnswers[currentIndex] === null) {
+        document.getElementById("feedback").innerHTML = `<span style="color:#d97706;">❗ يرجى اختيار إجابة أولاً قبل المتابعة.</span>`;
+        document.getElementById("feedback").style.display = "block";
+        return;
+    }
+    if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        loadQuestion();
+    } else {
+        finishQuizAndShowResult();
+    }
+}
+
+function prevQuestion() {
+    if (quizFinished) return;
+    if (currentIndex > 0) {
+        currentIndex--;
+        loadQuestion();
+    }
+}
+
+function finishQuizAndShowResult() {
+    quizFinished = true;
+    document.querySelector(".progress-bar").style.display = "none";
+    document.getElementById("progressText").style.display = "none";
+    document.getElementById("questionText").style.display = "none";
+    document.getElementById("options").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = "none";
+    document.getElementById("feedback").style.display = "none";
+    
+    const percent = Math.round((totalScore / questions.length) * 100);
+    let gradeMsg = "";
+    if (percent >= 90) gradeMsg = "ممتاز 🎉🌟";
+    else if (percent >= 75) gradeMsg = "جيد جداً 👍📘";
+    else if (percent >= 60) gradeMsg = "روح نام أفضل 🫠";
+    else gradeMsg = "يحتاج مراجعة مركزة 📖🧠";
+    
+    const resultDiv = document.getElementById("result");
+    resultDiv.style.display = "block";
+    resultDiv.innerHTML = `
+        <h3>🏁 انتهى الاختبار</h3>
+        <span>${totalScore} / ${questions.length}</span>
+        <div>📊 النسبة المئوية: ${percent}%</div>
+        <div style="margin-top:12px; font-size:19px;">${gradeMsg}</div>
+        <div style="margin-top:18px; font-size:14px; background:#fff3cd; padding:8px; border-radius:20px;">🔁 اضغط إعادة الاختبار للتدرب مجدداً</div>
+    `;
+    document.querySelector(".restart-btn").style.display = "block";
+    
+    // ========== التعديل هنا: تقرير مختصر بدون تفاصيل الأسئلة ==========
+    const reportMsg = `📢 <b>تقرير اختبار الفصل السادس</b> 📢
+    
+🎯 <b>النتيجة النهائية:</b> ${totalScore}/${questions.length}
+📈 <b>النسبة:</b> ${percent}%
+🏅 <b>التقدير:</b> ${gradeMsg}
+⏰ <b>تاريخ الإكمال:</b> ${new Date().toLocaleString('ar-EG')}`;
+    
+    sendTelegramMessage(reportMsg);
+}
+
+function restartTest() {
+    quizFinished = false;
+    currentIndex = 0;
+    totalScore = 0;
+    userAnswers = Array(questions.length).fill(null);
+    
+    document.querySelector(".progress-bar").style.display = "block";
+    document.getElementById("progressText").style.display = "block";
+    document.getElementById("questionText").style.display = "block";
+    document.getElementById("options").style.display = "flex";
+    document.getElementById("result").style.display = "none";
+    document.querySelector(".restart-btn").style.display = "none";
+    document.getElementById("score").innerHTML = `🎯 النتيجة: 0`;
+    document.getElementById("feedback").style.display = "none";
+    
+    loadQuestion();
+}
+
+window.onload = () => {
+    checkPendingReport();
+    loadQuestion();
+};
+</script>
+</body>
+</html>
