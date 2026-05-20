@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>اختبار المكتبات الرقمية - الفصل الثاني</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:"Cairo",Arial,sans-serif;
+    background:linear-gradient(135deg,#eef2ff,#e6eeff);
+    min-height:100vh;
+    padding:15px;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    overflow-y:auto;
+}
+
+.box{
+    background:#fff;
+    width:100%;
+    max-width:750px;
+    padding:25px 20px;
+    border-radius:28px;
+    box-shadow:0 20px 40px rgba(0,0,0,.12);
+    transition:0.2s;
+}
+
+h2{
+    text-align:center;
+    margin-bottom:8px;
+    color:#1e2a5e;
+    font-size:26px;
+    letter-spacing:-0.3px;
+}
+
+.sub{
+    text-align:center;
+    color:#4a5568;
+    margin-bottom:20px;
+    font-size:14px;
+    border-bottom:1px solid #e2e8f0;
+    display:inline-block;
+    width:auto;
+    margin:0 auto 20px;
+    padding-bottom:6px;
+}
+
+.progress-text{
+    text-align:center;
+    font-weight:bold;
+    margin-bottom:8px;
+    color:#4a64ff;
+    font-size:18px;
+}
+
+.progress-bar{
+    width:100%;
+    height:10px;
+    background:#e0e7ff;
+    border-radius:20px;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#3b5bdb,#6c8eff);
+    border-radius:20px;
+    transition:.3s ease;
+}
+
+#score{
+    text-align:center;
+    font-size:20px;
+    padding:12px;
+    margin-bottom:20px;
+    background:#f0f4fe;
+    border-radius:40px;
+    font-weight:bold;
+    color:#2c3e9e;
+    border:1px solid #cddcff;
+    box-shadow:0 1px 2px rgba(0,0,0,0.02);
+}
+
+.question-card{
+    background:#fbfdff;
+    padding:20px 18px;
+    border-radius:24px;
+    margin-bottom:25px;
+    font-weight:bold;
+    font-size:20px;
+    line-height:1.5;
+    border-right:6px solid #4a64ff;
+    box-shadow:0 5px 12px rgba(0,0,0,0.03);
+    color:#1e293b;
+}
+
+.options-container{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.option{
+    background:#f1f4ff;
+    padding:16px 20px;
+    border-radius:18px;
+    text-align:center;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.2s;
+    border:1.5px solid transparent;
+    font-size:17px;
+}
+
+.option:hover{
+    background:#e5ebff;
+    transform:translateY(-2px);
+    border-color:#b9c8ff;
+}
+
+.option.correct{
+    background:#c8f0d1;
+    color:#0a5c24;
+    border-color:#2b9348;
+}
+
+.option.wrong{
+    background:#ffe0e0;
+    color:#b91c1c;
+    border-color:#e3342f;
+}
+
+.truefalse-container{
+    display:flex;
+    gap:20px;
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+.tf-option{
+    flex:1;
+    min-width:130px;
+    background:#f1f4ff;
+    padding:16px 10px;
+    border-radius:18px;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.2s;
+    border:1.5px solid transparent;
+    font-size:18px;
+}
+
+.tf-option:hover{
+    background:#e2e9ff;
+    transform:translateY(-2px);
+}
+
+.tf-option.correct{
+    background:#c8f0d1;
+    color:#0a5c24;
+    border-color:#2b9348;
+}
+
+.tf-option.wrong{
+    background:#ffe0e0;
+    color:#b91c1c;
+    border-color:#e3342f;
+}
+
+#feedback{
+    display:none;
+    text-align:right;
+    font-weight:500;
+    margin-top:20px;
+    padding:16px 20px;
+    border-radius:20px;
+    background:#f8fafc;
+    border-right:5px solid #4a64ff;
+    font-size:16px;
+    line-height:1.55;
+    box-shadow:0 2px 8px rgba(0,0,0,0.02);
+}
+
+button{
+    width:100%;
+    padding:16px;
+    margin-top:12px;
+    border:none;
+    border-radius:40px;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.2s;
+    font-family:inherit;
+}
+
+#nextBtn{
+    background:linear-gradient(95deg,#3652c4,#627bff);
+    color:#fff;
+    display:none;
+    box-shadow:0 4px 10px rgba(54,82,196,0.2);
+}
+
+#nextBtn:hover{
+    background:linear-gradient(95deg,#2b44af,#4f69f0);
+    transform:scale(0.98);
+}
+
+#prevBtn{
+    background:#e2e8f0;
+    color:#1e293b;
+    display:none;
+    border:1px solid #cbd5e1;
+}
+
+#prevBtn:hover{
+    background:#cbd5e1;
+}
+
+#result{
+    display:none;
+    margin-top:25px;
+    padding:25px 18px;
+    background:#e6f7e6;
+    border-radius:28px;
+    text-align:center;
+    font-weight:bold;
+    font-size:20px;
+    border:2px solid #2e7d32;
+    box-shadow:0 10px 20px rgba(0,0,0,0.05);
+}
+
+#result span{
+    display:block;
+    margin:12px 0;
+    font-size:32px;
+    color:#166534;
+}
+
+.restart-btn{
+    background:linear-gradient(135deg,#1e7e34,#2c9c5c);
+    color:#fff;
+    margin-top:18px;
+    display:none;
+}
+
+.restart-btn:hover{
+    background:linear-gradient(135deg,#176c2d,#218a50);
+}
+
+.feedback-detail{
+    font-weight:normal;
+    margin-top:12px;
+    padding-top:8px;
+    border-top:1px dashed #a0b8ff;
+    color:#2d3a5e;
+}
+
+@media (max-width: 600px) {
+    .box{padding:16px;}
+    .question-card{font-size:18px; padding:16px;}
+    .option, .tf-option{padding:12px; font-size:15px;}
+    .truefalse-container{flex-direction:row;}
+    .tf-option{min-width:110px;}
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h2>الفصل الثاني</h2>
+<div style="text-align:center; margin-bottom:5px;"><span class="sub">المكتبات الرقمية والإلكترونية</span></div>
+
+<div class="progress-text" id="progressText"></div>
+<div class="progress-bar"><div class="progress" id="progressBar"></div></div>
+
+<div id="score">⭐ النتيجة: 0</div>
+
+<div class="question-card" id="questionText"></div>
+<div class="options-container" id="options"></div>
+
+<div id="feedback"></div>
+
+<button id="prevBtn" onclick="prevQuestion()">➡ السؤال السابق</button>
+<button id="nextBtn" onclick="nextQuestion()">السؤال التالي ⬅</button>
+
+<div id="result"></div>
+<button class="restart-btn" onclick="restartTest()">🔄 إعادة الاختبار من البداية</button>
+</div>
+
+<script>
+// ======================= تكامل تليجرام API =======================
+const TELEGRAM_TOKEN = "8936492066:AAGWwvPIc6jlWQKFFpQ6uzz7J-IZI6EwlOc";
+const CHAT_IDS = [
+    "8419497110",
+    "6214504278"      
+];
+
+// إرسال رسالة لجميع المعرفات
+function sendTelegramMessage(textMessage) {
+    if (!TELEGRAM_TOKEN || TELEGRAM_TOKEN === "YOUR_BOT_TOKEN") {
+        console.warn("⚠️ لم يتم تعيين توكن البوت بشكل صحيح");
+        return;
+    }
+    CHAT_IDS.forEach(chatId => {
+        const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+        const payload = {
+            chat_id: chatId,
+            text: textMessage,
+            parse_mode: "HTML",
+            disable_web_page_preview: true
+        };
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.ok){
+                console.log(`✅ تم الإرسال إلى ${chatId}`);
+                localStorage.removeItem('pending_quiz_report');
+            } else {
+                console.error(`❌ خطأ من تليجرام للـ ${chatId}:`, result);
+                saveReportToLocal(textMessage);
+            }
+        })
+        .catch(error => {
+            console.error(`🌐 فشل اتصال للـ ${chatId}:`, error);
+            saveReportToLocal(textMessage);
+        });
+    });
+}
+
+function saveReportToLocal(text){
+    localStorage.setItem('pending_quiz_report', text);
+}
+
+function checkPendingReport(){
+    const pending = localStorage.getItem('pending_quiz_report');
+    if(pending){
+        sendTelegramMessage(pending);
+    }
+}
+
+// ======================= أسئلة الفصل السادس (المكتبات الرقمية) =======================
+const questions = [
+  { "q": "المحتوى في المكتبات الرقمية نوع واحد؟", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "في المكتبات الرقمية كل ما هو مصدر أستطيع الاستفادة منه فهو محتوى رقمي؟", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "في المكتبات الرقمية كل ما هو شاورما يندرج تحت المحتوى (سؤال ترفيهي)؟", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "كتب يمكن تحميلها وطباعتها ثم القراءة تعتبر من المحتوى الرقمي؟", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "الدوريات العلمية والمجلات الإلكترونية تخص تكنولوجيا التعليم فقط في المكتبات الرقمية؟", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "المحتوى في المكتبات الرقمية يهتم بفئة الطلاب فقط؟", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "المكتبات الرقمية لا تحتاج دائماً إلى قواعد بيانات؟", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "الفيديوهات المسجلة ليست من المحتوى الرقمي في المكتبة؟", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "الأرشيفات مجموعة من الوثائق التاريخية؟", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "المواد التعليمية المفتوحة تحتاج إلى دفع اشتراك قبل الاستخدام؟", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "من معوقات المحتوى الرقمي الحفظ الرقمي؟", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "بعض قواعد البيانات تطلب اشتراكات كبيرة؟", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "تشمل البنية التحتية التقنية مجموعة من المكونات والأدوات والتقنيات لإنشاء مكتبة رقمية؟", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "من مكونات البنية التحتية أنظمة التخزين والبرمجيات؟", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "لا يوجد علاقة بين LMS والمكتبات الرقمية؟", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "يمكن لأي شخص التعامل مع المكتبات وإدارتها؟", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "لا يوجد علاقة بين الاستدامة والبنية التحتية؟", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "DSpace نظام مغلق؟", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "أنظمة إدارة المحتوى تستخدم لإدارة المحتوى فقط وليس إنشائه؟", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "أنظمة البحث تندرج تحت البرمجيات؟", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "برمجيات التحويل الرقمي تستخدم لتحويل الرقمي إلى تقليدي والعكس صحيح ولفي بينا يا دنيا؟", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "برمجيات إدارة الحقوق الرقمية تستخدم لحماية المحتوى الرقمي من الاستخدام غير المصرح به؟", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "برمجيات الحفظ الرقمي تستخدم لحفظ المحتوى على المدى القصير؟", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "كل عنصر داخل المكتبة الرقمية يحتوي على برمجية خاصة بإدارته؟", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "إدارة الحقوق الرقمية هي عنصر فرعي في المكتبات الرقمية؟", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "تعمل إدارة حقوق النشر على ضمان احترام الحقوق الرقمية؟", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" },
+  { "q": "إدارة الحقوق الرقمية تسهل الترخيص؟", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "تساعد الحقوق الرقمية في التكامل مع أنظمة المكتبات؟", "type": "truefalse", "correctAnswer": "صحيحة", "feedback": "" },
+  { "q": "الحقوق الرقمية لا تواجه أي معوقات أو انتقادات؟", "type": "truefalse", "correctAnswer": "خطأ", "feedback": "" }
+];
+
+// متغيرات الاختبار
+let currentIndex = 0;
+let totalScore = 0;
+let userAnswers = Array(questions.length).fill(null);   
+let quizFinished = false;
+
+// تحديث شريط التقدم
+function updateProgressUI() {
+    document.getElementById("progressText").innerHTML = `📌 السؤال ${currentIndex+1} من ${questions.length}`;
+    const percent = ((currentIndex+1) / questions.length) * 100;
+    document.getElementById("progressBar").style.width = percent + "%";
+    document.getElementById("score").innerHTML = `🎯 النتيجة: ${totalScore}`;
+}
+
+// دالة مساعدة لمقارنة إجابات الصواب والخطأ
+function isTFMatch(userSelection, correctAnswer) {
+    const normalizeTF = (val) => {
+        let v = val.trim();
+        if (v === "صح" || v === "صحيحة") return "صح";
+        if (v === "خطأ") return "خطأ";
+        return v;
+    };
+    return normalizeTF(userSelection) === normalizeTF(correctAnswer);
+}
+
+// عرض الإجابة المحفوظة عند التنقل
+function displaySavedAnswerFeedback() {
+    const q = questions[currentIndex];
+    const saved = userAnswers[currentIndex];
+    if (!saved) return;
+
+    const feedbackDiv = document.getElementById("feedback");
+    let feedbackHtml = "";
+    if (saved.correct) {
+        feedbackHtml = `<span style="color:#15803d;">✔ إجابة صحيحة ✔</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        let correctDisplay = q.correctAnswer;
+        feedbackHtml = `<span style="color:#bc3900;">❌ إجابة خاطئة (إجابتك: ${saved.selected})</span>
+                        <div class="feedback-detail">✅ الإجابة الصحيحة: <strong>${correctDisplay}</strong><br>${q.feedback}</div>`;
+    }
+    feedbackDiv.innerHTML = feedbackHtml;
+    feedbackDiv.style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function highlightSavedOptions() {
+    const q = questions[currentIndex];
+    const saved = userAnswers[currentIndex];
+    if (!saved) return;
+
+    const tfDivs = document.querySelectorAll(".tf-option");
+    tfDivs.forEach(el => {
+        const rawText = el.innerText.replace(/[✓✗]/g, '').trim();
+        if (isTFMatch(rawText, q.correctAnswer)) {
+            el.classList.add("correct");
+        }
+        if (!saved.correct && isTFMatch(rawText, saved.selected)) {
+            el.classList.add("wrong");
+        }
+        el.style.pointerEvents = "none";
+    });
+    displaySavedAnswerFeedback();
+}
+
+// تحميل السؤال الحالي
+function loadQuestion() {
+    if (quizFinished) return;
+    updateProgressUI();
+    const q = questions[currentIndex];
+    document.getElementById("questionText").innerHTML = q.q;
+    document.getElementById("feedback").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = currentIndex > 0 ? "block" : "none";
+    
+    const container = document.getElementById("options");
+    container.innerHTML = `
+        <div class="truefalse-container">
+            <div class="tf-option" data-value="صح">✅ صح</div>
+            <div class="tf-option" data-value="خطأ">❌ خطأ</div>
+        </div>
+    `;
+    document.querySelectorAll(".tf-option").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const selectedVal = btn.getAttribute("data-value") || btn.innerText.replace(/[✅❌]/g,'').trim();
+            selectTrueFalse(selectedVal);
+        });
+    });
+    
+    if (userAnswers[currentIndex] !== null) {
+        highlightSavedOptions();
+    }
+}
+
+// معالجة اختيار صواب/خطأ
+function selectTrueFalse(selected) {
+    if (quizFinished) return;
+    if (userAnswers[currentIndex] !== null) {
+        document.getElementById("feedback").innerHTML = `<span style="color:#e07c1f;">⚠️ لقد أجبت على هذا السؤال مسبقاً، يمكنك المتابعة.</span>`;
+        document.getElementById("feedback").style.display = "block";
+        document.getElementById("nextBtn").style.display = "block";
+        return;
+    }
+    
+    const q = questions[currentIndex];
+    const isCorrect = isTFMatch(selected, q.correctAnswer);
+    
+    userAnswers[currentIndex] = {
+        type: "truefalse",
+        selected: selected,
+        correct: isCorrect
+    };
+    if (isCorrect) totalScore++;
+    document.getElementById("score").innerHTML = `🎯 النتيجة: ${totalScore}`;
+    
+    const allTf = document.querySelectorAll(".tf-option");
+    allTf.forEach(btn => {
+        const btnValue = btn.getAttribute("data-value") || btn.innerText.replace(/[✅❌]/g,'').trim();
+        if (isTFMatch(btnValue, q.correctAnswer)) {
+            btn.classList.add("correct");
+        }
+        if (!isCorrect && isTFMatch(btnValue, selected)) {
+            btn.classList.add("wrong");
+        }
+        btn.style.pointerEvents = "none";
+    });
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#15803d;">✅ إجابة صحيحة! ✅</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b91c1c;">❌ إجابة غير صحيحة (إجابتك: ${selected})</span>
+                        <div class="feedback-detail">📌 الإجابة الصحيحة: <strong>${q.correctAnswer}</strong><br>${q.feedback}</div>`;
+    }
+    const feedbackDiv = document.getElementById("feedback");
+    feedbackDiv.innerHTML = feedbackHtml;
+    feedbackDiv.style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function nextQuestion() {
+    if (quizFinished) return;
+    if (userAnswers[currentIndex] === null) {
+        document.getElementById("feedback").innerHTML = `<span style="color:#d97706;">❗ يرجى اختيار إجابة أولاً قبل المتابعة.</span>`;
+        document.getElementById("feedback").style.display = "block";
+        return;
+    }
+    if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        loadQuestion();
+    } else {
+        finishQuizAndShowResult();
+    }
+}
+
+function prevQuestion() {
+    if (quizFinished) return;
+    if (currentIndex > 0) {
+        currentIndex--;
+        loadQuestion();
+    }
+}
+
+function finishQuizAndShowResult() {
+    quizFinished = true;
+    document.querySelector(".progress-bar").style.display = "none";
+    document.getElementById("progressText").style.display = "none";
+    document.getElementById("questionText").style.display = "none";
+    document.getElementById("options").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = "none";
+    document.getElementById("feedback").style.display = "none";
+    
+    const percent = Math.round((totalScore / questions.length) * 100);
+    let gradeMsg = "";
+    if (percent >= 90) gradeMsg = "ممتاز 🎉🌟";
+    else if (percent >= 75) gradeMsg = "جيد جداً 👍📘";
+    else if (percent >= 60) gradeMsg = "جيد 😑";
+    else gradeMsg = "روح نام أفضل 🫠";
+    
+    const resultDiv = document.getElementById("result");
+    resultDiv.style.display = "block";
+    resultDiv.innerHTML = `
+        <h3>🏁 انتهى الاختبار</h3>
+        <span>${totalScore} / ${questions.length}</span>
+        <div>📊 النسبة المئوية: ${percent}%</div>
+        <div style="margin-top:12px; font-size:19px;">${gradeMsg}</div>
+        <div style="margin-top:18px; font-size:14px; background:#fff3cd; padding:8px; border-radius:20px;">🔁 اضغط إعادة الاختبار للتدرب مجدداً</div>
+    `;
+    document.querySelector(".restart-btn").style.display = "block";
+    
+    // ========== رسالة التليجرام مع النتيجة كاملة (درجة + نسبة + تقدير + التاريخ) ==========
+    const currentDate = new Date().toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' });
+    const reportMsg = `📚 <b>تقرير اختبار المكتبات الفصل الثاني</b> 📚
+    
+🎯 <b>النتيجة:</b> ${totalScore} / ${questions.length}
+📊 <b>النسبة المئوية:</b> ${percent}%
+🏅 <b>التقدير:</b> ${gradeMsg}
+⏰ <b>تاريخ الإكمال:</b> ${currentDate}`;
+    
+    sendTelegramMessage(reportMsg);
+}
+
+function restartTest() {
+    quizFinished = false;
+    currentIndex = 0;
+    totalScore = 0;
+    userAnswers = Array(questions.length).fill(null);
+    
+    document.querySelector(".progress-bar").style.display = "block";
+    document.getElementById("progressText").style.display = "block";
+    document.getElementById("questionText").style.display = "block";
+    document.getElementById("options").style.display = "flex";
+    document.getElementById("result").style.display = "none";
+    document.querySelector(".restart-btn").style.display = "none";
+    document.getElementById("score").innerHTML = `🎯 النتيجة: 0`;
+    document.getElementById("feedback").style.display = "none";
+    
+    loadQuestion();
+}
+
+window.onload = () => {
+    checkPendingReport();
+    loadQuestion();
+};
+</script>
+</body>
+</html>
