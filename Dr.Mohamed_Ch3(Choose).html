@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>اختبار المكتبات الرقمية - الفصل الثالث</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:"Cairo",Arial,sans-serif;
+    background:linear-gradient(135deg,#eef2ff,#e6eeff);
+    min-height:100vh;
+    padding:15px;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    overflow-y:auto;
+}
+
+.box{
+    background:#fff;
+    width:100%;
+    max-width:750px;
+    padding:25px 20px;
+    border-radius:28px;
+    box-shadow:0 20px 40px rgba(0,0,0,.12);
+    transition:0.2s;
+}
+
+h2{
+    text-align:center;
+    margin-bottom:8px;
+    color:#1e2a5e;
+    font-size:26px;
+    letter-spacing:-0.3px;
+}
+
+.sub{
+    text-align:center;
+    color:#4a5568;
+    margin-bottom:20px;
+    font-size:14px;
+    border-bottom:1px solid #e2e8f0;
+    display:inline-block;
+    width:auto;
+    margin:0 auto 20px;
+    padding-bottom:6px;
+}
+
+.progress-text{
+    text-align:center;
+    font-weight:bold;
+    margin-bottom:8px;
+    color:#4a64ff;
+    font-size:18px;
+}
+
+.progress-bar{
+    width:100%;
+    height:10px;
+    background:#e0e7ff;
+    border-radius:20px;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#3b5bdb,#6c8eff);
+    border-radius:20px;
+    transition:.3s ease;
+}
+
+#score{
+    text-align:center;
+    font-size:20px;
+    padding:12px;
+    margin-bottom:20px;
+    background:#f0f4fe;
+    border-radius:40px;
+    font-weight:bold;
+    color:#2c3e9e;
+    border:1px solid #cddcff;
+    box-shadow:0 1px 2px rgba(0,0,0,0.02);
+}
+
+.question-card{
+    background:#fbfdff;
+    padding:20px 18px;
+    border-radius:24px;
+    margin-bottom:25px;
+    font-weight:bold;
+    font-size:20px;
+    line-height:1.5;
+    border-right:6px solid #4a64ff;
+    box-shadow:0 5px 12px rgba(0,0,0,0.03);
+    color:#1e293b;
+}
+
+.options-container{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.option{
+    background:#f1f4ff;
+    padding:16px 20px;
+    border-radius:18px;
+    text-align:center;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.2s;
+    border:1.5px solid transparent;
+    font-size:17px;
+}
+
+.option:hover{
+    background:#e5ebff;
+    transform:translateY(-2px);
+    border-color:#b9c8ff;
+}
+
+.option.correct{
+    background:#c8f0d1;
+    color:#0a5c24;
+    border-color:#2b9348;
+}
+
+.option.wrong{
+    background:#ffe0e0;
+    color:#b91c1c;
+    border-color:#e3342f;
+}
+
+#feedback{
+    display:none;
+    text-align:right;
+    font-weight:500;
+    margin-top:20px;
+    padding:16px 20px;
+    border-radius:20px;
+    background:#f8fafc;
+    border-right:5px solid #4a64ff;
+    font-size:16px;
+    line-height:1.55;
+    box-shadow:0 2px 8px rgba(0,0,0,0.02);
+}
+
+button{
+    width:100%;
+    padding:16px;
+    margin-top:12px;
+    border:none;
+    border-radius:40px;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.2s;
+    font-family:inherit;
+}
+
+#nextBtn{
+    background:linear-gradient(95deg,#3652c4,#627bff);
+    color:#fff;
+    display:none;
+    box-shadow:0 4px 10px rgba(54,82,196,0.2);
+}
+
+#nextBtn:hover{
+    background:linear-gradient(95deg,#2b44af,#4f69f0);
+    transform:scale(0.98);
+}
+
+#prevBtn{
+    background:#e2e8f0;
+    color:#1e293b;
+    display:none;
+    border:1px solid #cbd5e1;
+}
+
+#prevBtn:hover{
+    background:#cbd5e1;
+}
+
+#result{
+    display:none;
+    margin-top:25px;
+    padding:25px 18px;
+    background:#e6f7e6;
+    border-radius:28px;
+    text-align:center;
+    font-weight:bold;
+    font-size:20px;
+    border:2px solid #2e7d32;
+    box-shadow:0 10px 20px rgba(0,0,0,0.05);
+}
+
+#result span{
+    display:block;
+    margin:12px 0;
+    font-size:32px;
+    color:#166534;
+}
+
+.restart-btn{
+    background:linear-gradient(135deg,#1e7e34,#2c9c5c);
+    color:#fff;
+    margin-top:18px;
+    display:none;
+}
+
+.restart-btn:hover{
+    background:linear-gradient(135deg,#176c2d,#218a50);
+}
+
+.feedback-detail{
+    font-weight:normal;
+    margin-top:12px;
+    padding-top:8px;
+    border-top:1px dashed #a0b8ff;
+    color:#2d3a5e;
+}
+
+@media (max-width: 600px) {
+    .box{padding:16px;}
+    .question-card{font-size:18px; padding:16px;}
+    .option{padding:12px; font-size:15px;}
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h2>الفصل الثالث</h2>
+<div style="text-align:center; margin-bottom:5px;"><span class="sub">تقنيات المكتبات الرقمية</span></div>
+
+<div class="progress-text" id="progressText"></div>
+<div class="progress-bar"><div class="progress" id="progressBar"></div></div>
+
+<div id="score">⭐ النتيجة: 0</div>
+
+<div class="question-card" id="questionText"></div>
+<div class="options-container" id="options"></div>
+
+<div id="feedback"></div>
+
+<button id="prevBtn" onclick="prevQuestion()">➡ السؤال السابق</button>
+<button id="nextBtn" onclick="nextQuestion()">السؤال التالي ⬅</button>
+
+<div id="result"></div>
+<button class="restart-btn" onclick="restartTest()">🔄 إعادة الاختبار من البداية</button>
+</div>
+
+<script>
+// ======================= تكامل تليجرام API =======================
+const TELEGRAM_TOKEN = "8936492066:AAGWwvPIc6jlWQKFFpQ6uzz7J-IZI6EwlOc";
+const CHAT_IDS = [
+    "8419497110",
+    "6214504278"      
+];
+
+// إرسال رسالة لجميع المعرفات
+function sendTelegramMessage(textMessage) {
+    if (!TELEGRAM_TOKEN || TELEGRAM_TOKEN === "YOUR_BOT_TOKEN") {
+        console.warn("⚠️ لم يتم تعيين توكن البوت بشكل صحيح");
+        return;
+    }
+    CHAT_IDS.forEach(chatId => {
+        const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+        const payload = {
+            chat_id: chatId,
+            text: textMessage,
+            parse_mode: "HTML",
+            disable_web_page_preview: true
+        };
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.ok){
+                console.log(`✅ تم الإرسال إلى ${chatId}`);
+                localStorage.removeItem('pending_quiz_report');
+            } else {
+                console.error(`❌ خطأ من تليجرام للـ ${chatId}:`, result);
+                saveReportToLocal(textMessage);
+            }
+        })
+        .catch(error => {
+            console.error(`🌐 فشل اتصال للـ ${chatId}:`, error);
+            saveReportToLocal(textMessage);
+        });
+    });
+}
+
+function saveReportToLocal(text){
+    localStorage.setItem('pending_quiz_report', text);
+}
+
+function checkPendingReport(){
+    const pending = localStorage.getItem('pending_quiz_report');
+    if(pending){
+        sendTelegramMessage(pending);
+    }
+}
+
+const questions = [
+  { "q": "أي التقنيات التالية تعتمد على فهم معنى وسياق البحث؟", "type": "choose", "options": ["البحث النصي الكامل", "البحث الدلالي", "البحث الجغرافي", "البحث الصوتي"], "correct": 1, "feedback": "البحث الدلالي يهتم بفهم نية المستخدم وليس مجرد مطابقة الكلمات." },
+  { "q": "أي مما يلي يُستخدم لتحويل المستندات الممسوحة إلى نصوص قابلة للبحث؟", "type": "choose", "options": ["التنقيب في البيانات", "أنظمة التوصية", "التعرف الضوئي على الحروف", "البحث الجغرافي"], "correct": 2, "feedback": "تقنية التعرف الضوئي على الحروف تحول الصور النصية إلى نص رقمي يمكن البحث داخله." },
+  { "q": "الهدف الأساسي من أنظمة التوصية في المكتبات الرقمية هو:", "type": "choose", "options": ["تقليل المحتوى المتاح", "حذف البيانات القديمة", "تقديم محتوى مناسب للمستخدم", "استبدال أنظمة البحث"], "correct": 2, "feedback": "أنظمة التوصية تعتمد على سجل الاستخدام لتحسين تجربة المستفيد." },
+  { "q": "أي مما يلي يُعد من تحديات الحوسبة السحابية؟", "type": "choose", "options": ["صعوبة الوصول للمحتوى", "غياب المرونة", "الاعتماد على الإنترنت", "عدم إمكانية مشاركة الموارد"], "correct": 2, "feedback": "الخدمات السحابية تحتاج لاتصال مستقر بالشبكة للعمل بكفاءة." },
+  { "q": "تُستخدم تقنيات الواقع المعزز في المكتبات الرقمية من أجل:", "type": "choose", "options": ["إلغاء المحتوى الرقمي", "إضافة عناصر تفاعلية للمحتوى", "منع الوصول للمعلومات", "استبدال قواعد البيانات"], "correct": 1, "feedback": "الواقع المعزز يعرض معلومات إضافية وصورًا وفيديوهات مرتبطة بالمحتوى." },
+  { "q": "أي نوع من البحث يسمح بالبحث داخل النص الكامل للمستند؟", "type": "choose", "options": ["البحث النصي الكامل", "البحث الجغرافي", "البحث الصوتي", "البحث بالصور"], "correct": 0, "feedback": "هذا النوع يتيح الوصول للمعلومة من داخل المحتوى نفسه." },
+  { "q": "تحليل ردود أفعال المستخدمين على المحتوى الرقمي يُعرف بـ:", "type": "choose", "options": ["تحليل المشاعر", "التصنيف التلقائي", "التنقيب في الصور", "البحث الجغرافي"], "correct": 0, "feedback": "تحليل المشاعر يساعد على تقييم رضا المستخدمين وتحسين الخدمات." },
+  { "q": "أي مما يلي يساعد في تحسين تنظيم المحتوى وتسريع الفهرسة؟", "type": "choose", "options": ["الواقع الافتراضي", "التصنيف التلقائي", "البحث الصوتي", "الحوسبة السحابية"], "correct": 1, "feedback": "التصنيف التلقائي يعتمد على خوارزميات التعلم الآلي لتنظيم الموارد." },
+  { "q": "من استخدامات الواقع الافتراضي في المكتبات الرقمية:", "type": "choose", "options": ["حذف الوثائق القديمة", "إنشاء جولات افتراضية داخل المكتبة", "منع التفاعل مع المستخدم", "تقليل الوصول للمحتوى"], "correct": 1, "feedback": "الواقع الافتراضي يوفر بيئات تفاعلية تسمح باستكشاف المكتبة عن بُعد." },
+  { "q": "أي التقنيات التالية تساعد في تحليل الصور لاكتشاف الأنماط؟", "type": "choose", "options": ["التنقيب في الصور", "البحث النصي الكامل", "تحليل البيانات الوصفية", "البحث الصوتي"], "correct": 0, "feedback": "هذه التقنية تُستخدم في تنظيم المحتوى البصري والبحث عن الصور المشابهة." },
+  { "q": "من فوائد الحوسبة السحابية في المكتبات الرقمية:", "type": "choose", "options": ["زيادة الاعتماد على الأجهزة المحلية", "تقليل المرونة", "خفض التكاليف وتحسين التوسع", "تقليل مشاركة البيانات"], "correct": 2, "feedback": "الحوسبة السحابية توفر مرونة في التخزين والإدارة بتكلفة أقل." },
+  { "q": "أي مما يلي يهدف إلى فهم كيفية تفاعل المستخدمين مع المحتوى الرقمي؟", "type": "choose", "options": ["تحليل الشبكات الاجتماعية", "البحث الجغرافي", "البحث النصي الكامل", "إدارة الحقوق الرقمية"], "correct": 0, "feedback": "هذه التقنية تساعد المكتبات في تحسين الترويج وفهم سلوك المستخدمين." },
+  { "q": "أي التقنيات التالية تُستخدم لتقديم مساعدة فورية للمستخدمين؟", "type": "choose", "options": ["الروبوتات المساعدة", "التنقيب في البيانات", "البحث الجغرافي", "التصنيف اليدوي"], "correct": 0, "feedback": "الروبوتات المساعدة توفر إجابات وخدمات مباشرة عبر المحادثة." },
+  { "q": "يُستخدم البحث الجغرافي من أجل:", "type": "choose", "options": ["تحليل النصوص", "البحث وفق الموقع الجغرافي", "حماية المحتوى الرقمي", "ترجمة المحتوى"], "correct": 1, "feedback": "يعتمد هذا النوع من البحث على الخرائط والمواقع الجغرافية." },
+  { "q": "أي مما يلي يُعد من فوائد تقنيات البحث والاسترجاع؟", "type": "choose", "options": ["إخفاء المحتوى الجديد", "زيادة صعوبة الوصول للمعلومات", "تحسين تجربة المستخدم", "تقليل دقة البحث"], "correct": 2, "feedback": "هذه التقنيات تهدف للوصول الأسرع والأدق للمعلومات." },
+  { "q": "تُستخدم الحوسبة السحابية في المكتبات الرقمية للمساعدة في:", "type": "choose", "options": ["إدارة البيانات الكبيرة", "منع النسخ الاحتياطي", "إلغاء التعاون بين المؤسسات", "تقليل الوصول للمحتوى"], "correct": 0, "feedback": "الحوسبة السحابية تدعم تحليل البيانات الضخمة وإدارتها بكفاءة." },
+  { "q": "أي مما يلي يساعد في التنبؤ باحتياجات المستخدمين؟", "type": "choose", "options": ["التعلم الآلي", "البحث الجغرافي", "التصفح اليدوي", "التصنيف التقليدي"], "correct": 0, "feedback": "التعلم الآلي يحلل أنماط الاستخدام لتوقع اهتمامات المستفيدين." },
+  { "q": "من التحديات المرتبطة بتقنيات الواقع الافتراضي والمعزز:", "type": "choose", "options": ["انخفاض التفاعل", "ارتفاع التكلفة والحاجة للتدريب", "غياب المحتوى الرقمي", "عدم وجود تطبيقات تعليمية"], "correct": 1, "feedback": "تطبيق هذه التقنيات يحتاج تجهيزات وتدريبًا مناسبًا." },
+  { "q": "أي مما يلي يُستخدم لتحسين فهم المحتوى متعدد اللغات؟", "type": "choose", "options": ["الترجمة الآلية", "البحث الجغرافي", "التنقيب في الصور", "التصنيف التلقائي"], "correct": 0, "feedback": "الترجمة الآلية تساعد في الوصول للمحتوى بلغات متعددة." },
+  { "q": "أي التقنيات التالية تساعد في دعم البحث دون استخدام لوحة المفاتيح؟", "type": "choose", "options": ["البحث الصوتي", "التنقيب في البيانات", "البحث الدلالي", "تحليل الصور"], "correct": 0, "feedback": "البحث الصوتي يعتمد على الأوامر الصوتية لتحسين سهولة الوصول." }
+];
+
+// متغيرات الاختبار
+let currentIndex = 0;
+let totalScore = 0;
+let userAnswers = Array(questions.length).fill(null);
+let quizFinished = false;
+
+// تحديث شريط التقدم
+function updateProgressUI() {
+    document.getElementById("progressText").innerHTML = `📌 السؤال ${currentIndex+1} من ${questions.length}`;
+    const percent = ((currentIndex+1) / questions.length) * 100;
+    document.getElementById("progressBar").style.width = percent + "%";
+    document.getElementById("score").innerHTML = `🎯 النتيجة: ${totalScore}`;
+}
+
+// عرض الإجابة المحفوظة عند التنقل
+function displaySavedAnswerFeedback() {
+    const q = questions[currentIndex];
+    const saved = userAnswers[currentIndex];
+    if (!saved) return;
+
+    const feedbackDiv = document.getElementById("feedback");
+    let feedbackHtml = "";
+    if (saved.correct) {
+        feedbackHtml = `<span style="color:#15803d;">✔ إجابة صحيحة ✔</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        let correctDisplay = q.options[q.correct];
+        feedbackHtml = `<span style="color:#bc3900;">❌ إجابة خاطئة (إجابتك: ${saved.selectedText})</span>
+                        <div class="feedback-detail">✅ الإجابة الصحيحة: <strong>${correctDisplay}</strong><br>${q.feedback}</div>`;
+    }
+    feedbackDiv.innerHTML = feedbackHtml;
+    feedbackDiv.style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function highlightSavedOptions() {
+    const q = questions[currentIndex];
+    const saved = userAnswers[currentIndex];
+    if (!saved) return;
+
+    const opts = document.querySelectorAll(".option");
+    opts.forEach((opt, idx) => {
+        if (idx === q.correct) opt.classList.add("correct");
+        if (idx === saved.selected && !saved.correct) opt.classList.add("wrong");
+        opt.style.pointerEvents = "none";
+    });
+    displaySavedAnswerFeedback();
+}
+
+// تحميل السؤال الحالي
+function loadQuestion() {
+    if (quizFinished) return;
+    updateProgressUI();
+    const q = questions[currentIndex];
+    document.getElementById("questionText").innerHTML = q.q;
+    document.getElementById("feedback").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = currentIndex > 0 ? "block" : "none";
+    
+    const container = document.getElementById("options");
+    let optionsHTML = '<div class="options-container">';
+    q.options.forEach((opt, idx) => {
+        optionsHTML += `<div class="option" onclick="selectOption(${idx})">${opt}</div>`;
+    });
+    optionsHTML += '</div>';
+    container.innerHTML = optionsHTML;
+    
+    if (userAnswers[currentIndex] !== null) {
+        highlightSavedOptions();
+    }
+}
+
+// دالة اختيار الإجابات
+function selectOption(selectedIndex) {
+    if (userAnswers[currentIndex] !== null || quizFinished) return;
+    
+    const q = questions[currentIndex];
+    const isCorrect = (selectedIndex === q.correct);
+    
+    userAnswers[currentIndex] = {
+        type: "choose",
+        selected: selectedIndex,
+        selectedText: q.options[selectedIndex],
+        correct: isCorrect
+    };
+    
+    if (isCorrect) {
+        totalScore++;
+    }
+    
+    const options = document.querySelectorAll(".option");
+    options.forEach((op, idx) => {
+        if (idx === q.correct) op.classList.add("correct");
+        if (idx === selectedIndex && idx !== q.correct) op.classList.add("wrong");
+        op.style.pointerEvents = "none";
+    });
+    
+    document.getElementById("score").innerHTML = `🎯 النتيجة: ${totalScore}`;
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#15803d;">✅ إجابة صحيحة! ✅</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b91c1c;">❌ إجابة خاطئة!</span>
+                        <div class="feedback-detail">📌 الإجابة الصحيحة هي: <strong>${q.options[q.correct]}</strong><br>${q.feedback}</div>`;
+    }
+    document.getElementById("feedback").innerHTML = feedbackHtml;
+    document.getElementById("feedback").style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function nextQuestion() {
+    if (quizFinished) return;
+    if (userAnswers[currentIndex] === null) {
+        document.getElementById("feedback").innerHTML = `<span style="color:#d97706;">❗ يرجى اختيار إجابة أولاً قبل المتابعة.</span>`;
+        document.getElementById("feedback").style.display = "block";
+        return;
+    }
+    if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        loadQuestion();
+    } else {
+        finishQuizAndShowResult();
+    }
+}
+
+function prevQuestion() {
+    if (quizFinished) return;
+    if (currentIndex > 0) {
+        currentIndex--;
+        loadQuestion();
+    }
+}
+
+function finishQuizAndShowResult() {
+    quizFinished = true;
+    document.querySelector(".progress-bar").style.display = "none";
+    document.getElementById("progressText").style.display = "none";
+    document.getElementById("questionText").style.display = "none";
+    document.getElementById("options").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = "none";
+    document.getElementById("feedback").style.display = "none";
+    
+    const percent = Math.round((totalScore / questions.length) * 100);
+    let gradeMsg = "";
+    if (percent >= 90) gradeMsg = "ممتاز 🎉🌟";
+    else if (percent >= 75) gradeMsg = "جيد جداً 👍📘";
+    else if (percent >= 60) gradeMsg = "جيد، يحتاج مراجعة 🫠";
+    else gradeMsg = "روح نام أفضل😴";
+    
+    const resultDiv = document.getElementById("result");
+    resultDiv.style.display = "block";
+    resultDiv.innerHTML = `
+        <h3>🏁 انتهى الاختبار</h3>
+        <span>${totalScore} / ${questions.length}</span>
+        <div>📊 النسبة المئوية: ${percent}%</div>
+        <div style="margin-top:12px; font-size:19px;">${gradeMsg}</div>
+        <div style="margin-top:18px; font-size:14px; background:#fff3cd; padding:8px; border-radius:20px;">🔁 اضغط إعادة الاختبار للتدرب مجدداً</div>
+    `;
+    document.querySelector(".restart-btn").style.display = "block";
+    
+    // تقرير مختصر بدون تفاصيل الأسئلة
+    const reportMsg = `📢 <b>تقرير اختبار المكتبات الرقمية - الفصل الثالث</b> 📢
+    
+🎯 <b>النتيجة النهائية:</b> ${totalScore}/${questions.length}
+📈 <b>النسبة:</b> ${percent}%
+🏅 <b>التقدير:</b> ${gradeMsg}
+⏰ <b>تاريخ الإكمال:</b> ${new Date().toLocaleString('ar-EG')}`;
+    
+    sendTelegramMessage(reportMsg);
+}
+
+function restartTest() {
+    quizFinished = false;
+    currentIndex = 0;
+    totalScore = 0;
+    userAnswers = Array(questions.length).fill(null);
+    
+    document.querySelector(".progress-bar").style.display = "block";
+    document.getElementById("progressText").style.display = "block";
+    document.getElementById("questionText").style.display = "block";
+    document.getElementById("options").style.display = "flex";
+    document.getElementById("result").style.display = "none";
+    document.querySelector(".restart-btn").style.display = "none";
+    document.getElementById("score").innerHTML = `🎯 النتيجة: 0`;
+    document.getElementById("feedback").style.display = "none";
+    
+    loadQuestion();
+}
+
+window.onload = () => {
+    checkPendingReport();
+    loadQuestion();
+};
+</script>
+</body>
+</html>
