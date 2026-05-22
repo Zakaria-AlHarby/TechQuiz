@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار تكنولوجيا التعليم</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:"Cairo",Arial,sans-serif;
+    background:linear-gradient(135deg,#eef2ff,#e6eeff);
+    min-height:100vh;
+    padding:15px;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    overflow-y:auto;
+}
+
+.box{
+    background:#fff;
+    width:100%;
+    max-width:700px;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+
+h2{
+    text-align:center;
+    margin-bottom:15px;
+    color:#333;
+}
+
+.progress-text{
+    text-align:center;
+    font-weight:bold;
+    margin-bottom:8px;
+    color:#4a64ff;
+    font-size:18px;
+}
+
+.progress-bar{
+    width:100%;
+    height:10px;
+    background:#e0e0e0;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#4a64ff,#6a82ff);
+    transition:.3s;
+}
+
+#score{
+    text-align:center;
+    font-size:20px;
+    padding:12px;
+    margin-bottom:20px;
+    background:#f3f6ff;
+    border-radius:10px;
+    font-weight:bold;
+    color:#4a64ff;
+    border:2px solid #e0e6ff;
+}
+
+.question{
+    background:#f8faff;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:25px;
+    font-weight:bold;
+    font-size:20px;
+    line-height:1.6;
+    border-right:5px solid #4a64ff;
+}
+
+.options-container{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.option{
+    background:#e8edff;
+    padding:18px;
+    border-radius:12px;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+    border:2px solid transparent;
+}
+
+.option:hover{
+    background:#d9e0ff;
+    transform:translateY(-2px);
+}
+
+.option.correct{
+    background:#b6ffb6;
+    color:#1b8a2c;
+    border-color:#1b8a2c;
+}
+
+.option.wrong{
+    background:#ffb6b6;
+    color:#b30000;
+    border-color:#b30000;
+}
+
+.truefalse-container{
+    display:flex;
+    gap:20px;
+    justify-content:center;
+}
+
+.tf-option{
+    flex:1;
+    background:#e8edff;
+    padding:18px;
+    border-radius:12px;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+    border:2px solid transparent;
+}
+
+.tf-option:hover{
+    background:#d9e0ff;
+    transform:translateY(-2px);
+}
+
+.tf-option.correct{
+    background:#b6ffb6;
+    color:#1b8a2c;
+    border-color:#1b8a2c;
+}
+
+.tf-option.wrong{
+    background:#ffb6b6;
+    color:#b30000;
+    border-color:#b30000;
+}
+
+#feedback{
+    display:none;
+    text-align:center;
+    font-weight:bold;
+    margin-top:20px;
+    padding:15px;
+    border-radius:10px;
+    background:#f0f4ff;
+    border-right:5px solid #4a64ff;
+    font-size:18px;
+    line-height:1.5;
+}
+
+button{
+    width:100%;
+    padding:18px;
+    margin-top:15px;
+    border:none;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+#nextBtn{
+    background:linear-gradient(135deg,#4a64ff,#6a82ff);
+    color:#fff;
+    display:none;
+}
+
+#nextBtn:hover{
+    background:linear-gradient(135deg,#3a54ef,#5a72ef);
+}
+
+#prevBtn{
+    background:linear-gradient(135deg,#6c757d,#868e96);
+    color:#fff;
+    display:none;
+}
+
+#prevBtn:hover{
+    background:linear-gradient(135deg,#5c656d,#767e86);
+}
+
+#result{
+    display:none;
+    margin-top:25px;
+    padding:25px;
+    background:#d4ffd6;
+    border-radius:15px;
+    text-align:center;
+    font-weight:bold;
+    font-size:22px;
+    border:3px solid #1b8a2c;
+}
+
+#result span{
+    display:block;
+    margin:10px 0;
+    font-size:28px;
+    color:#1b8a2c;
+}
+
+.restart-btn{
+    background:linear-gradient(135deg,#28a745,#20c997);
+    color:#fff;
+    margin-top:20px;
+    display:none;
+}
+
+.restart-btn:hover{
+    background:linear-gradient(135deg,#218838,#1ca87e);
+}
+
+.feedback-detail{
+    font-weight:normal;
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px dashed #4a64ff;
+    color:#555;
+}
+
+@media (max-width: 600px) {
+    .box{padding:15px;}
+    .question{font-size:18px; padding:15px;}
+    .option, .tf-option{padding:14px; font-size:16px;}
+    .truefalse-container{flex-direction:column;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2> الفصل الثاني_02 </h2>
+
+<div class="progress-text" id="progressText"></div>
+<div class="progress-bar"><div class="progress" id="progressBar"></div></div>
+
+<div id="score">النتيجة: 0</div>
+
+<div class="question" id="questionText"></div>
+<div class="options-container" id="options"></div>
+
+<div id="feedback"></div>
+
+<button id="prevBtn" onclick="prevQuestion()">➡ السؤال السابق</button>
+<button id="nextBtn" onclick="nextQuestion()">السؤال التالي ⬅</button>
+
+<div id="result"></div>
+<button class="restart-btn" onclick="restartTest()">🔄 إعادة الاختبار</button>
+</div>
+
+<script>
+// ==================== إعدادات تليجرام ====================
+// ضع التوكن الخاص بالبوت هنا
+const TELEGRAM_TOKEN = "8936492066:AAGWwvPIc6jlWQKFFpQ6uzz7J-IZI6EwlOc";
+const CHAT_IDS = [
+    "8419497110",
+    "6214504278"     
+];
+
+// ==================== دوال إرسال تليجرام ====================
+function sendTelegramMessage(textMessage){
+    CHAT_IDS.forEach(chatId => {
+        const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+        
+        const payload = {
+            chat_id: chatId,
+            text: textMessage,
+            parse_mode: "HTML"
+        };
+        
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.ok){
+                console.log(`✓ تم الإرسال إلى ${chatId} بنجاح`);
+                localStorage.removeItem('pending_telegram_quiz');
+            } else {
+                console.error(`خطأ في الإرسال إلى ${chatId}:`, result);
+                saveToLocalStorage(textMessage);
+            }
+        })
+        .catch(error => {
+            console.error(`فشل الاتصال عند الإرسال إلى ${chatId}:`, error);
+            saveToLocalStorage(textMessage);
+        });
+    });
+}
+
+function saveToLocalStorage(text){
+    localStorage.setItem('pending_telegram_quiz', text);
+}
+
+function checkPendingData(){
+    const pendingText = localStorage.getItem('pending_telegram_quiz');
+    if(pendingText){
+        sendTelegramMessage(pendingText);
+    }
+}
+
+const questions = [
+ // ==================== أسئلة الجولات الافتراضية (Virtual Tou)
+
+// ==================== أسئلة مراحل إنشاء الجولات الافتراضية والمعايير والنظريات ====================
+
+// الجزء الأول: أسئلة الاختيار من متعدد (Choose)
+{ type: "choose", q: "تمر عملية نشأة وتطوير الجولة الافتراضية بمجموعة من المراحل الأساسية، أي مما يلي يمثل المرحلة الأولى منها؟",
+  options: ["الإنتاج ومراقبة التطوير (Production and monitoring)", "التخطيط والإعداد (Planning and preparation)", "اختيار وسائط الجولة (Types of media)", "معرفة طرق التحديث والصيانة"], correct: 1, feedback: "مرحلة التخطيط والإعداد هي المرحلة الأولى والأساسية في بناء الجولة الافتراضية." },
+
+{ type: "choose", q: "وفقاً للمنظور البنائي في تصميم الجولات الافتراضية، ما هو الأسلوب الأنسب لتقديم الدعم والتعلم للمستفيدين؟",
+  options: ["التجول الحر المطلق دون أي قيود", "المنع الكامل للتفاعل والاعتماد على الصور الثابتة", "التجول مع وجود الإرشاد والمساندة (التوجيه)", "تقديم الإرشاد المستمر دون انسحاب المصمم أو المعلم"], correct: 2, feedback: "التجول مع الإرشاد والمساندة هو الأنسب وفق المنظور البنائي، حيث يقدم الدعم المناسب للمتعلم." },
+
+{ type: "choose", q: "أي من برامج التصميم التالية يُستخدم بشكل أساسي في 'معالجة الصور' الرقمية قبل إدراجها في بيئة الجولة الافتراضية؟",
+  options: ["Adobe Photoshop", "Adobe Illustrator", "3D Studio Max", "Panowalker"], correct: 0, feedback: "Adobe Photoshop هو البرنامج الأساسي لمعالجة الصور الرقمية." },
+
+{ type: "choose", q: "عند تحديد البرامج المساعدة ووضعية الويب لتسهيل استخدام الجولات الافتراضية، نكون قد قمنا بتطبيق الخطوة:",
+  options: ["الأولى من خطوات بناء الجولات", "الثالثة من خطوات بناء الجولات", "الخامسة من خطوات بناء الجولات", "السادسة من خطوات بناء الجولات"], correct: 2, feedback: "تحديد البرامج المساعدة ووضعية الويب هي الخطوة الخامسة من خطوات بناء الجولات الافتراضية." },
+
+{ type: "choose", q: "ما الفائدة التربوية الأساسية من تقديم المساعدات والإرشادات للمتعلم أثناء تصفحه للجولة الافتراضية؟",
+  options: ["جعل المتعلم معتمداً كلياً على البرنامج دون تفكير", "تقليل التحميل المعرفي (Cognitive Load) على المتعلم", "زيادة صعوبة الوصول للمعلومات داخل البيئة الافتراضية", "إلغاء خاصية التفاعلية داخل الجولة تماماً"], correct: 1, feedback: "تقديم المساعدات والإرشادات يقلل التحميل المعرفي على المتعلم ويساعده على التركيز في المحتوى." },
+
+{ type: "choose", q: "أي من البرامج التالية يُعد برنامجاً متخصصاً في إنشاء الجولات الافتراضية وليس مجرد أداة مساعدة لتعديل الوسائط؟",
+  options: ["Adobe Photoshop", "Adobe Illustrator", "Tourweaver", "ARCore"], correct: 2, feedback: "Tourweaver هو برنامج متخصص في إنشاء الجولات الافتراضية." },
+
+{ type: "choose", q: "وفقاً لأسس التصميم التعليمي، يجب أن يتوافر في بيئة الجولة الافتراضية توازن دقيق بين:",
+  options: ["عدد الصور الفوتوغرافية ومقاطع الفيديو دون الاهتمام بالنص", "التكلفة المادية العالية واستخدام النظم المعقدة جداً", "قدرة التفاعلية والحرية الممنوحة للمتعلم وبين التوجيه والإرشاد التعليمي", "الاعتماد على التعليم الفردي العشوائي البحت وإلغاء دور المعلم"], correct: 2, feedback: "التوازن بين التفاعلية والتوجيه الإرشادي هو أساس التصميم التعليمي الجيد للجولات الافتراضية." },
+
+{ type: "choose", q: "أي من الخطوات التالية تشمل تحديد ما إذا كانت الجولة ستعتمد على وسائط نصية، أو صورية، أو صوتية، أو ثلاثية الأبعاد؟",
+  options: ["الخطوة الأولى", "الخطوة الثانية", "الخطوة الرابعة", "الخطوة الخامسة"], correct: 1, feedback: "الخطوة الثانية هي مرحلة اختيار أنواع وسائط الجولة (نصية، صورية، صوتية، ثلاثية الأبعاد)." },
+
+{ type: "choose", q: "يتطلب نجاح مرحلة 'التخطيط والإعداد' مشاركة فريق عمل يضم متخصصين وتربويين، بهدف التأكد من أن:",
+  options: ["المحتوى والسياق ملائمان للمتعلمين واحتياجاتهم التعليمية", "البرنامج لا يحتوي على أي نصوص مكتوبة ويقتصر على الصور فقط", "تكلفة الجولة تكون باهظة جداً وخارج قدرة المؤسسة", "المتعلم يتم عزله تماماً عن أي إرشاد أو تواصل مع المعلم"], correct: 0, feedback: "المحتوى والسياق يجب أن يكونا ملائمين للمتعلمين واحتياجاتهم التعليمية." },
+
+{ type: "choose", q: "تتضمن الخطوة الرابعة من خطوات بناء الجولات الافتراضية اختيار:",
+  options: ["المجال العام للجولة كالمتاحف والمعامل", "المحتوى العلمي والمعرفي الدقيق للجولة", "طريقة إنشاء الجولة والبرامج الأساسية المستخدمة فيها", "طرق الصيانة الدورية والتحديث المستمر للموقع"], correct: 2, feedback: "الخطوة الرابعة تتضمن اختيار طريقة إنشاء الجولة والبرامج الأساسية المستخدمة." },
+
+// الجزء الثاني: أسئلة الصواب والخطأ (True/False)
+{ type: "truefalse", q: "خلال مرحلة 'الإنتاج ومراقبة التطوير'، يتم بناء نموذج أولي يتضمن جمع المكونات المادية وتحديد أنماط التجول المختلفة.", correctAnswer: "صح", feedback: "صحيح، مرحلة الإنتاج ومراقبة التطوير تتضمن بناء نموذج أولي وتحديد أنماط التجول." },
+
+{ type: "truefalse", q: "الخطوة الأولى دائماً عند الشروع في بناء جولة افتراضية جديدة هي تحديد نوع الجولة (نصية، صوتية، بانورامية، إلخ).", correctAnswer: "خطأ", feedback: "التصحيح: الخطوة الأولى هي التخطيط والإعداد، ثم تأتي مرحلة تحديد نوع الجولة." },
+
+{ type: "truefalse", q: "من الممارسات الخاطئة في المنظور البنائي أن يقدم المعلم توجيهاً مستمراً لا ينقطع دون الانسحاب التدريجي مع تقدم المتعلم في الجولة.", correctAnswer: "صح", feedback: "صحيح، في المنظور البنائي يجب أن ينسحب المعلم تدريجياً مع تقدم المتعلم." },
+
+{ type: "truefalse", q: "تهتم الخطوة السادسة والأخيرة في هيكل بناء الجولات الافتراضية بوضع آليات واضحة للتحديث المستمر والصيانة للبيئة المصممة.", correctAnswer: "صح", feedback: "صحيح، الصيانة والتحديث المستمر هما محور الخطوة السادسة والأخيرة." },
+
+{ type: "truefalse", q: "برنامج VR Worx وبرنامج 3D Studio Max ينتميان إلى فئة الأدوات المساعدة لمعالجة النصوص فقط داخل الجولة.", correctAnswer: "خطأ", feedback: "التصحيح: هذان البرنامجان يستخدمان في معالجة الصور والنماذج ثلاثية الأبعاد، وليس النصوص فقط." },
+
+{ type: "truefalse", q: "في الخطوة الثالثة من خطوات بناء الجولات الافتراضية، يركز المصمم على تحديد البرامج المساعدة والتطبيقات الخارجية.", correctAnswer: "خطأ", feedback: "التصحيح: تحديد البرامج المساعدة والتطبيقات الخارجية يكون في الخطوة الخامسة." },
+
+{ type: "truefalse", q: "تسهم البيئات الافتراضية المصممة تعليمياً بشكل جيد في توفير أدوات تفاعلية تتيح للمتعلم التواصل مع زملائه ومع المحتوى المعروض.", correctAnswer: "صح", feedback: "صحيح، البيئات الافتراضية المصممة جيداً توفر أدوات تفاعلية للتواصل." },
+
+{ type: "truefalse", q: "في المنظور البنائي، تعتمد فكرة الإرشاد في الجولات على تقديم المساعدة للمتعلم لمساعدته في ربط المعلومات الجديدة بمعلوماته السابقة.", correctAnswer: "صح", feedback: "صحيح، الإرشاد يساعد المتعلم على الربط بين المعلومات الجديدة والسابقة." },
+
+{ type: "truefalse", q: "إذا أطلق مصمم الجولات التعليمية العنان للمتعلم دون أي قيود أو توجيه، فإن القرارات التعليمية التي يتخذها الطالب قد تكون غير ملائمة للأهداف.", correctAnswer: "صح", feedback: "صحيح، التجول الحر المطلق قد يؤدي إلى قرارات تعليمية غير ملائمة للأهداف." },
+
+{ type: "truefalse", q: "مرحلة 'أنواع وسائط الجولة الافتراضية' تشمل اتخاذ قرارات بشأن استخدام صفحات الويب والبرمجيات المعتمدة على الإنترنت لعرض مكونات الجولة.", correctAnswer: "صح", feedback: "صحيح، هذه المرحلة تشمل تحديد وسائط العرض بما فيها صفحات الويب والبرمجيات." }
+
+];
+
+let index = 0;
+let score = 0;
+let userAnswers = Array(questions.length).fill(null);
+let answerStatus = Array(questions.length).fill(false);
+let quizCompleted = false;
+
+function updateProgress() {
+    document.getElementById("progressText").textContent = `السؤال ${index+1} من ${questions.length}`;
+    document.getElementById("progressBar").style.width = ((index+1)/questions.length)*100 + "%";
+}
+
+function loadQuestion() {
+    if(quizCompleted) return;
+    
+    updateProgress();
+    const q = questions[index];
+    document.getElementById("questionText").textContent = q.q;
+    document.getElementById("feedback").style.display = "none";
+    
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = index > 0 ? "block" : "none";
+    
+    const optionsContainer = document.getElementById("options");
+    
+    if (q.type === "choose") {
+        let optionsHTML = '<div class="options-container">';
+        q.options.forEach((opt, i) => {
+            optionsHTML += `<div class="option" onclick="selectOption(${i})">${opt}</div>`;
+        });
+        optionsHTML += '</div>';
+        optionsContainer.innerHTML = optionsHTML;
+    } else if (q.type === "truefalse") {
+        optionsContainer.innerHTML = `
+            <div class="truefalse-container">
+                <div class="tf-option" onclick="selectTrueFalse('صح')">✓ صح</div>
+                <div class="tf-option" onclick="selectTrueFalse('خطأ')">✗ خطأ</div>
+            </div>
+        `;
+    }
+    
+    if (userAnswers[index] !== null) {
+        showSavedAnswer();
+    }
+}
+
+function selectOption(selectedIndex) {
+    if (userAnswers[index] !== null || quizCompleted) return;
+    
+    const q = questions[index];
+    const isCorrect = (selectedIndex === q.correct);
+    
+    userAnswers[index] = { type: "choose", selected: selectedIndex, correct: isCorrect };
+    answerStatus[index] = isCorrect;
+    
+    if (isCorrect) {
+        score++;
+    }
+    
+    const options = document.querySelectorAll(".option");
+    options.forEach((op, idx) => {
+        if (idx === q.correct) op.classList.add("correct");
+        if (idx === selectedIndex && idx !== q.correct) op.classList.add("wrong");
+        op.style.pointerEvents = "none";
+    });
+    
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة!</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة!</span>
+                        <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.options[q.correct]}</strong><br>${q.feedback}</div>`;
+    }
+    document.getElementById("feedback").innerHTML = feedbackHtml;
+    document.getElementById("feedback").style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function selectTrueFalse(selected) {
+    if (userAnswers[index] !== null || quizCompleted) return;
+    
+    const q = questions[index];
+    const isCorrect = (selected === q.correctAnswer);
+    
+    userAnswers[index] = { type: "truefalse", selected: selected, correct: isCorrect };
+    answerStatus[index] = isCorrect;
+    
+    if (isCorrect) {
+        score++;
+    }
+    
+    const options = document.querySelectorAll(".tf-option");
+    options.forEach(op => {
+        if (op.textContent.includes(q.correctAnswer)) {
+            op.classList.add("correct");
+        }
+        if (op.textContent.includes(selected) && !isCorrect) {
+            op.classList.add("wrong");
+        }
+        op.style.pointerEvents = "none";
+    });
+    
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة!</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة!</span>
+                        <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.correctAnswer}</strong><br>${q.feedback}</div>`;
+    }
+    document.getElementById("feedback").innerHTML = feedbackHtml;
+    document.getElementById("feedback").style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function showSavedAnswer() {
+    const q = questions[index];
+    const saved = userAnswers[index];
+    
+    if (q.type === "choose") {
+        const options = document.querySelectorAll(".option");
+        options.forEach((op, idx) => {
+            if (idx === q.correct) op.classList.add("correct");
+            if (idx === saved.selected && !saved.correct) op.classList.add("wrong");
+            op.style.pointerEvents = "none";
+        });
+        
+        let feedbackHtml = "";
+        if (saved.correct) {
+            feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة ✅</span>
+                            <div class="feedback-detail">${q.feedback}</div>`;
+        } else {
+            feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة (إجابتك: ${q.options[saved.selected]})</span>
+                            <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.options[q.correct]}</strong><br>${q.feedback}</div>`;
+        }
+        document.getElementById("feedback").innerHTML = feedbackHtml;
+        document.getElementById("feedback").style.display = "block";
+    } else if (q.type === "truefalse") {
+        const options = document.querySelectorAll(".tf-option");
+        options.forEach(op => {
+            if (op.textContent.includes(q.correctAnswer)) {
+                op.classList.add("correct");
+            }
+            if (op.textContent.includes(saved.selected) && !saved.correct) {
+                op.classList.add("wrong");
+            }
+            op.style.pointerEvents = "none";
+        });
+        
+        let feedbackHtml = "";
+        if (saved.correct) {
+            feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة ✅</span>
+                            <div class="feedback-detail">${q.feedback}</div>`;
+        } else {
+            feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة (إجابتك: ${saved.selected})</span>
+                            <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.correctAnswer}</strong><br>${q.feedback}</div>`;
+        }
+        document.getElementById("feedback").innerHTML = feedbackHtml;
+        document.getElementById("feedback").style.display = "block";
+    }
+    
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function nextQuestion() {
+    if (userAnswers[index] === null) {
+        document.getElementById("feedback").innerHTML = `<span style="color:#b30000">❗ الرجاء اختيار إجابة أولاً.</span>`;
+        document.getElementById("feedback").style.display = "block";
+        return;
+    }
+    
+    if (index < questions.length - 1) {
+        index++;
+        loadQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function prevQuestion() {
+    if (index > 0) {
+        index--;
+        loadQuestion();
+    }
+}
+
+function showResult() {
+    quizCompleted = true;
+    
+    document.querySelector(".progress-bar").style.display = "none";
+    document.getElementById("progressText").style.display = "none";
+    document.getElementById("questionText").style.display = "none";
+    document.getElementById("options").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = "none";
+    document.getElementById("feedback").style.display = "none";
+    
+    const percent = Math.round((score/questions.length)*100);
+    let gradeMsg = "";
+    if (percent >= 90) gradeMsg = "ممتاز 🎉";
+    else if (percent >= 75) gradeMsg = "جيد جداً 👍";
+    else if (percent >= 60) gradeMsg = "جيد 📚";
+    else gradeMsg = "روح نام أفضل 😴";
+    
+    document.getElementById("result").style.display = "block";
+    document.getElementById("result").innerHTML = `
+        <h3>🏁 انتهى الاختبار</h3>
+        <span>${score} / ${questions.length}</span>
+        <div>النسبة المئوية: ${percent}%</div>
+        <div style="margin-top:15px; font-size:20px;">${gradeMsg}</div>
+        <div style="margin-top:20px; font-size:16px;">📌 اضغط "إعادة الاختبار" للتدرب مجدداً</div>
+    `;
+    document.querySelector(".restart-btn").style.display = "block";
+    
+    // ==================== إرسال التقرير إلى تليجرام (تم إصلاح المتغير) ====================
+    const reportMsg = `📢 <b>تقرير الجولات الفصل الأول</b> 📢
+    
+🎯 <b>النتيجة النهائية:</b> ${score}/${questions.length}
+📈 <b>النسبة:</b> ${percent}%
+🏅 <b>التقدير:</b> ${gradeMsg}
+⏰ <b>تاريخ الإكمال:</b> ${new Date().toLocaleString('ar-EG')}`;
+    
+    sendTelegramMessage(reportMsg);
+}
+
+function restartTest() {
+    quizCompleted = false;
+    index = 0;
+    score = 0;
+    userAnswers = Array(questions.length).fill(null);
+    answerStatus = Array(questions.length).fill(false);
+    
+    document.querySelector(".progress-bar").style.display = "block";
+    document.getElementById("progressText").style.display = "block";
+    document.getElementById("questionText").style.display = "block";
+    document.getElementById("options").style.display = "flex";
+    document.getElementById("result").style.display = "none";
+    document.querySelector(".restart-btn").style.display = "none";
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    loadQuestion();
+}
+
+// بدء الاختبار والتحقق من البيانات المعلقة
+window.onload = function() {
+    checkPendingData();
+    loadQuestion();
+};
+</script>
+
+</body>
+</html>
