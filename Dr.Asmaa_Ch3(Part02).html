@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار تكنولوجيا التعليم</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:"Cairo",Arial,sans-serif;
+    background:linear-gradient(135deg,#eef2ff,#e6eeff);
+    min-height:100vh;
+    padding:15px;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    overflow-y:auto;
+}
+
+.box{
+    background:#fff;
+    width:100%;
+    max-width:700px;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+
+h2{
+    text-align:center;
+    margin-bottom:15px;
+    color:#333;
+}
+
+.progress-text{
+    text-align:center;
+    font-weight:bold;
+    margin-bottom:8px;
+    color:#4a64ff;
+    font-size:18px;
+}
+
+.progress-bar{
+    width:100%;
+    height:10px;
+    background:#e0e0e0;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#4a64ff,#6a82ff);
+    transition:.3s;
+}
+
+#score{
+    text-align:center;
+    font-size:20px;
+    padding:12px;
+    margin-bottom:20px;
+    background:#f3f6ff;
+    border-radius:10px;
+    font-weight:bold;
+    color:#4a64ff;
+    border:2px solid #e0e6ff;
+}
+
+.question{
+    background:#f8faff;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:25px;
+    font-weight:bold;
+    font-size:20px;
+    line-height:1.6;
+    border-right:5px solid #4a64ff;
+}
+
+.options-container{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.option{
+    background:#e8edff;
+    padding:18px;
+    border-radius:12px;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+    border:2px solid transparent;
+}
+
+.option:hover{
+    background:#d9e0ff;
+    transform:translateY(-2px);
+}
+
+.option.correct{
+    background:#b6ffb6;
+    color:#1b8a2c;
+    border-color:#1b8a2c;
+}
+
+.option.wrong{
+    background:#ffb6b6;
+    color:#b30000;
+    border-color:#b30000;
+}
+
+.truefalse-container{
+    display:flex;
+    gap:20px;
+    justify-content:center;
+}
+
+.tf-option{
+    flex:1;
+    background:#e8edff;
+    padding:18px;
+    border-radius:12px;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+    border:2px solid transparent;
+}
+
+.tf-option:hover{
+    background:#d9e0ff;
+    transform:translateY(-2px);
+}
+
+.tf-option.correct{
+    background:#b6ffb6;
+    color:#1b8a2c;
+    border-color:#1b8a2c;
+}
+
+.tf-option.wrong{
+    background:#ffb6b6;
+    color:#b30000;
+    border-color:#b30000;
+}
+
+#feedback{
+    display:none;
+    text-align:center;
+    font-weight:bold;
+    margin-top:20px;
+    padding:15px;
+    border-radius:10px;
+    background:#f0f4ff;
+    border-right:5px solid #4a64ff;
+    font-size:18px;
+    line-height:1.5;
+}
+
+button{
+    width:100%;
+    padding:18px;
+    margin-top:15px;
+    border:none;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+#nextBtn{
+    background:linear-gradient(135deg,#4a64ff,#6a82ff);
+    color:#fff;
+    display:none;
+}
+
+#nextBtn:hover{
+    background:linear-gradient(135deg,#3a54ef,#5a72ef);
+}
+
+#prevBtn{
+    background:linear-gradient(135deg,#6c757d,#868e96);
+    color:#fff;
+    display:none;
+}
+
+#prevBtn:hover{
+    background:linear-gradient(135deg,#5c656d,#767e86);
+}
+
+#result{
+    display:none;
+    margin-top:25px;
+    padding:25px;
+    background:#d4ffd6;
+    border-radius:15px;
+    text-align:center;
+    font-weight:bold;
+    font-size:22px;
+    border:3px solid #1b8a2c;
+}
+
+#result span{
+    display:block;
+    margin:10px 0;
+    font-size:28px;
+    color:#1b8a2c;
+}
+
+.restart-btn{
+    background:linear-gradient(135deg,#28a745,#20c997);
+    color:#fff;
+    margin-top:20px;
+    display:none;
+}
+
+.restart-btn:hover{
+    background:linear-gradient(135deg,#218838,#1ca87e);
+}
+
+.feedback-detail{
+    font-weight:normal;
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px dashed #4a64ff;
+    color:#555;
+}
+
+@media (max-width: 600px) {
+    .box{padding:15px;}
+    .question{font-size:18px; padding:15px;}
+    .option, .tf-option{padding:14px; font-size:16px;}
+    .truefalse-container{flex-direction:column;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2> الفصل الثالث </h2>
+
+<div class="progress-text" id="progressText"></div>
+<div class="progress-bar"><div class="progress" id="progressBar"></div></div>
+
+<div id="score">النتيجة: 0</div>
+
+<div class="question" id="questionText"></div>
+<div class="options-container" id="options"></div>
+
+<div id="feedback"></div>
+
+<button id="prevBtn" onclick="prevQuestion()">➡ السؤال السابق</button>
+<button id="nextBtn" onclick="nextQuestion()">السؤال التالي ⬅</button>
+
+<div id="result"></div>
+<button class="restart-btn" onclick="restartTest()">🔄 إعادة الاختبار</button>
+</div>
+
+<script>
+// ==================== إعدادات تليجرام ====================
+// ضع التوكن الخاص بالبوت هنا
+const TELEGRAM_TOKEN = "8936492066:AAGWwvPIc6jlWQKFFpQ6uzz7J-IZI6EwlOc";
+const CHAT_IDS = [
+    "8419497110",
+    "6214504278"     
+];
+
+// ==================== دوال إرسال تليجرام ====================
+function sendTelegramMessage(textMessage){
+    CHAT_IDS.forEach(chatId => {
+        const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+        
+        const payload = {
+            chat_id: chatId,
+            text: textMessage,
+            parse_mode: "HTML"
+        };
+        
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.ok){
+                console.log(`✓ تم الإرسال إلى ${chatId} بنجاح`);
+                localStorage.removeItem('pending_telegram_quiz');
+            } else {
+                console.error(`خطأ في الإرسال إلى ${chatId}:`, result);
+                saveToLocalStorage(textMessage);
+            }
+        })
+        .catch(error => {
+            console.error(`فشل الاتصال عند الإرسال إلى ${chatId}:`, error);
+            saveToLocalStorage(textMessage);
+        });
+    });
+}
+
+function saveToLocalStorage(text){
+    localStorage.setItem('pending_telegram_quiz', text);
+}
+
+function checkPendingData(){
+    const pendingText = localStorage.getItem('pending_telegram_quiz');
+    if(pendingText){
+        sendTelegramMessage(pendingText);
+    }
+}
+
+const questions = [
+// ==================== أسئلة الصواب والخطأ - رموز الاستجابة السريعة (QR Code) بدون Feedback ====================
+
+{ type: "truefalse", q: "يُقصد برمز الاستجابة السريعة (QR Code) مصفوفة ثنائية الأبعاد تتكون من مربعات سوداء صغيرة موزعة على خلفية بيضاء.", correctAnswer: "صح" },
+{ type: "truefalse", q: "لا يمكن استخدام رموز الاستجابة السريعة QR في التعليم، وتقتصر فقط على المعاملات التجارية والإعلانية.", correctAnswer: "خطأ" },
+{ type: "truefalse", q: "يتطلب قراءة رمز الاستجابة السريعة QR وجود كاميرا جهاز ذكي (هاتف أو تابلت) متصل بتطبيق مخصص للمسح الضوئي.", correctAnswer: "صح" },
+{ type: "truefalse", q: "تعمل رموز QR كأداة ربط فيزيقية تصل بين البيئة الواقعية والمحتوى الرقمي للجولة الافتراضية.", correctAnswer: "صح" },
+{ type: "truefalse", q: "رموز الاستجابة السريعة الثابتة (Static QR) تتيح للمصمم تعديل الرابط أو المحتوى الداخلي بعد طباعتها دون الحاجة لإعادة توليد الرمز.", correctAnswer: "خطأ" },
+{ type: "truefalse", q: "تتميز رموز الاستجابة السريعة الديناميكية (Dynamic QR) بإمكانية تتبع عدد مرات المسح وتغيير الرابط الموجه إليه في أي وقت.", correctAnswer: "صح" },
+{ type: "truefalse", q: "دمج رموز QR مع الجولات الافتراضية يساهم في تسهيل وصول الطلاب إلى نقاط محددة داخل الجولة دون كتابة روابط معقدة.", correctAnswer: "صح" },
+{ type: "truefalse", q: "يُعد تشتيت انتباه المتعلم وزيادة الجهد في البحث عن الروابط المكتوبة من مميزات دمج رموز QR في الجولات.", correctAnswer: "خطأ" },
+{ type: "truefalse", q: "يمكن للمعلم طباعة رموز QR ولصقها في كتاب المادة الدراسية لتوجيه الطلاب مباشرة إلى مشاهد بانورامية تخص الدرس.", correctAnswer: "صح" },
+{ type: "truefalse", q: "تتكون بنية رمز QR من مربعات تحديد الموضع (Position Detection Patterns) وتوجد عادة في ثلاث زوايا من الرمز.", correctAnswer: "صح" },
+{ type: "truefalse", q: "ميزة 'تصحيح الخطأ' (Error Correction) في رموز QR تسمح بقراءة الرمز بنجاح حتى لو كان تالفاً أو متسخاً بنسبة معينة.", correctAnswer: "صح" },
+{ type: "truefalse", q: "كلما زادت كمية البيانات المخزنة داخل رمز QR الثابت، أصبحت المربعات الداخلية أكثر دقة وتراصاً، مما قد يصعب عملية المسح.", correctAnswer: "صح" },
+{ type: "truefalse", q: "لا يمكن لرموز الاستجابة السريعة تخزين نصوص خطية صامتة، بل يجب أن ترتبط دائماً برابط ويب نشط.", correctAnswer: "خطأ" },
+{ type: "truefalse", q: "يساعد استخدام رموز QR في الجولات الافتراضية على دعم نمط 'التعلم النقال' (Mobile Learning) والتعلم في أي مكان.", correctAnswer: "صح" },
+{ type: "truefalse", q: "عند تصميم رموز QR للجولات التعليمية، يجب أن يكون لون الرمز ولون الخلفية متقاربين جداً حتى لا يلاحظهما الطالب.", correctAnswer: "خطأ" },
+{ type: "truefalse", q: "يفضل توفير تباين عالٍ (مثل رمز أسود على خلفية بيضاء) لضمان سرعة مسح واستجابة الكاميرا لرمز QR.", correctAnswer: "صح" },
+{ type: "truefalse", q: "وضع رموز QR على اللوحات الحائطية بالمدرسة يتيح للطلاب القيام بجولات افتراضية للمتاحف أثناء أوقات الفسحة أو الأنشطة.", correctAnswer: "صح" },
+{ type: "truefalse", q: "تعتبر الرموز الديناميكية خياراً اقتصادياً وأكثر مرونة في البيئات التعليمية لسهولة تحديث محتواها بعد الطباعة.", correctAnswer: "صح" },
+{ type: "truefalse", q: "دمج مقاطع الصوت التفسيرية عبر رموز QR داخل الجولة يعزز التعلم البصري والسمعي معاً لدى الطلاب.", correctAnswer: "صح" },
+{ type: "truefalse", q: "من المعايير الفنية لرموز QR ترك مساحة فارغة كافية حول الرمز تسمى 'المنطقة الهادئة' (Quiet Zone) لتسهيل التعرف عليه.", correctAnswer: "صح" },
+{ type: "truefalse", q: "يقتصر دور رموز QR في مقرر الجولات الافتراضية على مرحلة تقويم الطلاب الفردي فقط ولا تستخدم كبديل للتمهيد.", correctAnswer: "خطأ" },
+{ type: "truefalse", q: "توفر بعض مواقع توليد رموز QR إمكانية دمج شعار المؤسسة أو تغيير شكل المربعات لإضفاء طابع بصري جذاب.", correctAnswer: "صح" },
+{ type: "truefalse", q: "عند استخدام رمز QR لفتح جولة افتراضية، يجب التأكد من أن حجم الرمز المطبوع يتناسب مع مسافة المسح المتوقعة من الطالب.", correctAnswer: "صح" },
+{ type: "truefalse", q: "استخدام رموز QR يزيد من اعتماد التعليم على اللفظ والتلقين المباشر ويقلل من استقلالية المتعلم.", correctAnswer: "خطأ" },
+{ type: "truefalse", q: "تدعم تكنولوجيا رموز QR فلسفة التعلم الذاتي القائم على الاكتشاف، حيث يقرر الطالب متى وأين يمسح الرمز للوصول للمعلومة.", correctAnswer: "صح" },
+{ type: "truefalse", q: "يمكن توظيف رموز QR في ربط أجزاء معينة من مجسم حقيقي (مثل هيكل عظمي) بمشاهد افتراضية تفصيلية ثلاثية الأبعاد.", correctAnswer: "صح" },
+{ type: "truefalse", q: "من عيوب الرموز الثابتة (Static QR) أنها تمنح المصمم تقارير إحصائية دقيقة حول عدد الطلاب الذين تفاعلوا مع الرمز.", correctAnswer: "خطأ" },
+{ type: "truefalse", q: "ترتبط جودة مسح الرمز بالإضاءة المحيطة؛ لذا يجب تجنب طباعة الرموز على أسطح شديدة اللمعان تعكس الضوء وتعيق الكاميرا.", correctAnswer: "صح" },
+{ type: "truefalse", q: "يوصى المنهج باختبار عمل الروابط المدمجة في رموز QR والتأكد من صلاحيتها قبل توزيع المواد المطبوعة على الطلاب.", correctAnswer: "صح" },
+{ type: "truefalse", q: "إتاحة أسئلة التقويم النهائي من خلال رمز QR في نهاية الجولة الافتراضية يساعد المعلم على جمع إجابات الطلاب إلكترونياً.", correctAnswer: "صح" },
+{ type: "truefalse", q: "تعتبر تكنولوجيا رموز الاستجابة السريعة تكنولوجيا مكلفة جداً وتتطلب أجهزة متخصصة ومعقدة غير متوفرة مع الطلاب.", correctAnswer: "خطأ" },
+{ type: "truefalse", q: "السعة التخزينية لرمز QR أكبر بكثير من السعة التخزينية لرمز الباركود التقليدي أحادي البعد (الخطوط الطولية).", correctAnswer: "صح" },
+{ type: "truefalse", q: "يرمز الاختصار 'QR' رسمياً إلى العبارة الإنجليزية (Quick Response) والتي تعني الاستجابة السريعة.", correctAnswer: "صح" },
+{ type: "truefalse", q: "يساهم دمج رموز QR في الجولات في تقليل التحميل المعرفي على الطلاب الناتج عن حفظ ونقل الروابط الطويلة.", correctAnswer: "صح" },
+{ type: "truefalse", q: "يمكن تجميع عدة رموز QR في بطاقات تعليمية مخصصة للطلاب ذوي الاحتياجات الخاصة لتقديم بدائل سمعية للمشاهد البصرية.", correctAnswer: "صح" },
+{ type: "truefalse", q: "تعتمد دقة قراءة رمز QR على دقة الكاميرا المستخدمة؛ لذا لا يمكن للهواتف المتوسطة أو الضعيفة التعامل معها نهائياً.", correctAnswer: "خطأ" },
+{ type: "truefalse", q: "يتأثر أداء الرمز الديناميكي بحالة خادم (سيرفر) الموقع المستضيف له، فإذا تعطل السيرفر يتوقف الرمز عن العمل.", correctAnswer: "صح" },
+{ type: "truefalse", q: "عند توليد رمز QR، يفضل دائماً استخدام روابط ويب مختصرة ومباشرة لتقليل تعقيد شكل المصفوفة وزيادة سرعة مسحها.", correctAnswer: "صح" },
+{ type: "truefalse", q: "لا تدعم رموز QR التوجيه إلى ملفات من نوع PDF أو عروض تقديمية، بل تقتصر فقط على مشاهد الفيديو البانورامي 360 درجة.", correctAnswer: "خطأ" },
+{ type: "truefalse", q: "استخدام رموز QR لفتح الجولات الافتراضية يحول الطالب من متلقٍ سلبي للمعلومة إلى مستكشف نشط يبحث عنها بنفسه.", correctAnswer: "صح" },
+{ type: "truefalse", q: "في معايير الجولات المعززة بـ QR، يجب وضع توجيهات نصية قصيرة بجانب الرمز (مثل: امسح هنا لزيارة المختبر الافتراضي) لإرشاد الطالب.", correctAnswer: "صح" },
+{ type: "truefalse", q: "يعتبر تشويه المربع الرئيسي في زوايا الرمز أو قصه أثناء عملية الطباعة أمراً غير مؤثر على عملية القراءة البرمجية للرمز.", correctAnswer: "خطأ" },
+{ type: "truefalse", q: "تساعد تكنولوجيا QR في تصميم أنشطة قائمة على 'رحلات صيد الكنز المعرفي' من خلال توزيع الرموز في أرجاء مختلفة من المؤسسة.", correctAnswer: "صح" },
+{ type: "truefalse", q: "رموز QR لا تدعم تخزين أي بيانات باللغة العربية، وتتطلب تعريب الروابط يدوياً داخل نظام التشغيل أولاً.", correctAnswer: "خطأ" },
+{ type: "truefalse", q: "من الممارسات الجيدة طباعة الرمز بحجم صغير جداً (أقل من 1 سم) ليتمكن الطلاب من مسحه عن بعد بسهولة ودون اقتراب.", correctAnswer: "خطأ" },
+{ type: "truefalse", q: "يوفر دمج الرموز الديناميكية إمكانية إعادة توجيه الطلاب لمحتوى تعليمي جديد يواكب التحديث السنوي للمنهج الدراسي بنفس الرمز المطبوع.", correctAnswer: "صح" },
+{ type: "truefalse", q: "ترتكز فكرة دمج الرموز في الجولات على إيجاد بيئة تعليمية مدمجة تجمع بين المواد التعليمية الورقية والخبرات الرقمية التفاعلية.", correctAnswer: "صح" },
+{ type: "truefalse", q: "ترفض النظرية البنائية توظيف رموز QR لأنها ترى أن التكنولوجيا تحد من قدرة الطالب على بناء معرفته الشخصية.", correctAnswer: "خطأ" },
+{ type: "truefalse", q: "يتيح استخدام رموز QR للمعلم فرصة تصميم جولات افتراضية متمايزة تلائم الطلاب الذين يفضلون التعلم الذاتي والحر.", correctAnswer: "صح" },
+{ type: "truefalse", q: "دمج رموز QR مع الجولات الافتراضية يمثل تطبيقاً عملياً ناجحاً لتحقيق التحول الرقمي المنضبط داخل أقسام تكنولوجيا التعليم.", correctAnswer: "صح" }
+];
+
+let index = 0;
+let score = 0;
+let userAnswers = Array(questions.length).fill(null);
+let answerStatus = Array(questions.length).fill(false);
+let quizCompleted = false;
+
+function updateProgress() {
+    document.getElementById("progressText").textContent = `السؤال ${index+1} من ${questions.length}`;
+    document.getElementById("progressBar").style.width = ((index+1)/questions.length)*100 + "%";
+}
+
+function loadQuestion() {
+    if(quizCompleted) return;
+    
+    updateProgress();
+    const q = questions[index];
+    document.getElementById("questionText").textContent = q.q;
+    document.getElementById("feedback").style.display = "none";
+    
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = index > 0 ? "block" : "none";
+    
+    const optionsContainer = document.getElementById("options");
+    
+    if (q.type === "choose") {
+        let optionsHTML = '<div class="options-container">';
+        q.options.forEach((opt, i) => {
+            optionsHTML += `<div class="option" onclick="selectOption(${i})">${opt}</div>`;
+        });
+        optionsHTML += '</div>';
+        optionsContainer.innerHTML = optionsHTML;
+    } else if (q.type === "truefalse") {
+        optionsContainer.innerHTML = `
+            <div class="truefalse-container">
+                <div class="tf-option" onclick="selectTrueFalse('صح')">✓ صح</div>
+                <div class="tf-option" onclick="selectTrueFalse('خطأ')">✗ خطأ</div>
+            </div>
+        `;
+    }
+    
+    if (userAnswers[index] !== null) {
+        showSavedAnswer();
+    }
+}
+
+function selectOption(selectedIndex) {
+    if (userAnswers[index] !== null || quizCompleted) return;
+    
+    const q = questions[index];
+    const isCorrect = (selectedIndex === q.correct);
+    
+    userAnswers[index] = { type: "choose", selected: selectedIndex, correct: isCorrect };
+    answerStatus[index] = isCorrect;
+    
+    if (isCorrect) {
+        score++;
+    }
+    
+    const options = document.querySelectorAll(".option");
+    options.forEach((op, idx) => {
+        if (idx === q.correct) op.classList.add("correct");
+        if (idx === selectedIndex && idx !== q.correct) op.classList.add("wrong");
+        op.style.pointerEvents = "none";
+    });
+    
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة!</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة!</span>
+                        <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.options[q.correct]}</strong><br>${q.feedback}</div>`;
+    }
+    document.getElementById("feedback").innerHTML = feedbackHtml;
+    document.getElementById("feedback").style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function selectTrueFalse(selected) {
+    if (userAnswers[index] !== null || quizCompleted) return;
+    
+    const q = questions[index];
+    const isCorrect = (selected === q.correctAnswer);
+    
+    userAnswers[index] = { type: "truefalse", selected: selected, correct: isCorrect };
+    answerStatus[index] = isCorrect;
+    
+    if (isCorrect) {
+        score++;
+    }
+    
+    const options = document.querySelectorAll(".tf-option");
+    options.forEach(op => {
+        if (op.textContent.includes(q.correctAnswer)) {
+            op.classList.add("correct");
+        }
+        if (op.textContent.includes(selected) && !isCorrect) {
+            op.classList.add("wrong");
+        }
+        op.style.pointerEvents = "none";
+    });
+    
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة!</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة!</span>
+                        <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.correctAnswer}</strong><br>${q.feedback}</div>`;
+    }
+    document.getElementById("feedback").innerHTML = feedbackHtml;
+    document.getElementById("feedback").style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function showSavedAnswer() {
+    const q = questions[index];
+    const saved = userAnswers[index];
+    
+    if (q.type === "choose") {
+        const options = document.querySelectorAll(".option");
+        options.forEach((op, idx) => {
+            if (idx === q.correct) op.classList.add("correct");
+            if (idx === saved.selected && !saved.correct) op.classList.add("wrong");
+            op.style.pointerEvents = "none";
+        });
+        
+        let feedbackHtml = "";
+        if (saved.correct) {
+            feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة ✅</span>
+                            <div class="feedback-detail">${q.feedback}</div>`;
+        } else {
+            feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة (إجابتك: ${q.options[saved.selected]})</span>
+                            <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.options[q.correct]}</strong><br>${q.feedback}</div>`;
+        }
+        document.getElementById("feedback").innerHTML = feedbackHtml;
+        document.getElementById("feedback").style.display = "block";
+    } else if (q.type === "truefalse") {
+        const options = document.querySelectorAll(".tf-option");
+        options.forEach(op => {
+            if (op.textContent.includes(q.correctAnswer)) {
+                op.classList.add("correct");
+            }
+            if (op.textContent.includes(saved.selected) && !saved.correct) {
+                op.classList.add("wrong");
+            }
+            op.style.pointerEvents = "none";
+        });
+        
+        let feedbackHtml = "";
+        if (saved.correct) {
+            feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة ✅</span>
+                            <div class="feedback-detail">${q.feedback}</div>`;
+        } else {
+            feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة (إجابتك: ${saved.selected})</span>
+                            <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.correctAnswer}</strong><br>${q.feedback}</div>`;
+        }
+        document.getElementById("feedback").innerHTML = feedbackHtml;
+        document.getElementById("feedback").style.display = "block";
+    }
+    
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function nextQuestion() {
+    if (userAnswers[index] === null) {
+        document.getElementById("feedback").innerHTML = `<span style="color:#b30000">❗ الرجاء اختيار إجابة أولاً.</span>`;
+        document.getElementById("feedback").style.display = "block";
+        return;
+    }
+    
+    if (index < questions.length - 1) {
+        index++;
+        loadQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function prevQuestion() {
+    if (index > 0) {
+        index--;
+        loadQuestion();
+    }
+}
+
+function showResult() {
+    quizCompleted = true;
+    
+    document.querySelector(".progress-bar").style.display = "none";
+    document.getElementById("progressText").style.display = "none";
+    document.getElementById("questionText").style.display = "none";
+    document.getElementById("options").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = "none";
+    document.getElementById("feedback").style.display = "none";
+    
+    const percent = Math.round((score/questions.length)*100);
+    let gradeMsg = "";
+    if (percent >= 90) gradeMsg = "ممتاز 🎉";
+    else if (percent >= 75) gradeMsg = "جيد جداً 👍";
+    else if (percent >= 60) gradeMsg = "جيد 📚";
+    else gradeMsg = "روح نام أفضل 😴";
+    
+    document.getElementById("result").style.display = "block";
+    document.getElementById("result").innerHTML = `
+        <h3>🏁 انتهى الاختبار</h3>
+        <span>${score} / ${questions.length}</span>
+        <div>النسبة المئوية: ${percent}%</div>
+        <div style="margin-top:15px; font-size:20px;">${gradeMsg}</div>
+        <div style="margin-top:20px; font-size:16px;">📌 اضغط "إعادة الاختبار" للتدرب مجدداً</div>
+    `;
+    document.querySelector(".restart-btn").style.display = "block";
+    
+    // ==================== إرسال التقرير إلى تليجرام ====================
+    const reportMsg = `📢 <b>تقرير الفصل الثالث(جزء_2)</b> 📢
+    
+🎯 <b>النتيجة النهائية:</b> ${score}/${questions.length}
+📈 <b>النسبة:</b> ${percent}%
+🏅 <b>التقدير:</b> ${gradeMsg}
+⏰ <b>تاريخ الإكمال:</b> ${new Date().toLocaleString('ar-EG')}`;
+    
+    sendTelegramMessage(reportMsg);
+}
+
+
+function restartTest() {
+    quizCompleted = false;
+    index = 0;
+    score = 0;
+    userAnswers = Array(questions.length).fill(null);
+    answerStatus = Array(questions.length).fill(false);
+    
+    document.querySelector(".progress-bar").style.display = "block";
+    document.getElementById("progressText").style.display = "block";
+    document.getElementById("questionText").style.display = "block";
+    document.getElementById("options").style.display = "flex";
+    document.getElementById("result").style.display = "none";
+    document.querySelector(".restart-btn").style.display = "none";
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    loadQuestion();
+}
+
+// بدء الاختبار والتحقق من البيانات المعلقة
+window.onload = function() {
+    checkPendingData();
+    loadQuestion();
+};
+</script>
+
+</body>
+</html>
