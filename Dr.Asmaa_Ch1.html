@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار تكنولوجيا التعليم</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:"Cairo",Arial,sans-serif;
+    background:linear-gradient(135deg,#eef2ff,#e6eeff);
+    min-height:100vh;
+    padding:15px;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    overflow-y:auto;
+}
+
+.box{
+    background:#fff;
+    width:100%;
+    max-width:700px;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+
+h2{
+    text-align:center;
+    margin-bottom:15px;
+    color:#333;
+}
+
+.progress-text{
+    text-align:center;
+    font-weight:bold;
+    margin-bottom:8px;
+    color:#4a64ff;
+    font-size:18px;
+}
+
+.progress-bar{
+    width:100%;
+    height:10px;
+    background:#e0e0e0;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#4a64ff,#6a82ff);
+    transition:.3s;
+}
+
+#score{
+    text-align:center;
+    font-size:20px;
+    padding:12px;
+    margin-bottom:20px;
+    background:#f3f6ff;
+    border-radius:10px;
+    font-weight:bold;
+    color:#4a64ff;
+    border:2px solid #e0e6ff;
+}
+
+.question{
+    background:#f8faff;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:25px;
+    font-weight:bold;
+    font-size:20px;
+    line-height:1.6;
+    border-right:5px solid #4a64ff;
+}
+
+.options-container{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.option{
+    background:#e8edff;
+    padding:18px;
+    border-radius:12px;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+    border:2px solid transparent;
+}
+
+.option:hover{
+    background:#d9e0ff;
+    transform:translateY(-2px);
+}
+
+.option.correct{
+    background:#b6ffb6;
+    color:#1b8a2c;
+    border-color:#1b8a2c;
+}
+
+.option.wrong{
+    background:#ffb6b6;
+    color:#b30000;
+    border-color:#b30000;
+}
+
+.truefalse-container{
+    display:flex;
+    gap:20px;
+    justify-content:center;
+}
+
+.tf-option{
+    flex:1;
+    background:#e8edff;
+    padding:18px;
+    border-radius:12px;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+    border:2px solid transparent;
+}
+
+.tf-option:hover{
+    background:#d9e0ff;
+    transform:translateY(-2px);
+}
+
+.tf-option.correct{
+    background:#b6ffb6;
+    color:#1b8a2c;
+    border-color:#1b8a2c;
+}
+
+.tf-option.wrong{
+    background:#ffb6b6;
+    color:#b30000;
+    border-color:#b30000;
+}
+
+#feedback{
+    display:none;
+    text-align:center;
+    font-weight:bold;
+    margin-top:20px;
+    padding:15px;
+    border-radius:10px;
+    background:#f0f4ff;
+    border-right:5px solid #4a64ff;
+    font-size:18px;
+    line-height:1.5;
+}
+
+button{
+    width:100%;
+    padding:18px;
+    margin-top:15px;
+    border:none;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+#nextBtn{
+    background:linear-gradient(135deg,#4a64ff,#6a82ff);
+    color:#fff;
+    display:none;
+}
+
+#nextBtn:hover{
+    background:linear-gradient(135deg,#3a54ef,#5a72ef);
+}
+
+#prevBtn{
+    background:linear-gradient(135deg,#6c757d,#868e96);
+    color:#fff;
+    display:none;
+}
+
+#prevBtn:hover{
+    background:linear-gradient(135deg,#5c656d,#767e86);
+}
+
+#result{
+    display:none;
+    margin-top:25px;
+    padding:25px;
+    background:#d4ffd6;
+    border-radius:15px;
+    text-align:center;
+    font-weight:bold;
+    font-size:22px;
+    border:3px solid #1b8a2c;
+}
+
+#result span{
+    display:block;
+    margin:10px 0;
+    font-size:28px;
+    color:#1b8a2c;
+}
+
+.restart-btn{
+    background:linear-gradient(135deg,#28a745,#20c997);
+    color:#fff;
+    margin-top:20px;
+    display:none;
+}
+
+.restart-btn:hover{
+    background:linear-gradient(135deg,#218838,#1ca87e);
+}
+
+.feedback-detail{
+    font-weight:normal;
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px dashed #4a64ff;
+    color:#555;
+}
+
+@media (max-width: 600px) {
+    .box{padding:15px;}
+    .question{font-size:18px; padding:15px;}
+    .option, .tf-option{padding:14px; font-size:16px;}
+    .truefalse-container{flex-direction:column;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2> الفصل الاول </h2>
+
+<div class="progress-text" id="progressText"></div>
+<div class="progress-bar"><div class="progress" id="progressBar"></div></div>
+
+<div id="score">النتيجة: 0</div>
+
+<div class="question" id="questionText"></div>
+<div class="options-container" id="options"></div>
+
+<div id="feedback"></div>
+
+<button id="prevBtn" onclick="prevQuestion()">➡ السؤال السابق</button>
+<button id="nextBtn" onclick="nextQuestion()">السؤال التالي ⬅</button>
+
+<div id="result"></div>
+<button class="restart-btn" onclick="restartTest()">🔄 إعادة الاختبار</button>
+</div>
+
+<script>
+// ==================== إعدادات تليجرام ====================
+// ضع التوكن الخاص بالبوت هنا
+const TELEGRAM_TOKEN = "8936492066:AAGWwvPIc6jlWQKFFpQ6uzz7J-IZI6EwlOc";
+const CHAT_IDS = [
+    "8419497110",
+    "6214504278"     
+];
+
+// ==================== دوال إرسال تليجرام ====================
+function sendTelegramMessage(textMessage){
+    CHAT_IDS.forEach(chatId => {
+        const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+        
+        const payload = {
+            chat_id: chatId,
+            text: textMessage,
+            parse_mode: "HTML"
+        };
+        
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.ok){
+                console.log(`✓ تم الإرسال إلى ${chatId} بنجاح`);
+                localStorage.removeItem('pending_telegram_quiz');
+            } else {
+                console.error(`خطأ في الإرسال إلى ${chatId}:`, result);
+                saveToLocalStorage(textMessage);
+            }
+        })
+        .catch(error => {
+            console.error(`فشل الاتصال عند الإرسال إلى ${chatId}:`, error);
+            saveToLocalStorage(textMessage);
+        });
+    });
+}
+
+function saveToLocalStorage(text){
+    localStorage.setItem('pending_telegram_quiz', text);
+}
+
+function checkPendingData(){
+    const pendingText = localStorage.getItem('pending_telegram_quiz');
+    if(pendingText){
+        sendTelegramMessage(pendingText);
+    }
+}
+
+const questions = [
+// ==================== الأسئلة حسب ترتيبك ====================
+// 1
+{ type: "truefalse", q: "الجولات الافتراضيه ليست حديثه ولكنها ظهرت قديما", correctAnswer: "خطأ", feedback: "التصحيح: الجولات الافتراضية حديثة الظهور." },
+// 2
+{ type: "truefalse", q: "اول من استخدمت الجولات الافتراضيه اليزابيث الاولى", correctAnswer: "خطأ", feedback: "التصحيح: أول من استخدمتها هي إليزابيث الثانية." },
+// 3
+{ type: "truefalse", q: "اول استخدام للجولات الافتراضيه كانه سنه 1994", correctAnswer: "صح", feedback: "صحيح، أول استخدام كان عام 1994." },
+// 4
+{ type: "truefalse", q: "اول مركز اتفتح باستخدام الواقع الافتراضي كان اسمه الجولات الافتراضيه", correctAnswer: "صح", feedback: "صحيح، هذا الاسم هو ما أطلق على أول مركز." },
+// 5
+{ type: "truefalse", q: "الجولات الافتراضيه لا تستخدم داخل قاعات الدراسه في التعليم", correctAnswer: "خطأ", feedback: "التصحيح: الجولات الافتراضية تستخدم داخل قاعات الدراسة." },
+// 6
+{ type: "truefalse", q: "الجولات الافتراضيه لا تستخدم في المواقع الاثريه والمتاحف", correctAnswer: "خطأ", feedback: "التصحيح: تستخدم بكثرة في المواقع الأثرية والمتاحف." },
+// 7
+{ type: "truefalse", q: "زياده الانترنت وسرعه الوصول ادت الى التقليل من استخدام الجولات الافتراضيه", correctAnswer: "خطأ", feedback: "التصحيح: العكس، زادت من استخدامها وانتشارها." },
+// 8
+{ type: "truefalse", q: "الجولات الافتراضيه خدمتها للمتعلمين وليس المعلمين", correctAnswer: "خطأ", feedback: "التصحيح: تخدم المتعلمين والمعلمين معاً." },
+// 9
+{ type: "truefalse", q: "في الجولات الافتراضيه محور العمليه التعليمية هو المعلم", correctAnswer: "خطأ", feedback: "التصحيح: المتعلم هو محور العملية التعليمية." },
+// 10
+{ type: "truefalse", q: "لا تعد الزيارات الميدانيه التقليديه وسيله لتحقيق اهداف العمليه التعليمية نظرا لكثره عيوبها", correctAnswer: "خطأ", feedback: "التصحيح: الزيارات الميدانية التقليدية وسيلة مهمة رغم عيوبها." },
+// 11
+{ type: "truefalse", q: "الزيارات الميدانيه التقليديه مدخل للجولات الافتراضيه", correctAnswer: "صح", feedback: "صحيح، لأنها تمهد للانتقال إلى البديل الافتراضي." },
+// 12
+{ type: "truefalse", q: "الزيارات الميدانيه التقليديه لا تصل المتعلم بالعالم الخارجي الواقعي", correctAnswer: "خطأ", feedback: "التصحيح: الزيارات التقليدية تصل المتعلم بالعالم الخارجي الواقعي." },
+// 13
+{ type: "truefalse", q: "الزيارات الميدانيه التقليديه لا تساعد في مهاره حل المشكلات", correctAnswer: "خطأ", feedback: "التصحيح: تساعد في تنمية مهارة حل المشكلات." },
+// 14
+{ type: "truefalse", q: "الزيارات الميدانيه التقليديه لها 4 مراحل اساسيه", correctAnswer: "خطأ", feedback: "التصحيح: لها 3 مراحل أساسية." },
+// 15
+{ type: "truefalse", q: "كانت اسباب انتشار الجولات الافتراضيه انتشار الانترنت ورخص تكلفته فقط", correctAnswer: "خطأ", feedback: "التصحيح: هناك أسباب أخرى مثل التطور التكنولوجي والاحتياجات التعليمية." },
+// 16
+{ type: "truefalse", q: "الجولات الافتراضيه اداه من خلالها نربط العالم كله", correctAnswer: "صح", feedback: "صحيح، لأنها تتخطى الحدود الجغرافية." },
+// 17
+{ type: "truefalse", q: "لا تفيد الجولات الافتراضيه في مقررات العلوم", correctAnswer: "خطأ", feedback: "التصحيح: تفيد جداً في مقررات العلوم مثل التشريح والتجارب." },
+// 18
+{ type: "truefalse", q: "من معوقات الجولات الميدانيه التقليديه عدم قدره المرشدين لتوجيه المتعلمين للمشاركه في الرحله", correctAnswer: "صح", feedback: "صحيح، هذا أحد المعوقات الرئيسية." },
+// 19
+{ type: "truefalse", q: "من معوقات الجولات الميدانيه التقليديه عدم وجود وقت كافي للتخطيط", correctAnswer: "صح", feedback: "صحيح، فالتخطيط يحتاج وقتاً طويلاً." },
+// 20
+{ type: "truefalse", q: "الجولات الافتراضيه تكون بعد استراتيجيات التدريس فقط وليس قبلها", correctAnswer: "خطأ", feedback: "التصحيح: تكون قبل استراتيجيات التدريس وبعدها." },
+// 21
+{ type: "truefalse", q: "الجولات الميدانيه التقليديه هي اداه تعليميه تم التنويع في استخدامها خلال السنوات الماضيه مع انتشار التكنولوجيا في المؤسسات التعليمية", correctAnswer: "خطأ", feedback: "التصحيح: الجولات الافتراضية هي التي انتشرت مع التكنولوجيا." },
+// 22
+{ type: "truefalse", q: "الجولات الافتراضيه هي جوله ميدانيه في بيئه بديله سواء كانت حقيقيه او محاكاه لها", correctAnswer: "صح", feedback: "صحيح، هذا تعريف دقيق للجولات الافتراضية." },
+// 23
+{ type: "truefalse", q: "Virtual هو شكل غير تقليدي لمجتمعات يعتمد بناؤها على تكنولوجيا الحاسبات والمعلومات", correctAnswer: "صح", feedback: "صحيح، لأن Virtual يعني افتراضياً قائماً على الحاسوب." },
+// 24
+{ type: "truefalse", q: "Virtual يختلف عن اشكال المجتمعات التقليديه", correctAnswer: "صح", feedback: "صحيح، فهو يتجاوز القيود التقليدية." },
+// 25
+{ type: "truefalse", q: "يغيب في ال Virtual القيود الفيزيقيه", correctAnswer: "صح", feedback: "صحيح، فلا مكان ولا زمان فيزيقي." },
+// 26
+{ type: "truefalse", q: "تتعدد مسميات الجوله الافتراضيه", correctAnswer: "صح", feedback: "صحيح، مثل البانورامية، والجولة التفاعلية." },
+// 27
+{ type: "truefalse", q: "من مسميات الجوله الافتراضيه البانوراميه", correctAnswer: "صح", feedback: "صحيح، فهي تعتمد على اللقطات البانورامية." },
+// 28
+{ type: "truefalse", q: "الجولات الميدانيه التقليديه هي بيئه تفاعليه تسمح للمتعلم بالتفاعل مع المحتوى التعليمي من جميع الاتجاهات للتغلب على المشكلات التي تظهر للمتعلم اثناء الدراسه", correctAnswer: "خطأ", feedback: "التصحيح: الجولات الافتراضية هي البيئة التفاعلية." },
+// 29
+{ type: "truefalse", q: "الجولات الافتراضيه لا تسمح للتجول باستخدام الوسائط المخزنه عليها", correctAnswer: "خطأ", feedback: "التصحيح: تسمح بالتجول باستخدام الوسائط المخزنة." },
+// 30
+{ type: "truefalse", q: "الجولات الافتراضيه بيئه تفاعليه تتغلب على القيود المكانيه والزمانيه وتحتوى على مجموعه من الصور والفيديو والصوت واللقطات البانوراميه", correctAnswer: "صح", feedback: "صحيح، هذا تعريف شامل لها." },
+// 31
+{ type: "truefalse", q: "من عيوب الجولات الافتراضيه انها لا تدعم المقررات البيئيه", correctAnswer: "خطأ", feedback: "التصحيح: بالعكس، تدعم المقررات البيئية بقوة." },
+// 32
+{ type: "truefalse", q: "تتطلب الجولات الافتراضيه الى مقياس محدد في انشاؤها", correctAnswer: "خطأ", feedback: "التصحيح: لا يوجد مقياس محدد، تختلف حسب الهدف." },
+// 33
+{ type: "truefalse", q: "تكلفه الجولات الافتراضيه اعلى من الزيارات التقليديه", correctAnswer: "خطأ", feedback: "التصحيح: الزيارات التقليدية أعلى تكلفة (مواصلات، تأمين، إلخ)." },
+// 34
+{ type: "truefalse", q: "لا تسمح الجولات الافتراضيه بمبدأ التشاركيه فهي تعتمد على الفروق الفرديه", correctAnswer: "خطأ", feedback: "التصحيح: تسمح بالتشاركية والفروق الفردية معاً." },
+// 35
+{ type: "truefalse", q: "دعم المقررات البيئيه يتم من خلال اسلوب توجيه للتمكن من ربط المعلومات وايجاد علاقه بين المفاهيم والبيئه", correctAnswer: "صح", feedback: "صحيح، هذا أسلوب فعال." },
+// 36
+{ type: "truefalse", q: "التوجيه الخارجي له دور كبير في تنمية ادراك المتعلم لقدرته على اداء المهام التعليميه", correctAnswer: "صح", feedback: "صحيح، يعزز الثقة بالنفس." },
+// 37
+{ type: "truefalse", q: "الجولات الافتراضيه تعرض البيانات الغير مرئيه في الحقيقه", correctAnswer: "صح", feedback: "صحيح، مثل الطبقات الجيولوجية أو التركيب الداخلي." },
+// 38
+{ type: "truefalse", q: "تنفيذ الجولات الافتراضيه لا يصح ان يكون من التسجيلات الصوتيه او النماذج الثلاثيه الابعاد", correctAnswer: "خطأ", feedback: "التصحيح: يصح بل ويستحسن استخدامها." },
+// 39
+{ type: "truefalse", q: "الجولات الافتراضيه تعطي للمتعلم الاحساس بالحركه مما يضفي مزيدا من الواقعيه", correctAnswer: "صح", feedback: "صحيح، هذا من أهم مزاياها." },
+// 40
+{ type: "truefalse", q: "من عيوب الجولات الافتراضيه انها لا تتماشى مع النظريه البنائيه", correctAnswer: "خطأ", feedback: "التصحيح: تتماشى جداً مع النظرية البنائية." },
+// 41
+{ type: "truefalse", q: "الجولات الافتراضيه تساعد الذين لديهم مشكلات صحيه او حركيه", correctAnswer: "صح", feedback: "صحيح، لأنها لا تتطلب حركة فعلية." },
+// 42
+{ type: "truefalse", q: "من عيوب الجولات الافتراضيه انها تسمح بعدد معين لزياره الموقع", correctAnswer: "خطأ", feedback: "التصحيح: لا تضع حداً عددياً للزوار." },
+// 43 (Choose)
+{ type: "choose", q: "عمليه روابط بين العقد يمكن من خلالها عرض المحتوى اعتمادا على نمط او عده انماط على حسب طبيعه المحتوى", options: ["عقده التجول", "روابط التجول", "انماط التجول", "ادوات التجول"], correct: 2, feedback: "أنماط التجول هي التي تحدد طريقة عرض المحتوى." },
+// 44 (Choose)
+{ type: "choose", q: "تساعد المتعلم في التنقل بين العقد والموضوعات", options: ["عقده التجول", "روابط التجول", "انماط التجول", "ادوات التجول"], correct: 3, feedback: "أدوات التجول (مثل الأزرار والقوائم) تسهل التنقل." },
+// 45 (Choose)
+{ type: "choose", q: "وصالت تربط بين العقد والموضوعات", options: ["عقده التجول", "روابط التجول", "انماط التجول", "ادوات التجول"], correct: 1, feedback: "روابط التجول هي الوصلات بين العقد." },
+// 46 (Choose)
+{ type: "choose", q: "كائنات ذات وحده متكامله تحتوى على المعلومه واما ان تكون عنصر واحد كالنص او الصوره او عده عناصر", options: ["عقده التجول", "روابط التجول", "انماط التجول", "ادوات التجول"], correct: 0, feedback: "عقدة التجول هي وحدة المحتوى الأساسية." },
+// 47 (Choose)
+{ type: "choose", q: "هو ابحار محدد بصوره مسبقه من النظام", options: ["الخطي", "الشبكي", "الهرمي", "الهجين"], correct: 0, feedback: "النمط الخطي محدد مسبقاً من النظام." },
+// 48 (True/False - from choose list)
+{ type: "truefalse", q: "النمط الشبكي يحتوى على نصوص او رسومات خطيه", correctAnswer: "خطأ", feedback: "التصحيح: النمط الخطي هو الذي يحتوي على نصوص أو رسومات خطية." },
+// 49 (Choose)
+{ type: "choose", q: "يتجول فيه المتعلم عن طريق ايقونات الابحار الى صفحه الامام والخلف او الخروج", options: ["الخطي", "الشبكي", "الهرمي", "الهجين"], correct: 0, feedback: "النمط الخطي يستخدم أيقونات الأمام والخلف." },
+// 50 (True/False)
+{ type: "truefalse", q: "النمط الهرمي هو الذي يمكن ان يوصل لكل العقد من خلال عقده واحده على الاقل", correctAnswer: "خطأ", feedback: "التصحيح: النمط الخطي هو الذي يوصل لكل العقد من عقدة واحدة." },
+// 51 (True/False)
+{ type: "truefalse", q: "كل الروابط ترتبط رأسها بذيلها في النمط الخطي", correctAnswer: "صح", feedback: "صحيح، هذا تعريف النمط الخطي المتسلسل." },
+// 52 (Choose)
+{ type: "choose", q: "من عيوبه لا يتسم بالمرونه ولا يراعي الفروق الفرديه", options: ["الخطي", "الشبكي", "الهرمي", "الهجين"], correct: 0, feedback: "النمط الخطي جامد ولا يراعي الفروق الفردية." },
+// 53 (Choose)
+{ type: "choose", q: "مفيد لكل مستويات الطالب واقل تعقيدا من المستويات الاخرى", options: ["الخطي", "الشبكي", "الهرمي", "الهجين"], correct: 0, feedback: "النمط الخطي بسيط ومناسب لجميع المستويات." },
+// 54 (True/False)
+{ type: "truefalse", q: "الابحار الهرمي ينظم تدريجيا في درجه التعقيد كلما اتجهنا الى الاسفل", correctAnswer: "خطأ", feedback: "التصحيح: درجة التعقيد تزيد كلما اتجهنا إلى الأعلى." },
+// 55 (Choose)
+{ type: "choose", q: "يزود المتعلم بقائمه اختيار مرتبطه بقوائم اخرى", options: ["الخطي", "الشبكي", "الهرمي", "الهجين"], correct: 2, feedback: "النمط الهرمي يعتمد على قوائم متفرعة." },
+// 56 (True/False)
+{ type: "truefalse", q: "من عيوب النمط الهرمي ان له حد اقصى في عدد القوائم التي يحتويها", correctAnswer: "خطأ", feedback: "التصحيح: ليس له حد أقصى محدد." },
+// 57 (True/False)
+{ type: "truefalse", q: "النمط الخطي يتحرك فيه المتعلم عن طريق الضغط بالفاره على النقاط الساخنه بشكل منظم وتتابعي", correctAnswer: "خطأ", feedback: "التصحيح: النمط الهرمي هو الذي يستخدم النقاط الساخنة." },
+// 58 (Choose)
+{ type: "choose", q: "يستطيع ترتيب المجموعات الكبيره واعطاء لكل مجموعه رمز ولون معين غير متكرر", options: ["الخطي", "الشبكي", "الهرمي", "الهجين"], correct: 2, feedback: "النمط الهرمي ينظم المجموعات الكبيرة بألوان ورموز." },
+// 59 (True/False)
+{ type: "truefalse", q: "من عيوب النمط الهرمي انه ياخذ وقتا طويلا في عمليه استرجاع المعلومات", correctAnswer: "خطأ", feedback: "التصحيح: استرجاع المعلومات فيه سريع نسبياً." },
+// 60 (Choose)
+{ type: "choose", q: "يكون فيه الموضوعات مجزاه الى اجزاء متعددة بينها روابط ووصالت كثيره", options: ["الخطي", "الشبكي", "الهرمي", "الهجين"], correct: 1, feedback: "النمط الشبكي يتميز بالروابط الكثيرة بين الأجزاء." },
+// 61 (True/False)
+{ type: "truefalse", q: "من عيوب النمط الخطي كثرت الروابط التي تجعل المتعلم تائها", correctAnswer: "خطأ", feedback: "التصحيح: من عيوب النمط الشبكي كثرة الروابط والتشتت." },
+// 62 (Choose)
+{ type: "choose", q: "يطلق عليه الابحار التوسعي", options: ["الخطي", "الشبكي", "الهرمي", "الهجين"], correct: 1, feedback: "النمط الشبكي يسمى الإبحار التوسعي." },
+// 63 (Choose)
+{ type: "choose", q: "النمط الشبكي اسمه الفائق او المختلط ويستخدم فيه اكثر من نمط", options: ["الخطي", "الشبكي", "الهرمي", "الهجين"], correct: 3, feedback: "النمط الهجين هو الفائق أو المختلط." },
+// 64 (True/False)
+{ type: "truefalse", q: "النمط الشبكي يسمى بالنمط العشوائي", correctAnswer: "صح", feedback: "صحيح، لأنه غير خطي وغير هرمي." },
+// 65 (Choose)
+{ type: "choose", q: "نمط غالبا يستخدم في انظمه شبكات المعلومات", options: ["الخطي", "الشبكي", "الهرمي", "الهجين"], correct: 3, feedback: "النمط الهجين يدمج بين الأنماط الأخرى." },
+// 66 (True/False)
+{ type: "truefalse", q: "التجول الحر افضل من التجول بالارشاد", correctAnswer: "خطأ", feedback: "التصحيح: التجول بالإرشاد أفضل للمتعلمين المبتدئين." },
+// 67 (True/False)
+{ type: "truefalse", q: "في التجول الحر اعتماد المستخدم على وسائل الوصول تقل مقارنه بالتجول بالارشاد", correctAnswer: "خطأ", feedback: "التصحيح: في التجول الحر يزيد الاعتماد على وسائل الوصول." },
+// 68 (True/False)
+{ type: "truefalse", q: "شرط التجول الحر بالارشاد ان تكون المساعده محدوده", correctAnswer: "صح", feedback: "صحيح، حتى لا يصبح مقيّداً بالكامل." },
+// 69 (True/False)
+{ type: "truefalse", q: "يجب على التوجيه ان لا ينقطع بشكل تدريجي", correctAnswer: "خطأ", feedback: "التصحيح: يجب أن ينقطع بشكل تدريجي كلما زادت خبرة المتعلم." },
+// 70 (True/False)
+{ type: "truefalse", q: "في التجول الحر بالارشاد يجب مراعاه التوازن بين فكره التفاعليه والتوجيه للتجول", correctAnswer: "صح", feedback: "صحيح، هذا هو المبدأ الأساسي." },
+// 71 (True/False)
+{ type: "truefalse", q: "من مميزات النوع النصي من الجولات الافتراضيه بعرض مفصل لمحتوى الجوله", correctAnswer: "صح", feedback: "صحيح، النص يتيح التفاصيل الدقيقة." },
+// 72 (True/False)
+{ type: "truefalse", q: "تتشارك النمط النصي مع النمط المعتمد على الصور", correctAnswer: "صح", feedback: "صحيح، غالباً ما يُدمجان معاً." },
+// 73 (True/False)
+{ type: "truefalse", q: "من عيوب الجولات القائمه على الصور انها ليس بها تفاعل", correctAnswer: "خطأ", feedback: "التصحيح: قد تحتوي على تفاعل مثل النقر على مناطق مختلفة." },
+// 74 (True/False)
+{ type: "truefalse", q: "معظم الجولات الافتراضيه مرئيه ومسموعه", correctAnswer: "صح", feedback: "صحيح، تجمع بين الصوت والصورة." },
+// 75 (Choose)
+{ type: "choose", q: "يستخدم فيه خاصيه المشي ومناسب للمتعلمين ذوي الاحتياجات الخاصه", options: ["الصوت", "الصور", "النص", "ثلاثي الابعاد"], correct: 0, feedback: "الجولات الصوتية مناسبة لضعاف البصر." },
+// 76 (True/False)
+{ type: "truefalse", q: "من مميزات النوع القائم على النص ان الراوي يوصف الجوله وصفا دقيقا", correctAnswer: "خطأ", feedback: "التصحيح: هذا من مميزات النوع الصوتي." },
+// 77 (True/False)
+{ type: "truefalse", q: "الجولات الافتراضيه ثلاثيه الابعاد لا تتيح امكانيه التفاعل", correctAnswer: "خطأ", feedback: "التصحيح: تتيح تفاعلاً كبيراً جداً." },
+// 78 (True/False)
+{ type: "truefalse", q: "الجولات الافتراضيه القائمه على الفيديو لا تشتمل على رسوم متحركه", correctAnswer: "خطأ", feedback: "التصحيح: قد تشتمل على رسوم متحركة وانتقالات." },
+// 79 (Choose)
+{ type: "choose", q: "نوع من الجولات الافتراضيه تعرض محتواها بطريقه فلميه متحركه", options: ["ثلاثي الابعاد", "الفيديو", "البانورامي", "المتزامن"], correct: 1, feedback: "الجولات القائمة على الفيديو تعرض كمشاهد فلمية." },
+// 80 (Choose)
+{ type: "choose", q: "نوع من الجولات الافتراضيه تعرض محتواها بطريقه ثلاثيه الابعاد", options: ["ثلاثي الابعاد", "الفيديو", "البانورامي", "المتزامن"], correct: 2, feedback: "البانورامي يعطي إحساساً ثلاثي الأبعاد." },
+// 81 (Choose)
+{ type: "choose", q: "نوع من الجولات الافتراضيه من عيوبه تكلفه الانتاج العاليه وصعوبه التحديث", options: ["ثلاثي الابعاد", "الفيديو", "البانورامي", "المتزامن"], correct: 1, feedback: "جولات الفيديو مكلفة الإنتاج ويصعب تحديثها." },
+// 82 (Choose)
+{ type: "choose", q: "نوع من الجولات الافتراضيه تتطلب انتاج الصور بزاويه 360 درجه وبجوده عاليه", options: ["ثلاثي الابعاد", "الفيديو", "البانورامي", "المتزامن"], correct: 2, feedback: "الجولات البانورامية تعتمد على صور 360 درجة." },
+// 83 (True/False)
+{ type: "truefalse", q: "نوع من الجولات الافتراضيه يدمج بين الفيديو والبانورامي هو التزامني", correctAnswer: "صح", feedback: "صحيح، يسمى التزامني أو المتزامن." },
+// 84 (True/False)
+{ type: "truefalse", q: "في مرحله الملاحظه يكون اخذ المعلومات من المستخدم الى البيئه", correctAnswer: "خطأ", feedback: "التصحيح: في مرحلة الملاحظة يكون أخذ المعلومات من البيئة إلى المستخدم." },
+// 85 (True/False)
+{ type: "truefalse", q: "في مرحله المعالجه يكون المستخدم قادر على رؤيه نتيجه افعاله", correctAnswer: "صح", feedback: "صحيح، هذا هو مفهوم التغذية الراجعة." },
+// 86 (True/False)
+{ type: "truefalse", q: "في مرحله الملاحظه لا يشترط وجود المستخدم داخل البيئه", correctAnswer: "صح", feedback: "صحيح، يمكن أن يلاحظ من الخارج." },
+// 87 (True/False)
+{ type: "truefalse", q: "ليس من الضروري وجود وكيل افتراضي في الجولات الافتراضيه", correctAnswer: "صح", feedback: "صحيح، الوكيل الافتراضي اختياري وليس إلزامياً." },
+// 88 (True/False)
+{ type: "truefalse", q: "التجول الحر معتمد على تكنولوجيا الواقع الافتراضي", correctAnswer: "صح", feedback: "صحيح، يعتمد على الواقع الافتراضي." },
+// 89 (True/False)
+{ type: "truefalse", q: "التجول الحر يطلق عليه اسم ثنائي البعد", correctAnswer: "خطأ", feedback: "التصحيح: يطلق عليه أحياناً ثلاثي الأبعاد أو الواقع الافتراضي." },
+// 90 (True/False)
+{ type: "truefalse", q: "طريقه الاستعراض في التجول الموجه بالمشي لكن في التجول الحر بانورامي", correctAnswer: "خطأ", feedback: "التصحيح: في التجول الموجه بانورامي، وفي الحر مشي." },
+// 91 (True/False)
+{ type: "truefalse", q: "سرعه التجول في الحر اقل من سرعه التجول الموجه", correctAnswer: "صح", feedback: "صحيح، لأن التجول الحر يتطلب معالجة أكبر." },
+// 92 (True/False)
+{ type: "truefalse", q: "واقعيه التجول غير متطابقه مع الواقع الموجه ولكنها متطابقه مع الحر", correctAnswer: "صح", feedback: "صحيح، التجول الحر أكثر واقعية." },
+// 93 (True/False)
+{ type: "truefalse", q: "تمثيل المستخدم داخل الحر متاح غير متاح في الموجه", correctAnswer: "صح", feedback: "صحيح، في الحر يمثل المستخدم بأفاتار." },
+// 94 (True/False)
+{ type: "truefalse", q: "الروابط بين المكونات في الحر انسيابيه في الموجه نقاط ساخنه", correctAnswer: "صح", feedback: "صحيح، هذا الفرق بينهما." },
+// 95 (True/False)
+{ type: "truefalse", q: "الابحار الذي يتيحه التجول العشوائي هو الافقي", correctAnswer: "خطأ", feedback: "التصحيح: الذي يتيحه هو النمط الشبكي." },
+// 96 (True/False)
+{ type: "truefalse", q: "نمط التجول الخطي يكون باستخدام الازرار", correctAnswer: "صح", feedback: "صحيح، هذا صحيح." },
+// 97 (True/False)
+{ type: "truefalse", q: "النمط الخطي هو نمط يسير المتعلم بين خطوات متتابعه بين اجزاء المحتوى ولكن بحريه تامه باستخدام الازرار والقائمه", correctAnswer: "خطأ", feedback: "التصحيح: النمط الخطي لا يعطي حرية تامة، بل يسير بتسلسل محدد." },
+// 98 (True/False)
+{ type: "truefalse", q: "جوجل ماب يسمح بالجولات الافتراضيه ولكن على مواقع معينه من سطح الارض", correctAnswer: "صح", feedback: "صحيح، يتيح التجول في الشوارع والأماكن المحددة." },
+// 99 (Choose)
+{ type: "choose", q: "برنامج يرسم خريطه الارض عن طريق تركيب الصور التي تم الحصول عليها من خلال الاقمار الصناعيه والتصوير الجوى ونظم المعلومات الجغرافيه هو", options: ["جوجل ماب", "جوجل ايرث", "الواقع الافتراضي", "مايكروسوفت وورد"], correct: 1, feedback: "جوجل إيرث هو البرنامج الذي يرسم خريطة الأرض بهذه التقنيات." },
+// 100 (True/False)
+{ type: "truefalse", q: "الجولات الافتراضيه القائمه على سطح المكتب معتمده على الوسائط التفاعليه", correctAnswer: "صح", feedback: "صحيح، تعتمد على الوسائط المتعددة التفاعلية." }
+];
+
+let index = 0;
+let score = 0;
+let userAnswers = Array(questions.length).fill(null);
+let answerStatus = Array(questions.length).fill(false);
+let quizCompleted = false;
+
+function updateProgress() {
+    document.getElementById("progressText").textContent = `السؤال ${index+1} من ${questions.length}`;
+    document.getElementById("progressBar").style.width = ((index+1)/questions.length)*100 + "%";
+}
+
+function loadQuestion() {
+    if(quizCompleted) return;
+    
+    updateProgress();
+    const q = questions[index];
+    document.getElementById("questionText").textContent = q.q;
+    document.getElementById("feedback").style.display = "none";
+    
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = index > 0 ? "block" : "none";
+    
+    const optionsContainer = document.getElementById("options");
+    
+    if (q.type === "choose") {
+        let optionsHTML = '<div class="options-container">';
+        q.options.forEach((opt, i) => {
+            optionsHTML += `<div class="option" onclick="selectOption(${i})">${opt}</div>`;
+        });
+        optionsHTML += '</div>';
+        optionsContainer.innerHTML = optionsHTML;
+    } else if (q.type === "truefalse") {
+        optionsContainer.innerHTML = `
+            <div class="truefalse-container">
+                <div class="tf-option" onclick="selectTrueFalse('صح')">✓ صح</div>
+                <div class="tf-option" onclick="selectTrueFalse('خطأ')">✗ خطأ</div>
+            </div>
+        `;
+    }
+    
+    if (userAnswers[index] !== null) {
+        showSavedAnswer();
+    }
+}
+
+function selectOption(selectedIndex) {
+    if (userAnswers[index] !== null || quizCompleted) return;
+    
+    const q = questions[index];
+    const isCorrect = (selectedIndex === q.correct);
+    
+    userAnswers[index] = { type: "choose", selected: selectedIndex, correct: isCorrect };
+    answerStatus[index] = isCorrect;
+    
+    if (isCorrect) {
+        score++;
+    }
+    
+    const options = document.querySelectorAll(".option");
+    options.forEach((op, idx) => {
+        if (idx === q.correct) op.classList.add("correct");
+        if (idx === selectedIndex && idx !== q.correct) op.classList.add("wrong");
+        op.style.pointerEvents = "none";
+    });
+    
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة!</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة!</span>
+                        <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.options[q.correct]}</strong><br>${q.feedback}</div>`;
+    }
+    document.getElementById("feedback").innerHTML = feedbackHtml;
+    document.getElementById("feedback").style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function selectTrueFalse(selected) {
+    if (userAnswers[index] !== null || quizCompleted) return;
+    
+    const q = questions[index];
+    const isCorrect = (selected === q.correctAnswer);
+    
+    userAnswers[index] = { type: "truefalse", selected: selected, correct: isCorrect };
+    answerStatus[index] = isCorrect;
+    
+    if (isCorrect) {
+        score++;
+    }
+    
+    const options = document.querySelectorAll(".tf-option");
+    options.forEach(op => {
+        if (op.textContent.includes(q.correctAnswer)) {
+            op.classList.add("correct");
+        }
+        if (op.textContent.includes(selected) && !isCorrect) {
+            op.classList.add("wrong");
+        }
+        op.style.pointerEvents = "none";
+    });
+    
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة!</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة!</span>
+                        <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.correctAnswer}</strong><br>${q.feedback}</div>`;
+    }
+    document.getElementById("feedback").innerHTML = feedbackHtml;
+    document.getElementById("feedback").style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function showSavedAnswer() {
+    const q = questions[index];
+    const saved = userAnswers[index];
+    
+    if (q.type === "choose") {
+        const options = document.querySelectorAll(".option");
+        options.forEach((op, idx) => {
+            if (idx === q.correct) op.classList.add("correct");
+            if (idx === saved.selected && !saved.correct) op.classList.add("wrong");
+            op.style.pointerEvents = "none";
+        });
+        
+        let feedbackHtml = "";
+        if (saved.correct) {
+            feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة ✅</span>
+                            <div class="feedback-detail">${q.feedback}</div>`;
+        } else {
+            feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة (إجابتك: ${q.options[saved.selected]})</span>
+                            <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.options[q.correct]}</strong><br>${q.feedback}</div>`;
+        }
+        document.getElementById("feedback").innerHTML = feedbackHtml;
+        document.getElementById("feedback").style.display = "block";
+    } else if (q.type === "truefalse") {
+        const options = document.querySelectorAll(".tf-option");
+        options.forEach(op => {
+            if (op.textContent.includes(q.correctAnswer)) {
+                op.classList.add("correct");
+            }
+            if (op.textContent.includes(saved.selected) && !saved.correct) {
+                op.classList.add("wrong");
+            }
+            op.style.pointerEvents = "none";
+        });
+        
+        let feedbackHtml = "";
+        if (saved.correct) {
+            feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة ✅</span>
+                            <div class="feedback-detail">${q.feedback}</div>`;
+        } else {
+            feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة (إجابتك: ${saved.selected})</span>
+                            <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.correctAnswer}</strong><br>${q.feedback}</div>`;
+        }
+        document.getElementById("feedback").innerHTML = feedbackHtml;
+        document.getElementById("feedback").style.display = "block";
+    }
+    
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function nextQuestion() {
+    if (userAnswers[index] === null) {
+        document.getElementById("feedback").innerHTML = `<span style="color:#b30000">❗ الرجاء اختيار إجابة أولاً.</span>`;
+        document.getElementById("feedback").style.display = "block";
+        return;
+    }
+    
+    if (index < questions.length - 1) {
+        index++;
+        loadQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function prevQuestion() {
+    if (index > 0) {
+        index--;
+        loadQuestion();
+    }
+}
+
+function showResult() {
+    quizCompleted = true;
+    
+    document.querySelector(".progress-bar").style.display = "none";
+    document.getElementById("progressText").style.display = "none";
+    document.getElementById("questionText").style.display = "none";
+    document.getElementById("options").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = "none";
+    document.getElementById("feedback").style.display = "none";
+    
+    const percent = Math.round((score/questions.length)*100);
+    let gradeMsg = "";
+    if (percent >= 90) gradeMsg = "ممتاز 🎉";
+    else if (percent >= 75) gradeMsg = "جيد جداً 👍";
+    else if (percent >= 60) gradeMsg = "جيد 📚";
+    else gradeMsg = "روح نام أفضل 😴";
+    
+    document.getElementById("result").style.display = "block";
+    document.getElementById("result").innerHTML = `
+        <h3>🏁 انتهى الاختبار</h3>
+        <span>${score} / ${questions.length}</span>
+        <div>النسبة المئوية: ${percent}%</div>
+        <div style="margin-top:15px; font-size:20px;">${gradeMsg}</div>
+        <div style="margin-top:20px; font-size:16px;">📌 اضغط "إعادة الاختبار" للتدرب مجدداً</div>
+    `;
+    document.querySelector(".restart-btn").style.display = "block";
+    
+    // ==================== إرسال التقرير إلى تليجرام ====================
+    const reportMsg = `📢 <b>تقرير الجولات الفصل الأول</b> 📢
+    
+🎯 <b>النتيجة النهائية:</b> ${score}/${questions.length}
+📈 <b>النسبة:</b> ${percent}%
+🏅 <b>التقدير:</b> ${gradeMsg}
+⏰ <b>تاريخ الإكمال:</b> ${new Date().toLocaleString('ar-EG')}`;
+    
+    sendTelegramMessage(reportMsg);
+}
+
+
+function restartTest() {
+    quizCompleted = false;
+    index = 0;
+    score = 0;
+    userAnswers = Array(questions.length).fill(null);
+    answerStatus = Array(questions.length).fill(false);
+    
+    document.querySelector(".progress-bar").style.display = "block";
+    document.getElementById("progressText").style.display = "block";
+    document.getElementById("questionText").style.display = "block";
+    document.getElementById("options").style.display = "flex";
+    document.getElementById("result").style.display = "none";
+    document.querySelector(".restart-btn").style.display = "none";
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    loadQuestion();
+}
+
+// بدء الاختبار والتحقق من البيانات المعلقة
+window.onload = function() {
+    checkPendingData();
+    loadQuestion();
+};
+</script>
+
+</body>
+</html>
