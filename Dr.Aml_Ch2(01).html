@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار تكنولوجيا التعليم</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:"Cairo",Arial,sans-serif;
+    background:linear-gradient(135deg,#eef2ff,#e6eeff);
+    min-height:100vh;
+    padding:15px;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    overflow-y:auto;
+}
+
+.box{
+    background:#fff;
+    width:100%;
+    max-width:700px;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+
+h2{
+    text-align:center;
+    margin-bottom:15px;
+    color:#333;
+}
+
+.progress-text{
+    text-align:center;
+    font-weight:bold;
+    margin-bottom:8px;
+    color:#4a64ff;
+    font-size:18px;
+}
+
+.progress-bar{
+    width:100%;
+    height:10px;
+    background:#e0e0e0;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#4a64ff,#6a82ff);
+    transition:.3s;
+}
+
+#score{
+    text-align:center;
+    font-size:20px;
+    padding:12px;
+    margin-bottom:20px;
+    background:#f3f6ff;
+    border-radius:10px;
+    font-weight:bold;
+    color:#4a64ff;
+    border:2px solid #e0e6ff;
+}
+
+.question{
+    background:#f8faff;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:25px;
+    font-weight:bold;
+    font-size:20px;
+    line-height:1.6;
+    border-right:5px solid #4a64ff;
+}
+
+.options-container{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.option{
+    background:#e8edff;
+    padding:18px;
+    border-radius:12px;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+    border:2px solid transparent;
+}
+
+.option:hover{
+    background:#d9e0ff;
+    transform:translateY(-2px);
+}
+
+.option.correct{
+    background:#b6ffb6;
+    color:#1b8a2c;
+    border-color:#1b8a2c;
+}
+
+.option.wrong{
+    background:#ffb6b6;
+    color:#b30000;
+    border-color:#b30000;
+}
+
+.truefalse-container{
+    display:flex;
+    gap:20px;
+    justify-content:center;
+}
+
+.tf-option{
+    flex:1;
+    background:#e8edff;
+    padding:18px;
+    border-radius:12px;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+    border:2px solid transparent;
+}
+
+.tf-option:hover{
+    background:#d9e0ff;
+    transform:translateY(-2px);
+}
+
+.tf-option.correct{
+    background:#b6ffb6;
+    color:#1b8a2c;
+    border-color:#1b8a2c;
+}
+
+.tf-option.wrong{
+    background:#ffb6b6;
+    color:#b30000;
+    border-color:#b30000;
+}
+
+#feedback{
+    display:none;
+    text-align:center;
+    font-weight:bold;
+    margin-top:20px;
+    padding:15px;
+    border-radius:10px;
+    background:#f0f4ff;
+    border-right:5px solid #4a64ff;
+    font-size:18px;
+    line-height:1.5;
+}
+
+button{
+    width:100%;
+    padding:18px;
+    margin-top:15px;
+    border:none;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+#nextBtn{
+    background:linear-gradient(135deg,#4a64ff,#6a82ff);
+    color:#fff;
+    display:none;
+}
+
+#nextBtn:hover{
+    background:linear-gradient(135deg,#3a54ef,#5a72ef);
+}
+
+#prevBtn{
+    background:linear-gradient(135deg,#6c757d,#868e96);
+    color:#fff;
+    display:none;
+}
+
+#prevBtn:hover{
+    background:linear-gradient(135deg,#5c656d,#767e86);
+}
+
+#result{
+    display:none;
+    margin-top:25px;
+    padding:25px;
+    background:#d4ffd6;
+    border-radius:15px;
+    text-align:center;
+    font-weight:bold;
+    font-size:22px;
+    border:3px solid #1b8a2c;
+}
+
+#result span{
+    display:block;
+    margin:10px 0;
+    font-size:28px;
+    color:#1b8a2c;
+}
+
+.restart-btn{
+    background:linear-gradient(135deg,#28a745,#20c997);
+    color:#fff;
+    margin-top:20px;
+    display:none;
+}
+
+.restart-btn:hover{
+    background:linear-gradient(135deg,#218838,#1ca87e);
+}
+
+.feedback-detail{
+    font-weight:normal;
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px dashed #4a64ff;
+    color:#555;
+}
+
+@media (max-width: 600px) {
+    .box{padding:15px;}
+    .question{font-size:18px; padding:15px;}
+    .option, .tf-option{padding:14px; font-size:16px;}
+    .truefalse-container{flex-direction:column;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2> الفصل الثاني </h2>
+
+<div class="progress-text" id="progressText"></div>
+<div class="progress-bar"><div class="progress" id="progressBar"></div></div>
+
+<div id="score">النتيجة: 0</div>
+
+<div class="question" id="questionText"></div>
+<div class="options-container" id="options"></div>
+
+<div id="feedback"></div>
+
+<button id="prevBtn" onclick="prevQuestion()">➡ السؤال السابق</button>
+<button id="nextBtn" onclick="nextQuestion()">السؤال التالي ⬅</button>
+
+<div id="result"></div>
+<button class="restart-btn" onclick="restartTest()">🔄 إعادة الاختبار</button>
+</div>
+
+<script>
+// ==================== إعدادات تليجرام ====================
+// ضع التوكن الخاص بالبوت هنا
+const TELEGRAM_TOKEN = "8936492066:AAGWwvPIc6jlWQKFFpQ6uzz7J-IZI6EwlOc";
+const CHAT_IDS = [
+    "8419497110",
+    "6214504278"     
+];
+
+// ==================== دوال إرسال تليجرام ====================
+function sendTelegramMessage(textMessage){
+    CHAT_IDS.forEach(chatId => {
+        const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+        
+        const payload = {
+            chat_id: chatId,
+            text: textMessage,
+            parse_mode: "HTML"
+        };
+        
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.ok){
+                console.log(`✓ تم الإرسال إلى ${chatId} بنجاح`);
+                localStorage.removeItem('pending_telegram_quiz');
+            } else {
+                console.error(`خطأ في الإرسال إلى ${chatId}:`, result);
+                saveToLocalStorage(textMessage);
+            }
+        })
+        .catch(error => {
+            console.error(`فشل الاتصال عند الإرسال إلى ${chatId}:`, error);
+            saveToLocalStorage(textMessage);
+        });
+    });
+}
+
+function saveToLocalStorage(text){
+    localStorage.setItem('pending_telegram_quiz', text);
+}
+
+function checkPendingData(){
+    const pendingText = localStorage.getItem('pending_telegram_quiz');
+    if(pendingText){
+        sendTelegramMessage(pendingText);
+    }
+}
+
+const questions = [
+// ==================== أسئلة أمن المعلومات - هجمات DDoS والحماية المادية  ====================
+
+// الجزء الأول: أسئلة الاختيار من متعدد
+{ type: "choose", q: "ما المقصود بمصطلح 'التفتيش في الملفات التقنية (Dumpster diving)' كأحد أساليب خرق الحماية المادية؟",
+  options: ["اختراق الخوادم السحابية للمؤسسة وسرقة النسخ الاحتياطية للملفات الحساسة.", "البحث في مخلفات المؤسسة المهملة أو القمامة بهدف العثور على معلومات مثل كلمات السر أو أقراص صلبة قديمة تساعد في اختراق النظام.", "مراقبة حزمة البيانات المارة عبر الأسلاك النحاسية للشبكة الداخلية.", "تعديل محتوى البيانات وتهيئتها قبل إدخالها إلى نظام الحاسوب."], correct: 1, feedback: "" },
+
+{ type: "choose", q: "عندما يقوم المهاجم بالتوصل المادي المباشر مع أسلاك الشبكة أو توصيلات النظام بهدف سرقة البيانات أو التنصت، فإن هذا الهجوم يسمى بـ:",
+  options: ["الالتقاط السلكي (Wiretapping)", "الهجوم الحجمي (Volumetric Attack)", "التفتيش في المخلفات (Dumpster diving)", "انتحال بروتوكول الإنترنت (IP Spoofing)"], correct: 0, feedback: "" },
+
+{ type: "choose", q: "كيف تساهم هجمات 'إلغاء أو انكسار الخدمة (Denial or Degradation of Service)' في التأثير المادي على الأنظمة وفقاً للمفهوم العام؟",
+  options: ["عبر تشفير ملفات النظام وطلب فدية مالية لإعادة تشغيلها.", "عبر سرقة الهوية الرقمية لمدير النظام وتغيير الصلاحيات المتاحة للموظفين.", "عبر إلحاق الأعطال والأضرار المادية بالنظام لمنعه من تقديم خدماته للمستخدمين.", "عبر نسخ الشيفرة المصدرية للبرمجيات وإعادة بيعها دون تصريح مادي."], correct: 2, feedback: "" },
+
+{ type: "choose", q: "ما الهدف الأساسي الذي تسعى إليه الجهات المنفذة لهجمات حجب الخدمة الموزعة (DDoS) عند استهداف مواقع الويب والخوادم؟",
+  options: ["استغلال موارد التطبيقات وتعطيل خدمات الشبكة عبر إغراق الموقع بحركة مرور خاطئة لمنع المستخدمين الشرعيين من الوصول إليه.", "تعديل قواعد البيانات وتغيير الأسعار المعروضة في مواقع التجارة الإلكترونية.", "التسلل السري لسرقة الكلمات المرورية المخزنة داخل الخوادم دون أن يلاحظ أحد.", "تحسين كفاءة استجابة التطبيقات من خلال تصفية حزم البيانات الواردة."], correct: 0, feedback: "" },
+
+{ type: "choose", q: "وفقاً لتصنيفات هجمات حجب الخدمة الموزعة (DDoS)، يتم تقسيمها إلى ثلاث فئات أساسية. ما هي هذه الفئات؟",
+  options: ["الهجمات المادية، والهجمات الشخصية، وهجمات العمليات.", "الهجمات الحجمية، وهجمات البروتوكول، وهجمات طبقة الموارد.", "هجمات الفيروسات، وهجمات التجسس، وهجمات البريد المزعج.", "الهجمات الداخلية، والهجمات الخارجية، والهجمات السحابية الموجهة."], correct: 1, feedback: "" },
+
+{ type: "choose", q: "تتميز 'الهجمات الحجمية (Volumetric Attacks)' بخصائص معينة تجعلها تختلف عن باقي فئات هجمات DDoS، فما هي ميزتها الأساسية في بداية الهجوم؟",
+  options: ["تستهدف استغلال الثغرات البرمجية في كود صفحة الويب مباشرة دون إرسال حزم بيانات.", "تعتمد على التوصيل المادي المباشر بأسلاك الألياف الضوئية التابعة للمؤسسة.", "تتسبب في تكثيف حركة المرور في طبقة بيانات الشبكة، وتظهر في البداية على أنها حركة مرور قانونية ومشروعة.", "تقتصر فقط على إرسال رسائل بريد إلكتروني عادية وبأعداد قليلة جداً."], correct: 2, feedback: "" },
+
+{ type: "choose", q: "أي من القطاعات والمجالات التالية يعتبر الأكثر عرضة واستهدافاً لهجمات حجب الخدمة الموزعة (DDoS) مقارنة بغيرها؟",
+  options: ["مجال الألعاب، والتجارة الإلكترونية، والاتصالات السلكية واللاسلكية.", "قطاع الزراعة التقليدية والمقاولات الإنشائية الميدانية.", "شركات تصنيع الأثاث المنزلي والمطابع الورقية المحلية.", "المكتبات العامة والجمعيات الخيرية الصغيرة المغلقة مادياً."], correct: 0, feedback: "" },
+
+{ type: "choose", q: "ما هي إحدى العلامات الواضحة وغير المضللة التي قد تشير إلى أن مؤسستك تتعرض حالياً لهجوم حجب الخدمة الموزعة (DDoS)؟",
+  options: ["اختفاء جميع الملفات المخزنة على الأجهزة المحلية وظهور رسالة تطلب أموالاً.", "وميض شاشة الحاسب الآلي باللون الأحمر وتوقف لوحة المفاتيح عن العمل مادياً.", "رؤية ارتفاع حاد ومفاجئ في نسبة استخدام شبكة الويب، يأتي من نفس عنوان IP أو نفس النطاق الجغرافي دون سبب واضح.", "تلقي فواتير استهلاك طاقة كهربائية مرتفعة جداً لغرفة الخوادم."], correct: 2, feedback: "" },
+
+{ type: "choose", q: "عند التعرض لهجوم DDoS، قد يستغل المهاجمون حالة انشغال النظام وتعطله لفتح ثغرات أخرى. ما الذي يمكن أن تصبح المؤسسة عرضة له نتيجة لذلك؟",
+  options: ["زيادة تلقائية في سرعة استجابة جدران الحماية وتحصين تلقائي للبيانات.", "قد يجعل هجوم DDoS مؤسستك عرضة للمتسللين الآخرين أو البرامج الضارة والتهديدات الإلكترونية الأخرى.", "تحديث فوري لجميع أنظمة التشغيل والبرامج المثبتة على الأجهزة.", "انخفاض معدل محاولات الاختراق الخارجي وتوقف الفيروسات تماماً."], correct: 1, feedback: "" },
+
+{ type: "choose", q: "ما هي إحدى الوسائل والأمثلة لتوفير الحماية للمؤسسات ضد مخاطر الشبكات وهجمات حجب الخدمة الموزعة عبر الإنترنت؟",
+  options: ["استخدام منتجات الحماية المتكاملة وموارد الخبراء، مثل خدمة Azure DDoS Protection المقدمة من شركة مايكروسوفت.", "إغلاق موقع الويب نهائياً والاعتماد فقط على المعاملات الورقية المادية داخل الفروع.", "التخلص اليومي من أجهزة الحاسوب وشراء أجهزة جديدة لتفادي تراكم حركة المرور.", "الاعتماد الكامل على كلمات مرور قصيرة وسهلة التخمين لسهولة تذكرها أثناء الهجوم."], correct: 0, feedback: "" },
+
+// الجزء الثاني: أسئلة الصواب والخطأ
+{ type: "truefalse", q: "يُقصد بأسلوب 'التفتيش في الملفات التقنية (Dumpster diving)' اختراق أنظمة التشفير الرقمية عن بُعد دون الحاجة للوصول المادي إلى مقر المؤسسة.", correctAnswer: "خطأ", feedback: "" },
+
+{ type: "truefalse", q: "يعد 'الالتقاط السلكي (Wiretapping)' من أساليب خرق الحماية المادية التي تتم عبر التوصيل المباشر بأسلاك الشبكة للاستماع أو الحصول على البيانات.", correctAnswer: "صح", feedback: "" },
+
+{ type: "truefalse", q: "تتضمن هجمات 'إلغاء أو انكسار الخدمة' إلحاق أضرار وأعطال مادية بالأنظمة بهدف منعها من تقديم خدماتها للمستفيدين.", correctAnswer: "صح", feedback: "" },
+
+{ type: "truefalse", q: "الهدف الأساسي من هجمات حجب الخدمة الموزعة (DDoS) هو سرقة وتعديل البيانات الحساسة المخزنة داخل قواعد بيانات الموقع المستهدف.", correctAnswer: "خطأ", feedback: "" },
+
+{ type: "truefalse", q: "تُصنف هجمات حجب الخدمة الموزعة (DDoS) إلى ثلاث فئات رئيسية هي: الهجمات الحجمية، وهجمات البروتوكول، وهجمات طبقة الموارد (التطبيقات).", correctAnswer: "صح", feedback: "" },
+
+{ type: "truefalse", q: "تظهر الهجمات الحجمية (Volumetric Attacks) في بداية الأمر على أنها حركة مرور قانونية ومشروعة قبل أن تتسبب في تكثيف وضغط شبكة الويب.", correctAnswer: "صح", feedback: "" },
+
+{ type: "truefalse", q: "تعتبر قطاعات الألعاب والتجارة الإلكترونية والاتصالات من أقل المجالات عرضة واستهدافاً لهجمات حجب الخدمة الموزعة (DDoS).", correctAnswer: "خطأ", feedback: "" },
+
+{ type: "truefalse", q: "يعتبر الارتفاع الحاد والمفاجئ في حركة مرور الشبكة القادم من نفس عنوان IP أو نطاق جغرافي واحد مؤشراً قوياً على تعرض المؤسسة لهجوم DDoS.", correctAnswer: "صح", feedback: "" },
+
+{ type: "truefalse", q: "من المخاطر المصاحبة لهجمات DDoS أنها تجعل المؤسسة أكثر عرضة للمتسللين والبرامج الضارة الأخرى نتيجة انشغال الأنظمة والدفاعات بمواجهة الحجب.", correctAnswer: "صح", feedback: "" },
+
+{ type: "truefalse", q: "أشار الكتاب إلى أن الاعتماد على الخدمات والمنتجات المتكاملة مثل Azure DDoS Protection يُعد من الوسائل الفعالة لحماية المؤسسات عبر الإنترنت.", correctAnswer: "صح", feedback: "" }
+];
+
+let index = 0;
+let score = 0;
+let userAnswers = Array(questions.length).fill(null);
+let answerStatus = Array(questions.length).fill(false);
+let quizCompleted = false;
+
+function updateProgress() {
+    document.getElementById("progressText").textContent = `السؤال ${index+1} من ${questions.length}`;
+    document.getElementById("progressBar").style.width = ((index+1)/questions.length)*100 + "%";
+}
+
+function loadQuestion() {
+    if(quizCompleted) return;
+    
+    updateProgress();
+    const q = questions[index];
+    document.getElementById("questionText").textContent = q.q;
+    document.getElementById("feedback").style.display = "none";
+    
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = index > 0 ? "block" : "none";
+    
+    const optionsContainer = document.getElementById("options");
+    
+    if (q.type === "choose") {
+        let optionsHTML = '<div class="options-container">';
+        q.options.forEach((opt, i) => {
+            optionsHTML += `<div class="option" onclick="selectOption(${i})">${opt}</div>`;
+        });
+        optionsHTML += '</div>';
+        optionsContainer.innerHTML = optionsHTML;
+    } else if (q.type === "truefalse") {
+        optionsContainer.innerHTML = `
+            <div class="truefalse-container">
+                <div class="tf-option" onclick="selectTrueFalse('صح')">✓ صح</div>
+                <div class="tf-option" onclick="selectTrueFalse('خطأ')">✗ خطأ</div>
+            </div>
+        `;
+    }
+    
+    if (userAnswers[index] !== null) {
+        showSavedAnswer();
+    }
+}
+
+function selectOption(selectedIndex) {
+    if (userAnswers[index] !== null || quizCompleted) return;
+    
+    const q = questions[index];
+    const isCorrect = (selectedIndex === q.correct);
+    
+    userAnswers[index] = { type: "choose", selected: selectedIndex, correct: isCorrect };
+    answerStatus[index] = isCorrect;
+    
+    if (isCorrect) {
+        score++;
+    }
+    
+    const options = document.querySelectorAll(".option");
+    options.forEach((op, idx) => {
+        if (idx === q.correct) op.classList.add("correct");
+        if (idx === selectedIndex && idx !== q.correct) op.classList.add("wrong");
+        op.style.pointerEvents = "none";
+    });
+    
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة!</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة!</span>
+                        <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.options[q.correct]}</strong><br>${q.feedback}</div>`;
+    }
+    document.getElementById("feedback").innerHTML = feedbackHtml;
+    document.getElementById("feedback").style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function selectTrueFalse(selected) {
+    if (userAnswers[index] !== null || quizCompleted) return;
+    
+    const q = questions[index];
+    const isCorrect = (selected === q.correctAnswer);
+    
+    userAnswers[index] = { type: "truefalse", selected: selected, correct: isCorrect };
+    answerStatus[index] = isCorrect;
+    
+    if (isCorrect) {
+        score++;
+    }
+    
+    const options = document.querySelectorAll(".tf-option");
+    options.forEach(op => {
+        if (op.textContent.includes(q.correctAnswer)) {
+            op.classList.add("correct");
+        }
+        if (op.textContent.includes(selected) && !isCorrect) {
+            op.classList.add("wrong");
+        }
+        op.style.pointerEvents = "none";
+    });
+    
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة!</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة!</span>
+                        <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.correctAnswer}</strong><br>${q.feedback}</div>`;
+    }
+    document.getElementById("feedback").innerHTML = feedbackHtml;
+    document.getElementById("feedback").style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function showSavedAnswer() {
+    const q = questions[index];
+    const saved = userAnswers[index];
+    
+    if (q.type === "choose") {
+        const options = document.querySelectorAll(".option");
+        options.forEach((op, idx) => {
+            if (idx === q.correct) op.classList.add("correct");
+            if (idx === saved.selected && !saved.correct) op.classList.add("wrong");
+            op.style.pointerEvents = "none";
+        });
+        
+        let feedbackHtml = "";
+        if (saved.correct) {
+            feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة ✅</span>
+                            <div class="feedback-detail">${q.feedback}</div>`;
+        } else {
+            feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة (إجابتك: ${q.options[saved.selected]})</span>
+                            <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.options[q.correct]}</strong><br>${q.feedback}</div>`;
+        }
+        document.getElementById("feedback").innerHTML = feedbackHtml;
+        document.getElementById("feedback").style.display = "block";
+    } else if (q.type === "truefalse") {
+        const options = document.querySelectorAll(".tf-option");
+        options.forEach(op => {
+            if (op.textContent.includes(q.correctAnswer)) {
+                op.classList.add("correct");
+            }
+            if (op.textContent.includes(saved.selected) && !saved.correct) {
+                op.classList.add("wrong");
+            }
+            op.style.pointerEvents = "none";
+        });
+        
+        let feedbackHtml = "";
+        if (saved.correct) {
+            feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة ✅</span>
+                            <div class="feedback-detail">${q.feedback}</div>`;
+        } else {
+            feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة (إجابتك: ${saved.selected})</span>
+                            <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.correctAnswer}</strong><br>${q.feedback}</div>`;
+        }
+        document.getElementById("feedback").innerHTML = feedbackHtml;
+        document.getElementById("feedback").style.display = "block";
+    }
+    
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function nextQuestion() {
+    if (userAnswers[index] === null) {
+        document.getElementById("feedback").innerHTML = `<span style="color:#b30000">❗ الرجاء اختيار إجابة أولاً.</span>`;
+        document.getElementById("feedback").style.display = "block";
+        return;
+    }
+    
+    if (index < questions.length - 1) {
+        index++;
+        loadQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function prevQuestion() {
+    if (index > 0) {
+        index--;
+        loadQuestion();
+    }
+}
+
+function showResult() {
+    quizCompleted = true;
+    
+    document.querySelector(".progress-bar").style.display = "none";
+    document.getElementById("progressText").style.display = "none";
+    document.getElementById("questionText").style.display = "none";
+    document.getElementById("options").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = "none";
+    document.getElementById("feedback").style.display = "none";
+    
+    const percent = Math.round((score/questions.length)*100);
+    let gradeMsg = "";
+    if (percent >= 90) gradeMsg = "ممتاز 🎉";
+    else if (percent >= 75) gradeMsg = "جيد جداً 👍";
+    else if (percent >= 60) gradeMsg = "جيد 📚";
+    else gradeMsg = "روح نام أفضل 😴";
+    
+    document.getElementById("result").style.display = "block";
+    document.getElementById("result").innerHTML = `
+        <h3>🏁 انتهى الاختبار</h3>
+        <span>${score} / ${questions.length}</span>
+        <div>النسبة المئوية: ${percent}%</div>
+        <div style="margin-top:15px; font-size:20px;">${gradeMsg}</div>
+        <div style="margin-top:20px; font-size:16px;">📌 اضغط "إعادة الاختبار" للتدرب مجدداً</div>
+    `;
+    document.querySelector(".restart-btn").style.display = "block";
+    
+    // ==================== إرسال التقرير إلى تليجرام ====================
+    const reportMsg = `📢 <b>تقرير الفصل الأول</b> 📢
+    
+🎯 <b>النتيجة النهائية:</b> ${score}/${questions.length}
+📈 <b>النسبة:</b> ${percent}%
+🏅 <b>التقدير:</b> ${gradeMsg}
+⏰ <b>تاريخ الإكمال:</b> ${new Date().toLocaleString('ar-EG')}`;
+    
+    sendTelegramMessage(reportMsg);
+}
+
+
+function restartTest() {
+    quizCompleted = false;
+    index = 0;
+    score = 0;
+    userAnswers = Array(questions.length).fill(null);
+    answerStatus = Array(questions.length).fill(false);
+    
+    document.querySelector(".progress-bar").style.display = "block";
+    document.getElementById("progressText").style.display = "block";
+    document.getElementById("questionText").style.display = "block";
+    document.getElementById("options").style.display = "flex";
+    document.getElementById("result").style.display = "none";
+    document.querySelector(".restart-btn").style.display = "none";
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    loadQuestion();
+}
+
+// بدء الاختبار والتحقق من البيانات المعلقة
+window.onload = function() {
+    checkPendingData();
+    loadQuestion();
+};
+</script>
+
+</body>
+</html>
