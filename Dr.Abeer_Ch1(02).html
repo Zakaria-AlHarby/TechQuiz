@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار تكنولوجيا التعليم</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:"Cairo",Arial,sans-serif;
+    background:linear-gradient(135deg,#eef2ff,#e6eeff);
+    min-height:100vh;
+    padding:15px;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    overflow-y:auto;
+}
+
+.box{
+    background:#fff;
+    width:100%;
+    max-width:700px;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+
+h2{
+    text-align:center;
+    margin-bottom:15px;
+    color:#333;
+}
+
+.progress-text{
+    text-align:center;
+    font-weight:bold;
+    margin-bottom:8px;
+    color:#4a64ff;
+    font-size:18px;
+}
+
+.progress-bar{
+    width:100%;
+    height:10px;
+    background:#e0e0e0;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#4a64ff,#6a82ff);
+    transition:.3s;
+}
+
+#score{
+    text-align:center;
+    font-size:20px;
+    padding:12px;
+    margin-bottom:20px;
+    background:#f3f6ff;
+    border-radius:10px;
+    font-weight:bold;
+    color:#4a64ff;
+    border:2px solid #e0e6ff;
+}
+
+.question{
+    background:#f8faff;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:25px;
+    font-weight:bold;
+    font-size:20px;
+    line-height:1.6;
+    border-right:5px solid #4a64ff;
+}
+
+.options-container{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.option{
+    background:#e8edff;
+    padding:18px;
+    border-radius:12px;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+    border:2px solid transparent;
+}
+
+.option:hover{
+    background:#d9e0ff;
+    transform:translateY(-2px);
+}
+
+.option.correct{
+    background:#b6ffb6;
+    color:#1b8a2c;
+    border-color:#1b8a2c;
+}
+
+.option.wrong{
+    background:#ffb6b6;
+    color:#b30000;
+    border-color:#b30000;
+}
+
+.truefalse-container{
+    display:flex;
+    gap:20px;
+    justify-content:center;
+}
+
+.tf-option{
+    flex:1;
+    background:#e8edff;
+    padding:18px;
+    border-radius:12px;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+    border:2px solid transparent;
+}
+
+.tf-option:hover{
+    background:#d9e0ff;
+    transform:translateY(-2px);
+}
+
+.tf-option.correct{
+    background:#b6ffb6;
+    color:#1b8a2c;
+    border-color:#1b8a2c;
+}
+
+.tf-option.wrong{
+    background:#ffb6b6;
+    color:#b30000;
+    border-color:#b30000;
+}
+
+#feedback{
+    display:none;
+    text-align:center;
+    font-weight:bold;
+    margin-top:20px;
+    padding:15px;
+    border-radius:10px;
+    background:#f0f4ff;
+    border-right:5px solid #4a64ff;
+    font-size:18px;
+    line-height:1.5;
+}
+
+button{
+    width:100%;
+    padding:18px;
+    margin-top:15px;
+    border:none;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+#nextBtn{
+    background:linear-gradient(135deg,#4a64ff,#6a82ff);
+    color:#fff;
+    display:none;
+}
+
+#nextBtn:hover{
+    background:linear-gradient(135deg,#3a54ef,#5a72ef);
+}
+
+#prevBtn{
+    background:linear-gradient(135deg,#6c757d,#868e96);
+    color:#fff;
+    display:none;
+}
+
+#prevBtn:hover{
+    background:linear-gradient(135deg,#5c656d,#767e86);
+}
+
+#result{
+    display:none;
+    margin-top:25px;
+    padding:25px;
+    background:#d4ffd6;
+    border-radius:15px;
+    text-align:center;
+    font-weight:bold;
+    font-size:22px;
+    border:3px solid #1b8a2c;
+}
+
+#result span{
+    display:block;
+    margin:10px 0;
+    font-size:28px;
+    color:#1b8a2c;
+}
+
+.restart-btn{
+    background:linear-gradient(135deg,#28a745,#20c997);
+    color:#fff;
+    margin-top:20px;
+    display:none;
+}
+
+.restart-btn:hover{
+    background:linear-gradient(135deg,#218838,#1ca87e);
+}
+
+.feedback-detail{
+    font-weight:normal;
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px dashed #4a64ff;
+    color:#555;
+}
+
+@media (max-width: 600px) {
+    .box{padding:15px;}
+    .question{font-size:18px; padding:15px;}
+    .option, .tf-option{padding:14px; font-size:16px;}
+    .truefalse-container{flex-direction:column;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2> الفصل الاول </h2>
+
+<div class="progress-text" id="progressText"></div>
+<div class="progress-bar"><div class="progress" id="progressBar"></div></div>
+
+<div id="score">النتيجة: 0</div>
+
+<div class="question" id="questionText"></div>
+<div class="options-container" id="options"></div>
+
+<div id="feedback"></div>
+
+<button id="prevBtn" onclick="prevQuestion()">➡ السؤال السابق</button>
+<button id="nextBtn" onclick="nextQuestion()">السؤال التالي ⬅</button>
+
+<div id="result"></div>
+<button class="restart-btn" onclick="restartTest()">🔄 إعادة الاختبار</button>
+</div>
+
+<script>
+// ==================== إعدادات تليجرام ====================
+// ضع التوكن الخاص بالبوت هنا
+const TELEGRAM_TOKEN = "8936492066:AAGWwvPIc6jlWQKFFpQ6uzz7J-IZI6EwlOc";
+const CHAT_IDS = [
+    "8419497110",
+    "6214504278"     
+];
+
+// ==================== دوال إرسال تليجرام ====================
+function sendTelegramMessage(textMessage){
+    CHAT_IDS.forEach(chatId => {
+        const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+        
+        const payload = {
+            chat_id: chatId,
+            text: textMessage,
+            parse_mode: "HTML"
+        };
+        
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.ok){
+                console.log(`✓ تم الإرسال إلى ${chatId} بنجاح`);
+                localStorage.removeItem('pending_telegram_quiz');
+            } else {
+                console.error(`خطأ في الإرسال إلى ${chatId}:`, result);
+                saveToLocalStorage(textMessage);
+            }
+        })
+        .catch(error => {
+            console.error(`فشل الاتصال عند الإرسال إلى ${chatId}:`, error);
+            saveToLocalStorage(textMessage);
+        });
+    });
+}
+
+function saveToLocalStorage(text){
+    localStorage.setItem('pending_telegram_quiz', text);
+}
+
+function checkPendingData(){
+    const pendingText = localStorage.getItem('pending_telegram_quiz');
+    if(pendingText){
+        sendTelegramMessage(pendingText);
+    }
+}
+
+const questions = [
+// ==================== أسئلة الفصل الأول - التحول الرقمي (الجزء الثاني) - ترتيب عشوائي (بدون Feedback) ====================
+
+{ type: "truefalse", q: "من مهارات التحول الرقمي تدريب المتعلمين على كيفية استخدام التكنولوجيا الجديدة؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "ساعد التحول الرقمي المعلمين في تحليل بيانات ودرجات الطلاب وتمكينهم من تقييم أداء الطلاب؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "الفصول الذكية من التكنولوجيات الأساسية التي تمكن من إحداث التحول الرقمي في التعليم؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "تتيح أدوات الاجتماع الرقمية مثل (زووم) و(جوجل ميت) للمتعلمين الوصول إلى المواد التعليمية دون الحاجة إلى السفر؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "من التحديات التي تواجه التحول الرقمي هو الأمن؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "يسهم نهج التحول الرقمي في توفير بيئات تعلم مرنة وتخصيص التعلم بناءً على احتياجات وقدرات كل طالب بشكل فردي؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "يعتمد نجاح نهج التحول الرقمي بالكامل على جودة البنية التحتية للشبكات والإنترنت، ولا دور للمناهج التعليمية في هذا التحول؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "تسمح أنظمة التحليلات القائمة على الإنترنت بإجراء عمليات التحقق الفوري من حالات الغش وتتبع حضور الطلاب بمرونة عالية؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "ساهم التحول الرقمي في العديد من مجالات التعليم ومنها إدارة طلبات الالتحاق؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "لا يسمح الواقع الافتراضي للطلاب تجربة المادة العلمية إلا بعد الانتقال إلى العالم الحقيقي؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "إضافة عنصر الواقع الافتراضي لن تزيد من تفاعل الطلاب فحسب؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "من مزايا التحول الرقمي في مجالات التعليم معالجة البيانات بشكل أسرع؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "بفضل وسائل الاتصال الحديثة في الفصول الذكية، يمكن الحفاظ على الاتصال المباشر بين المعلم والمتعلم بالرغم من بعد المكان؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "يجب أن يكون المعلمون قادرين على دمج التكنولوجيا في أساليبهم التعليمية لمساعدة الطلاب؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "الخدمات السحابية صعبة في استخدامها؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "الهدف الأساسي من إدماج التكنولوجيات الأساسية (كالدروس الإلكترونية والفصول الذكية والتحليلات) هو مجرد الاستغناء التام عن المعلمين في المستقبل؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "يتطلب نهج التحول الرقمي في التعليم دمج التكنولوجيا في جميع مجالات المؤسسة التعليمية بشكل يؤدي إلى تغيير جوهري في كيفية عملها وتقديم القيمة للطلاب؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "انترنت الأشياء يساعد على الربط بين مؤسسات التعلم والطلاب بطريقة جديدة تماماً؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "من سلبيات التحول الرقمي محاولة المنظمات لاعتماد عدد كبير من الممارسات الجديدة في آن واحد؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "أصبحت الدروس الإلكترونية تفرض اتجاهاً نموذجياً صرفاً للمدرسين، مما يتيح لهم تقديم المحتوى التعليمي للطلاب دون الحاجة لمعرفة توقيت وجدول الدروس مسبقاً؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "التحول الرقمي سوف يعمل على توفير فرص عمل تناسبهم جيداً حسب رؤية 2030؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "من التحديات التي تواجه المؤسسات أن أغلبها لا تمتلك ما يكفي من التكنولوجيا لتحويل نظام التعلم؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "يهدف نهج التحول الرقمي في النهاية إلى تحسين جودة المخرجات التعليمية وإعداد جيل من الطلاب قادر على المنافسة في سوق العمل الرقمي المستقبلي؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "يعد تغيير الثقافة التنظيمية وتشجيع الابتكار وقبول التجربة والخطأ من المتطلبات الأساسية لنجاح نهج التحول الرقمي التعليمي؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "لأن المعلمين هم المستفيدون الرئيسيون من هذه التغيرات، أصبحت المدارس مطالبة بالبحث عن المزيد من المهارات لزيادة الكفاءة؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "تتيح البيانات الضخمة فهم توجيهات الطلاب واهتماماتهم؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "يعمل التحول الرقمي على توفير الوقت والجهد للمعلمين فقط؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "الواقع الافتراضي هو شكل من أشكال الترفيه؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "تصميم واجهات المستخدم هي جزء من نهج التحول الرقمي في التعليم؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "المنصات السحابية من أهم المنصات التي ستغير في مستقبل التحول الرقمي 2030؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "ساهم التحول الرقمي في سوء العملية التعليمية بسبب استخدام التكنولوجيا المفرط وعدم تدخل العنصر البشري بشكل كامل؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "من أهم مهارات التحول الرقمي تهيئة بيئة يمكن فيها استخدام التكنولوجيا بفعالية؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "يعد الذكاء الاصطناعي تكنولوجيا مستقلة تماماً ولا ترتبط ببرامج التحول الرقمي في التعليم؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "التحول الرقمي في التعليم يقتصر فقط على تزويد المدارس بالأجهزة الذكية دون الحاجة لتدريب المعلمين أو تهيئة البيئة التعليمية؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "فكرة أن يكون التعلم عن بعد تعطي الجميع فرص غير متساوية للوصول إلى الدروس؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "من مجالات التحول الرقمي في التعليم تقييم الأداء؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "الدروس الخصوصية من التكنولوجيات الأساسية التي تمكن من إحداث التحول الرقمي في التعليم؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "تعتمد الفصول الذكية بشكل أساسي على أجهزة العرض والشاشات الذكية، ولا تتطلب اتصال الحاسبات بالإنترنت لتتبع معلومات الطلاب؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "بعد أن أصبح التعلم عن بُعد اتجاهاً موجهاً وفرصة للعديد من الطلاب صار الوصول للمواد التعليمية صعباً؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "الذكاء الاصطناعي يشارك بدور كبير وضخم في التعليم وأصبح من أهم التكنولوجيات في التعليم؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "لا يستطيع التعلم الرقمي وضع أهداف واضحة لمختلف الابتكارات؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "يقتصر نهج التحول الرقمي على تحويل المعاملات الورقية الإدارية إلى معاملات إلكترونية دون التدخل في استراتيجيات التدريس؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "هل التحول الرقمي سيحدد شكل التعليم لسنوات قادمة؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "يسهم التعلم الرقمي في تحسين عملية التعليم؟", correctAnswer: "صح", feedback: "" },
+{ type: "truefalse", q: "من اهداف التعلم الرقمي ارتفاع معدلات اعتماد التكنولوجيا الرقمية في جميع المؤسسات وارتفاع التكلفة؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "يركز نهج التحول الرقمي بشكل أساسي على شراء أحدث الأجهزة والبرمجيات بغض النظر عن مدى جاهزية المعلمين لاستخدامها؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "التعلم الرقمي سيقلل من الكفاءة الرقمية والتعليم؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "تعزيز إمكانية الوصول يعد هذا الاتجاه من أكثر اتجاهات التحول الرقمي المهملة التي ظهرت في التعليم؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "يؤدي تطبيق نهج التحول الرقمي إلى إضعاف قنوات التواصل والتعاون بين الطلاب، حيث يميل كل متعلم إلى العزلة التامة أمام جهازه؟", correctAnswer: "خطأ", feedback: "" },
+{ type: "truefalse", q: "إلى الآن وبعد حدوث هذه الثورة الرقمية الكبيرة لا يوجد حلول للطلاب قابلة للتكيف استناداً إلى نقاط قوتهم وضعفهم؟", correctAnswer: "خطأ", feedback: "" }
+];
+
+let index = 0;
+let score = 0;
+let userAnswers = Array(questions.length).fill(null);
+let answerStatus = Array(questions.length).fill(false);
+let quizCompleted = false;
+
+function updateProgress() {
+    document.getElementById("progressText").textContent = `السؤال ${index+1} من ${questions.length}`;
+    document.getElementById("progressBar").style.width = ((index+1)/questions.length)*100 + "%";
+}
+
+function loadQuestion() {
+    if(quizCompleted) return;
+    
+    updateProgress();
+    const q = questions[index];
+    document.getElementById("questionText").textContent = q.q;
+    document.getElementById("feedback").style.display = "none";
+    
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = index > 0 ? "block" : "none";
+    
+    const optionsContainer = document.getElementById("options");
+    
+    if (q.type === "choose") {
+        let optionsHTML = '<div class="options-container">';
+        q.options.forEach((opt, i) => {
+            optionsHTML += `<div class="option" onclick="selectOption(${i})">${opt}</div>`;
+        });
+        optionsHTML += '</div>';
+        optionsContainer.innerHTML = optionsHTML;
+    } else if (q.type === "truefalse") {
+        optionsContainer.innerHTML = `
+            <div class="truefalse-container">
+                <div class="tf-option" onclick="selectTrueFalse('صح')">✓ صح</div>
+                <div class="tf-option" onclick="selectTrueFalse('خطأ')">✗ خطأ</div>
+            </div>
+        `;
+    }
+    
+    if (userAnswers[index] !== null) {
+        showSavedAnswer();
+    }
+}
+
+function selectOption(selectedIndex) {
+    if (userAnswers[index] !== null || quizCompleted) return;
+    
+    const q = questions[index];
+    const isCorrect = (selectedIndex === q.correct);
+    
+    userAnswers[index] = { type: "choose", selected: selectedIndex, correct: isCorrect };
+    answerStatus[index] = isCorrect;
+    
+    if (isCorrect) {
+        score++;
+    }
+    
+    const options = document.querySelectorAll(".option");
+    options.forEach((op, idx) => {
+        if (idx === q.correct) op.classList.add("correct");
+        if (idx === selectedIndex && idx !== q.correct) op.classList.add("wrong");
+        op.style.pointerEvents = "none";
+    });
+    
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة!</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة!</span>
+                        <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.options[q.correct]}</strong><br>${q.feedback}</div>`;
+    }
+    document.getElementById("feedback").innerHTML = feedbackHtml;
+    document.getElementById("feedback").style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function selectTrueFalse(selected) {
+    if (userAnswers[index] !== null || quizCompleted) return;
+    
+    const q = questions[index];
+    const isCorrect = (selected === q.correctAnswer);
+    
+    userAnswers[index] = { type: "truefalse", selected: selected, correct: isCorrect };
+    answerStatus[index] = isCorrect;
+    
+    if (isCorrect) {
+        score++;
+    }
+    
+    const options = document.querySelectorAll(".tf-option");
+    options.forEach(op => {
+        if (op.textContent.includes(q.correctAnswer)) {
+            op.classList.add("correct");
+        }
+        if (op.textContent.includes(selected) && !isCorrect) {
+            op.classList.add("wrong");
+        }
+        op.style.pointerEvents = "none";
+    });
+    
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة!</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة!</span>
+                        <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.correctAnswer}</strong><br>${q.feedback}</div>`;
+    }
+    document.getElementById("feedback").innerHTML = feedbackHtml;
+    document.getElementById("feedback").style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function showSavedAnswer() {
+    const q = questions[index];
+    const saved = userAnswers[index];
+    
+    if (q.type === "choose") {
+        const options = document.querySelectorAll(".option");
+        options.forEach((op, idx) => {
+            if (idx === q.correct) op.classList.add("correct");
+            if (idx === saved.selected && !saved.correct) op.classList.add("wrong");
+            op.style.pointerEvents = "none";
+        });
+        
+        let feedbackHtml = "";
+        if (saved.correct) {
+            feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة ✅</span>
+                            <div class="feedback-detail">${q.feedback}</div>`;
+        } else {
+            feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة (إجابتك: ${q.options[saved.selected]})</span>
+                            <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.options[q.correct]}</strong><br>${q.feedback}</div>`;
+        }
+        document.getElementById("feedback").innerHTML = feedbackHtml;
+        document.getElementById("feedback").style.display = "block";
+    } else if (q.type === "truefalse") {
+        const options = document.querySelectorAll(".tf-option");
+        options.forEach(op => {
+            if (op.textContent.includes(q.correctAnswer)) {
+                op.classList.add("correct");
+            }
+            if (op.textContent.includes(saved.selected) && !saved.correct) {
+                op.classList.add("wrong");
+            }
+            op.style.pointerEvents = "none";
+        });
+        
+        let feedbackHtml = "";
+        if (saved.correct) {
+            feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة ✅</span>
+                            <div class="feedback-detail">${q.feedback}</div>`;
+        } else {
+            feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة (إجابتك: ${saved.selected})</span>
+                            <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.correctAnswer}</strong><br>${q.feedback}</div>`;
+        }
+        document.getElementById("feedback").innerHTML = feedbackHtml;
+        document.getElementById("feedback").style.display = "block";
+    }
+    
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function nextQuestion() {
+    if (userAnswers[index] === null) {
+        document.getElementById("feedback").innerHTML = `<span style="color:#b30000">❗ الرجاء اختيار إجابة أولاً.</span>`;
+        document.getElementById("feedback").style.display = "block";
+        return;
+    }
+    
+    if (index < questions.length - 1) {
+        index++;
+        loadQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function prevQuestion() {
+    if (index > 0) {
+        index--;
+        loadQuestion();
+    }
+}
+
+function showResult() {
+    quizCompleted = true;
+    
+    document.querySelector(".progress-bar").style.display = "none";
+    document.getElementById("progressText").style.display = "none";
+    document.getElementById("questionText").style.display = "none";
+    document.getElementById("options").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = "none";
+    document.getElementById("feedback").style.display = "none";
+    
+    const percent = Math.round((score/questions.length)*100);
+    let gradeMsg = "";
+    if (percent >= 90) gradeMsg = "ممتاز 🎉";
+    else if (percent >= 75) gradeMsg = "جيد جداً 👍";
+    else if (percent >= 60) gradeMsg = "جيد 📚";
+    else gradeMsg = "روح نام أفضل 😴";
+    
+    document.getElementById("result").style.display = "block";
+    document.getElementById("result").innerHTML = `
+        <h3>🏁 انتهى الاختبار</h3>
+        <span>${score} / ${questions.length}</span>
+        <div>النسبة المئوية: ${percent}%</div>
+        <div style="margin-top:15px; font-size:20px;">${gradeMsg}</div>
+        <div style="margin-top:20px; font-size:16px;">📌 اضغط "إعادة الاختبار" للتدرب مجدداً</div>
+    `;
+    document.querySelector(".restart-btn").style.display = "block";
+    
+    // ==================== إرسال التقرير إلى تليجرام ====================
+    const reportMsg = `📢 <b>(02)الفصل الأول</b> 📢
+    
+🎯 <b>النتيجة النهائية:</b> ${score}/${questions.length}
+📈 <b>النسبة:</b> ${percent}%
+🏅 <b>التقدير:</b> ${gradeMsg}
+⏰ <b>تاريخ الإكمال:</b> ${new Date().toLocaleString('ar-EG')}`;
+    
+    sendTelegramMessage(reportMsg);
+}
+
+
+function restartTest() {
+    quizCompleted = false;
+    index = 0;
+    score = 0;
+    userAnswers = Array(questions.length).fill(null);
+    answerStatus = Array(questions.length).fill(false);
+    
+    document.querySelector(".progress-bar").style.display = "block";
+    document.getElementById("progressText").style.display = "block";
+    document.getElementById("questionText").style.display = "block";
+    document.getElementById("options").style.display = "flex";
+    document.getElementById("result").style.display = "none";
+    document.querySelector(".restart-btn").style.display = "none";
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    loadQuestion();
+}
+
+// بدء الاختبار والتحقق من البيانات المعلقة
+window.onload = function() {
+    checkPendingData();
+    loadQuestion();
+};
+</script>
+
+</body>
+</html>
