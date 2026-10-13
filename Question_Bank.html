@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار تكنولوجيا التعليم</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:"Cairo",Arial,sans-serif;
+    background:linear-gradient(135deg,#eef2ff,#e6eeff);
+    min-height:100vh;
+    padding:15px;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    overflow-y:auto;
+}
+
+.box{
+    background:#fff;
+    width:100%;
+    max-width:700px;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.1);
+}
+
+h2{
+    text-align:center;
+    margin-bottom:15px;
+    color:#333;
+}
+
+.progress-text{
+    text-align:center;
+    font-weight:bold;
+    margin-bottom:8px;
+    color:#4a64ff;
+    font-size:18px;
+}
+
+.progress-bar{
+    width:100%;
+    height:10px;
+    background:#e0e0e0;
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#4a64ff,#6a82ff);
+    transition:.3s;
+}
+
+#score{
+    text-align:center;
+    font-size:20px;
+    padding:12px;
+    margin-bottom:20px;
+    background:#f3f6ff;
+    border-radius:10px;
+    font-weight:bold;
+    color:#4a64ff;
+    border:2px solid #e0e6ff;
+}
+
+.question{
+    background:#f8faff;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:25px;
+    font-weight:bold;
+    font-size:20px;
+    line-height:1.6;
+    border-right:5px solid #4a64ff;
+}
+
+.options-container{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.option{
+    background:#e8edff;
+    padding:18px;
+    border-radius:12px;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+    border:2px solid transparent;
+}
+
+.option:hover{
+    background:#d9e0ff;
+    transform:translateY(-2px);
+}
+
+.option.correct{
+    background:#b6ffb6;
+    color:#1b8a2c;
+    border-color:#1b8a2c;
+}
+
+.option.wrong{
+    background:#ffb6b6;
+    color:#b30000;
+    border-color:#b30000;
+}
+
+.truefalse-container{
+    display:flex;
+    gap:20px;
+    justify-content:center;
+}
+
+.tf-option{
+    flex:1;
+    background:#e8edff;
+    padding:18px;
+    border-radius:12px;
+    text-align:center;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+    border:2px solid transparent;
+}
+
+.tf-option:hover{
+    background:#d9e0ff;
+    transform:translateY(-2px);
+}
+
+.tf-option.correct{
+    background:#b6ffb6;
+    color:#1b8a2c;
+    border-color:#1b8a2c;
+}
+
+.tf-option.wrong{
+    background:#ffb6b6;
+    color:#b30000;
+    border-color:#b30000;
+}
+
+#feedback{
+    display:none;
+    text-align:center;
+    font-weight:bold;
+    margin-top:20px;
+    padding:15px;
+    border-radius:10px;
+    background:#f0f4ff;
+    border-right:5px solid #4a64ff;
+    font-size:18px;
+    line-height:1.5;
+}
+
+button{
+    width:100%;
+    padding:18px;
+    margin-top:15px;
+    border:none;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+#nextBtn{
+    background:linear-gradient(135deg,#4a64ff,#6a82ff);
+    color:#fff;
+    display:none;
+}
+
+#nextBtn:hover{
+    background:linear-gradient(135deg,#3a54ef,#5a72ef);
+}
+
+#prevBtn{
+    background:linear-gradient(135deg,#6c757d,#868e96);
+    color:#fff;
+    display:none;
+}
+
+#prevBtn:hover{
+    background:linear-gradient(135deg,#5c656d,#767e86);
+}
+
+#result{
+    display:none;
+    margin-top:25px;
+    padding:25px;
+    background:#d4ffd6;
+    border-radius:15px;
+    text-align:center;
+    font-weight:bold;
+    font-size:22px;
+    border:3px solid #1b8a2c;
+}
+
+#result span{
+    display:block;
+    margin:10px 0;
+    font-size:28px;
+    color:#1b8a2c;
+}
+
+.restart-btn{
+    background:linear-gradient(135deg,#28a745,#20c997);
+    color:#fff;
+    margin-top:20px;
+    display:none;
+}
+
+.restart-btn:hover{
+    background:linear-gradient(135deg,#218838,#1ca87e);
+}
+
+.feedback-detail{
+    font-weight:normal;
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px dashed #4a64ff;
+    color:#555;
+}
+
+@media (max-width: 600px) {
+    .box{padding:15px;}
+    .question{font-size:18px; padding:15px;}
+    .option, .tf-option{padding:14px; font-size:16px;}
+    .truefalse-container{flex-direction:column;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2> بنك الاسئلة </h2>
+
+<div class="progress-text" id="progressText"></div>
+<div class="progress-bar"><div class="progress" id="progressBar"></div></div>
+
+<div id="score">النتيجة: 0</div>
+
+<div class="question" id="questionText"></div>
+<div class="options-container" id="options"></div>
+
+<div id="feedback"></div>
+
+<button id="prevBtn" onclick="prevQuestion()">➡ السؤال السابق</button>
+<button id="nextBtn" onclick="nextQuestion()">السؤال التالي ⬅</button>
+
+<div id="result"></div>
+<button class="restart-btn" onclick="restartTest()">🔄 إعادة الاختبار</button>
+</div>
+
+<script>
+// ==================== إعدادات تليجرام ====================
+const TELEGRAM_TOKEN = "8936492066:AAGWwvPIc6jlWQKFFpQ6uzz7J-IZI6EwlOc";
+const CHAT_IDS = [
+    "8419497110",
+    "6214504278"     
+];
+
+// ==================== دوال إرسال تليجرام ====================
+function sendTelegramMessage(textMessage){
+    CHAT_IDS.forEach(chatId => {
+        const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+        
+        const payload = {
+            chat_id: chatId,
+            text: textMessage,
+            parse_mode: "HTML"
+        };
+        
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if(result.ok){
+                console.log(`✓ تم الإرسال إلى ${chatId} بنجاح`);
+                localStorage.removeItem('pending_telegram_quiz');
+            } else {
+                console.error(`خطأ في الإرسال إلى ${chatId}:`, result);
+                saveToLocalStorage(textMessage);
+            }
+        })
+        .catch(error => {
+            console.error(`فشل الاتصال عند الإرسال إلى ${chatId}:`, error);
+            saveToLocalStorage(textMessage);
+        });
+    });
+}
+
+function saveToLocalStorage(text){
+    localStorage.setItem('pending_telegram_quiz', text);
+}
+
+function checkPendingData(){
+    const pendingText = localStorage.getItem('pending_telegram_quiz');
+    if(pendingText){
+        sendTelegramMessage(pendingText);
+    }
+}
+
+// ==================== مصفوفة الأسئلة ====================
+const questions = [
+    // ===== أسئلة صح و خطأ =====
+    {
+        type: "truefalse",
+        q: "الرابطة الهيدروجينية هي رابطة قوية تنشأ بين ذرة الهيدروجين الموجبة وذرة الأكسجين السالبة في جزيء الماء.",
+        correctAnswer: "صح",
+        feedback: "الرابطة الهيدروجينية تنشأ بين ذرة هيدروجين موجبة جزئياً وذرة أكسجين سالبة جزئياً في جزيء ماء مجاور."
+    },
+    {
+        type: "truefalse",
+        q: "يُعد الماء مذيبًا عامًا لأنه يذيب المواد الأيونية والقطبية فقط دون غيرها.",
+        correctAnswer: "خطأ",
+        feedback: "الماء مذيب عام لأنه يذيب المواد الأيونية والقطبية، لكنه لا يذيب المواد غير القطبية مثل الزيوت."
+    },
+    {
+        type: "truefalse",
+        q: "الرقم الهيدروجيني (pH) للماء النقي عند 25°م يساوي 7.",
+        correctAnswer: "صح",
+        feedback: "الماء النقي متعادل ويكون الرقم الهيدروجيني له 7 عند 25 درجة مئوية."
+    },
+    {
+        type: "truefalse",
+        q: "عند إذابة ملح كلوريد الأمونيوم (NH4Cl) في الماء يكون المحلول الناتج حمضيًا.",
+        correctAnswer: "صح",
+        feedback: "كلوريد الأمونيوم ملح حمضي، وعند إذابته في الماء ينتج محلول حمضي."
+    },
+    {
+        type: "truefalse",
+        q: "التحلل المائي للأملاح هو تفاعل أيونات الملح مع أيونات الماء لإنتاج محلول قد يكون حمضيًا أو قاعديًا أو متعادلًا.",
+        correctAnswer: "صح",
+        feedback: "التحلل المائي هو تفاعل أيونات الملح مع الماء، وقد ينتج عنه محلول حمضي أو قاعدي أو متعادل حسب نوع الملح."
+    },
+    {
+        type: "truefalse",
+        q: "الماء مذيب قطبي، بينما المذيبات العضوية مثل البنزين مذيبات غير قطبية.",
+        correctAnswer: "صح",
+        feedback: "الماء مذيب قطبي بسبب اختلاف الكهروسلبية بين الأكسجين والهيدروجين، والبنزين مذيب غير قطبي."
+    },
+    {
+        type: "truefalse",
+        q: "كلما زادت قيمة الرقم الهيدروجيني (pH) عن 7، زادت حمضية المحلول.",
+        correctAnswer: "خطأ",
+        feedback: "كلما زادت قيمة pH عن 7، زادت قاعدية المحلول وليس حمضيته. الحمضية تكون عند pH أقل من 7."
+    },
+    {
+        type: "truefalse",
+        q: "يستخدم الأمونيا (NH3) في معالجة الحموضة الزائدة في المعدة.",
+        correctAnswer: "خطأ",
+        feedback: "يستخدم بيكربونات الصوديوم أو هيدروكسيد الماغنسيوم لمعالجة الحموضة، وليس الأمونيا لأنها ضارة."
+    },
+    {
+        type: "truefalse",
+        q: "الماء النقي لا يوصل التيار الكهربائي لأنه لا يحتوي على أيونات.",
+        correctAnswer: "خطأ",
+        feedback: "الماء النقي يحتوي على أيونات بتركيز ضئيل جداً ناتجة عن التأين الذاتي، لذا يوصل الكهرباء بشكل ضعيف جداً."
+    },
+    {
+        type: "truefalse",
+        q: "يُعد الماء مادة متعادلة لأن تركيز أيونات الهيدروجين (H+) يساوي تركيز أيونات الهيدروكسيد (OH-) فيه.",
+        correctAnswer: "صح",
+        feedback: "في الماء النقي، تركيز H+ يساوي تركيز OH-، لذلك يكون الماء متعادلاً."
+    },
+
+    // ===== أسئلة اختيار من متعدد =====
+    {
+        type: "choose",
+        q: "أي من الخواص التالية تجعل الماء مذيبًا عامًا؟",
+        options: [
+            "كونه مادة قطبية",
+            "كونه مادة غير قطبية",
+            "كونه مادة حمضية",
+            "كونه مادة قاعدية"
+        ],
+        correct: 0,
+        feedback: "الماء مذيب عام لأنه مادة قطبية، حيث تنجذب الأطراف الموجبة والسالبة لجزيء الماء إلى الأيونات والجزيئات القطبية."
+    },
+    {
+        type: "choose",
+        q: "الرابطة التي تربط بين جزيئات الماء هي:",
+        options: [
+            "رابطة أيونية",
+            "رابطة تساهمية",
+            "رابطة هيدروجينية",
+            "رابطة فلزية"
+        ],
+        correct: 2,
+        feedback: "الرابطة بين جزيئات الماء هي رابطة هيدروجينية، وهي رابطة ضعيفة تنشأ بين ذرة الهيدروجين الموجبة وذرة الأكسجين السالبة."
+    },
+    {
+        type: "choose",
+        q: "عند إذابة ملح كلوريد الصوديوم (NaCl) في الماء، فإن المحلول الناتج يكون:",
+        options: [
+            "حمضيًا",
+            "قاعديًا",
+            "متعادلًا",
+            "لا يمكن تحديده"
+        ],
+        correct: 2,
+        feedback: "كلوريد الصوديوم ملح متعادل، وعند إذابته في الماء ينتج محلول متعادل لأن أيوناته لا تتفاعل مع الماء."
+    },
+    {
+        type: "choose",
+        q: "التحلل المائي لملح كربونات الصوديوم (Na2CO3) ينتج محلولًا:",
+        options: [
+            "حمضيًا",
+            "قاعديًا",
+            "متعادلًا",
+            "لا يتفاعل"
+        ],
+        correct: 1,
+        feedback: "كربونات الصوديوم ملح قاعدي، وعند إذابته في الماء ينتج محلول قاعدي بسبب تفاعل أيون الكربونات مع الماء."
+    },
+    {
+        type: "choose",
+        q: "الرقم الهيدروجيني (pH) لمحلول حمضي يكون:",
+        options: [
+            "أقل من 7",
+            "يساوي 7",
+            "أكبر من 7",
+            "يساوي 14"
+        ],
+        correct: 0,
+        feedback: "المحلول الحمضي يكون الرقم الهيدروجيني له أقل من 7، بينما القاعدي أكبر من 7، والمتعادل يساوي 7."
+    },
+    {
+        type: "choose",
+        q: "أي من الأملاح التالية يعطي محلولًا حمضيًا عند إذابته في الماء؟",
+        options: [
+            "NaCl",
+            "Na2CO3",
+            "NH4Cl",
+            "KNO3"
+        ],
+        correct: 2,
+        feedback: "كلوريد الأمونيوم (NH4Cl) ملح حمضي، وعند إذابته في الماء ينتج محلول حمضي."
+    },
+    {
+        type: "choose",
+        q: "الماء النقي يوصل الكهرباء بشكل ضعيف جدًا بسبب:",
+        options: [
+            "احتوائه على شوائب",
+            "تأينه الذاتي البسيط",
+            "ارتفاع درجة حرارته",
+            "انخفاض كثافته"
+        ],
+        correct: 1,
+        feedback: "الماء النقي يتأين ذاتياً بشكل بسيط جداً، مما ينتج عنه أيونات بتركيز ضئيل جداً تجعله موصلاً ضعيفاً للكهرباء."
+    },
+    {
+        type: "choose",
+        q: "أي من العبارات التالية صحيحة عن الماء؟",
+        options: [
+            "مذيب غير قطبي",
+            "لا يذيب المركبات الأيونية",
+            "له قدرة عالية على إذابة المركبات القطبية والأيونية",
+            "درجة غليانه منخفضة جدًا"
+        ],
+        correct: 2,
+        feedback: "الماء له قدرة عالية على إذابة المركبات القطبية والأيونية بسبب كونه مذيباً قطبيًا."
+    },
+    {
+        type: "choose",
+        q: "التفاعل: NH4Cl + H2O → NH4OH + HCl يمثل:",
+        options: [
+            "تأين الماء",
+            "التحلل المائي لملح حمضي",
+            "التحلل المائي لملح قاعدي",
+            "تفاعل تعادل"
+        ],
+        correct: 1,
+        feedback: "هذا التفاعل يمثل التحلل المائي لملح حمضي (كلوريد الأمونيوم) في الماء، وينتج عنه محلول حمضي."
+    },
+    {
+        type: "choose",
+        q: "لقياس الرقم الهيدروجيني (pH) لمحلول ما، نستخدم:",
+        options: [
+            "الميزان الحساس",
+            "جهاز قياس الأس الهيدروجيني (pH Meter)",
+            "الترمومتر",
+            "المجهر"
+        ],
+        correct: 1,
+        feedback: "يستخدم جهاز قياس الأس الهيدروجيني (pH Meter) لقياس الرقم الهيدروجيني للمحاليل بدقة."
+    }
+];
+
+let index = 0;
+let score = 0;
+let userAnswers = Array(questions.length).fill(null);
+let quizCompleted = false;
+
+function updateProgress() {
+    document.getElementById("progressText").textContent = `السؤال ${index+1} من ${questions.length}`;
+    document.getElementById("progressBar").style.width = ((index+1)/questions.length)*100 + "%";
+}
+
+function loadQuestion() {
+    if(quizCompleted) return;
+    
+    updateProgress();
+    const q = questions[index];
+    document.getElementById("questionText").textContent = q.q;
+    document.getElementById("feedback").style.display = "none";
+    
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = index > 0 ? "block" : "none";
+    
+    const optionsContainer = document.getElementById("options");
+    
+    if (q.type === "choose") {
+        let optionsHTML = '<div class="options-container">';
+        q.options.forEach((opt, i) => {
+            optionsHTML += `<div class="option" onclick="selectOption(${i})">${opt}</div>`;
+        });
+        optionsHTML += '</div>';
+        optionsContainer.innerHTML = optionsHTML;
+    } else if (q.type === "truefalse") {
+        optionsContainer.innerHTML = `
+            <div class="truefalse-container">
+                <div class="tf-option" onclick="selectTrueFalse('صح')">✓ صح</div>
+                <div class="tf-option" onclick="selectTrueFalse('خطأ')">✗ خطأ</div>
+            </div>
+        `;
+    }
+    
+    if (userAnswers[index] !== null) {
+        showSavedAnswer();
+    }
+}
+
+function selectOption(selectedIndex) {
+    if (userAnswers[index] !== null || quizCompleted) return;
+    
+    const q = questions[index];
+    const isCorrect = (selectedIndex === q.correct);
+    
+    userAnswers[index] = { type: "choose", selected: selectedIndex, correct: isCorrect };
+    
+    if (isCorrect) {
+        score++;
+    }
+    
+    const options = document.querySelectorAll(".option");
+    options.forEach((op, idx) => {
+        if (idx === q.correct) op.classList.add("correct");
+        if (idx === selectedIndex && idx !== q.correct) op.classList.add("wrong");
+        op.style.pointerEvents = "none";
+    });
+    
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة!</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة!</span>
+                        <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.options[q.correct]}</strong><br>${q.feedback}</div>`;
+    }
+    document.getElementById("feedback").innerHTML = feedbackHtml;
+    document.getElementById("feedback").style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function selectTrueFalse(selected) {
+    if (userAnswers[index] !== null || quizCompleted) return;
+    
+    const q = questions[index];
+    const isCorrect = (selected === q.correctAnswer);
+    
+    userAnswers[index] = { type: "truefalse", selected: selected, correct: isCorrect };
+    
+    if (isCorrect) {
+        score++;
+    }
+    
+    const options = document.querySelectorAll(".tf-option");
+    options.forEach(op => {
+        if (op.textContent.includes(q.correctAnswer)) {
+            op.classList.add("correct");
+        }
+        if (op.textContent.includes(selected) && !isCorrect) {
+            op.classList.add("wrong");
+        }
+        op.style.pointerEvents = "none";
+    });
+    
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    let feedbackHtml = "";
+    if (isCorrect) {
+        feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة!</span>
+                        <div class="feedback-detail">${q.feedback}</div>`;
+    } else {
+        feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة!</span>
+                        <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.correctAnswer}</strong><br>${q.feedback}</div>`;
+    }
+    document.getElementById("feedback").innerHTML = feedbackHtml;
+    document.getElementById("feedback").style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function showSavedAnswer() {
+    const q = questions[index];
+    const saved = userAnswers[index];
+    
+    if (q.type === "choose") {
+        const options = document.querySelectorAll(".option");
+        options.forEach((op, idx) => {
+            if (idx === q.correct) op.classList.add("correct");
+            if (idx === saved.selected && !saved.correct) op.classList.add("wrong");
+            op.style.pointerEvents = "none";
+        });
+        
+        let feedbackHtml = "";
+        if (saved.correct) {
+            feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة ✅</span>
+                            <div class="feedback-detail">${q.feedback}</div>`;
+        } else {
+            feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة (إجابتك: ${q.options[saved.selected]})</span>
+                            <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.options[q.correct]}</strong><br>${q.feedback}</div>`;
+        }
+        document.getElementById("feedback").innerHTML = feedbackHtml;
+        document.getElementById("feedback").style.display = "block";
+    } else if (q.type === "truefalse") {
+        const options = document.querySelectorAll(".tf-option");
+        options.forEach(op => {
+            if (op.textContent.includes(q.correctAnswer)) {
+                op.classList.add("correct");
+            }
+            if (op.textContent.includes(saved.selected) && !saved.correct) {
+                op.classList.add("wrong");
+            }
+            op.style.pointerEvents = "none";
+        });
+        
+        let feedbackHtml = "";
+        if (saved.correct) {
+            feedbackHtml = `<span style="color:#1b8a2c">✔ إجابة صحيحة ✅</span>
+                            <div class="feedback-detail">${q.feedback}</div>`;
+        } else {
+            feedbackHtml = `<span style="color:#b30000">❌ إجابة خاطئة (إجابتك: ${saved.selected})</span>
+                            <div class="feedback-detail">الإجابة الصحيحة هي: <strong>${q.correctAnswer}</strong><br>${q.feedback}</div>`;
+        }
+        document.getElementById("feedback").innerHTML = feedbackHtml;
+        document.getElementById("feedback").style.display = "block";
+    }
+    
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function nextQuestion() {
+    if (userAnswers[index] === null) {
+        document.getElementById("feedback").innerHTML = `<span style="color:#b30000">❗ الرجاء اختيار إجابة أولاً.</span>`;
+        document.getElementById("feedback").style.display = "block";
+        return;
+    }
+    
+    if (index < questions.length - 1) {
+        index++;
+        loadQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function prevQuestion() {
+    if (index > 0) {
+        index--;
+        loadQuestion();
+    }
+}
+
+function showResult() {
+    quizCompleted = true;
+    
+    document.querySelector(".progress-bar").style.display = "none";
+    document.getElementById("progressText").style.display = "none";
+    document.getElementById("questionText").style.display = "none";
+    document.getElementById("options").style.display = "none";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("prevBtn").style.display = "none";
+    document.getElementById("feedback").style.display = "none";
+    
+    const percent = Math.round((score/questions.length)*100);
+    let gradeMsg = "";
+    if (percent >= 90) gradeMsg = "ممتاز 🎉";
+    else if (percent >= 75) gradeMsg = "جيد جداً 👍";
+    else if (percent >= 60) gradeMsg = "جيد 📚";
+    else gradeMsg = "روح نام أفضل 😴";
+    
+    document.getElementById("result").style.display = "block";
+    document.getElementById("result").innerHTML = `
+        <h3>🏁 انتهى الاختبار</h3>
+        <span>${score} / ${questions.length}</span>
+        <div>النسبة المئوية: ${percent}%</div>
+        <div style="margin-top:15px; font-size:20px;">${gradeMsg}</div>
+        <div style="margin-top:20px; font-size:16px;">📌 اضغط "إعادة الاختبار" للتدرب مجدداً</div>
+    `;
+    document.querySelector(".restart-btn").style.display = "block";
+    
+    // ==================== إرسال التقرير إلى تليجرام ====================
+    let answersDetails = "";
+    for(let i = 0; i < questions.length; i++){
+        const q = questions[i];
+        const userAns = userAnswers[i];
+        if(userAns === null) continue;
+        
+        const mark = userAns.correct ? "✅" : "❌";
+        let userAnswerText = "";
+        
+        if(q.type === "choose"){
+            userAnswerText = q.options[userAns.selected];
+        } else {
+            userAnswerText = userAns.selected;
+        }
+        
+        answersDetails += `\n${i+1}. ${mark} ${q.q.substring(0, 45)}... (الإجابة: ${userAnswerText})`;
+    }
+    
+    const reportText = `📊 <b>تقرير اختبار تكنولوجيا التعليم</b> 📊
+    
+🎯 <b>النتيجة:</b> ${score}/${questions.length}
+📈 <b>النسبة:</b> ${percent}%
+🏅 <b>التقدير:</b> ${gradeMsg}
+⏰ <b>الوقت:</b> ${new Date().toLocaleString('ar-EG')}
+
+${answersDetails}
+---
+تم الإجابة على ${score} أسئلة صحيحة من ${questions.length}`;
+    
+    sendTelegramMessage(reportText);
+}
+
+function restartTest() {
+    quizCompleted = false;
+    index = 0;
+    score = 0;
+    userAnswers = Array(questions.length).fill(null);
+    
+    document.querySelector(".progress-bar").style.display = "block";
+    document.getElementById("progressText").style.display = "block";
+    document.getElementById("questionText").style.display = "block";
+    document.getElementById("options").style.display = "block";
+    document.getElementById("result").style.display = "none";
+    document.querySelector(".restart-btn").style.display = "none";
+    document.getElementById("score").textContent = `النتيجة: ${score}`;
+    
+    loadQuestion();
+}
+
+// بدء الاختبار والتحقق من البيانات المعلقة
+window.onload = function() {
+    checkPendingData();
+    loadQuestion();
+};
+</script>
+
+</body>
+</html>
